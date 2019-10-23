@@ -55,18 +55,19 @@
   };
 </script>
 
-  <meta name="description" content="编译和调试Linux内核相关参考 第一步123$ cd linux-4.16$ make menuconfig$ make -j8   开启debug 信息  12345Kernel hacking  ---&amp;gt;     [*] Kernel debugging    Compile-time checks and compiler options  ---&amp;gt;        [*] Co">
+  <meta name="description" content="自动加载php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是. include 和 require的大坑include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于工作目录的. 举个例子. 当前在index.php 的目录中 12345678# tre">
+<meta name="keywords" content="php">
 <meta property="og:type" content="article">
-<meta property="og:title" content="qemu调试内核">
-<meta property="og:url" content="http://yoursite.com/2019/09/15/compile-and-debug-linux-kernel/index.html">
+<meta property="og:title" content="composer的psr4">
+<meta property="og:url" content="http://yoursite.com/2019/10/22/composer的psr4/index.html">
 <meta property="og:site_name" content="dinosaur">
-<meta property="og:description" content="编译和调试Linux内核相关参考 第一步123$ cd linux-4.16$ make menuconfig$ make -j8   开启debug 信息  12345Kernel hacking  ---&amp;gt;     [*] Kernel debugging    Compile-time checks and compiler options  ---&amp;gt;        [*] Co">
+<meta property="og:description" content="自动加载php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是. include 和 require的大坑include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于工作目录的. 举个例子. 当前在index.php 的目录中 12345678# tre">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-08T07:08:33.877Z">
+<meta property="og:updated_time" content="2019-10-22T08:46:41.631Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="qemu调试内核">
-<meta name="twitter:description" content="编译和调试Linux内核相关参考 第一步123$ cd linux-4.16$ make menuconfig$ make -j8   开启debug 信息  12345Kernel hacking  ---&amp;gt;     [*] Kernel debugging    Compile-time checks and compiler options  ---&amp;gt;        [*] Co">
-  <link rel="canonical" href="http://yoursite.com/2019/09/15/compile-and-debug-linux-kernel/">
+<meta name="twitter:title" content="composer的psr4">
+<meta name="twitter:description" content="自动加载php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是. include 和 require的大坑include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于工作目录的. 举个例子. 当前在index.php 的目录中 12345678# tre">
+  <link rel="canonical" href="http://yoursite.com/2019/10/22/composer的psr4/">
 
 
 <script id="page-configurations">
@@ -80,7 +81,7 @@
   };
 </script>
 
-  <title>qemu调试内核 | dinosaur</title>
+  <title>composer的psr4 | dinosaur</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2G9M76S71Z"></script>
     <script>
@@ -221,7 +222,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/15/compile-and-debug-linux-kernel/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/22/composer的psr4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -235,7 +236,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            qemu调试内核
+            composer的psr4
             
 
           
@@ -252,19 +253,11 @@
                 
               
 
-              <time title="创建时间：2019-09-15 00:02:11" itemprop="dateCreated datePublished" datetime="2019-09-15T00:02:11+08:00">2019-09-15</time>
+              <time title="创建时间：2019-10-22 15:38:14 / 修改时间：16:46:41" itemprop="dateCreated datePublished" datetime="2019-10-22T15:38:14+08:00">2019-10-22</time>
             </span>
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-08 15:08:33" itemprop="dateModified" datetime="2019-10-08T15:08:33+08:00">2019-10-08</time>
-              </span>
             
           
 
@@ -287,8 +280,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/09/15/compile-and-debug-linux-kernel/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/15/compile-and-debug-linux-kernel/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/10/22/composer的psr4/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/22/composer的psr4/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -303,33 +296,40 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="编译和调试Linux内核"><a href="#编译和调试Linux内核" class="headerlink" title="编译和调试Linux内核"></a>编译和调试Linux内核</h1><p><a href="https://consen.github.io/2018/01/17/debug-linux-kernel-with-qemu-and-gdb/" target="_blank" rel="noopener">相关参考</a></p>
-<h2 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cd linux-4.16</span><br><span class="line">$ make menuconfig</span><br><span class="line">$ make -j8</span><br></pre></td></tr></table></figure>
+        <h3 id="自动加载"><a href="#自动加载" class="headerlink" title="自动加载"></a>自动加载</h3><p>php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是.</p>
+<h3 id="include-和-require的大坑"><a href="#include-和-require的大坑" class="headerlink" title="include 和 require的大坑"></a>include 和 require的大坑</h3><p>include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于<code>工作目录</code>的.</p>
+<p>举个例子.</p>
+<p>当前在index.php 的目录中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># tree</span><br><span class="line"></span><br><span class="line">test</span><br><span class="line">   ├── index.php</span><br><span class="line">   ├── relative.php</span><br><span class="line">   └── subdir</span><br><span class="line">       ├── a.php</span><br><span class="line">       └── relative.php</span><br></pre></td></tr></table></figure>
 
-<ul>
-<li>开启debug 信息</li>
+<p><code>index.php</code> 的代码很简单,就是包含一个路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &quot;./subdir/a.php&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>两个relative.php 文件分别输出自己的路径<br><code>subdir/relative.php</code>文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test/subdir/relative.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>relative.php</code>文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test/relative.php&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>那么如果与index.php 同目录下会include哪一个呢? </p>
+<p>答案是:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># php index.php </span><br><span class="line">root/relative.php</span><br></pre></td></tr></table></figure>
+
+<p>include了与index.php 同一个目录下的relative.php 文件</p>
+<p>而如果你在index.php的上一层目录执行,也就是<code>test</code>目录它甚至会报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php test/index.php </span><br><span class="line">PHP Warning:  include(./subdir/a.php): failed to open stream: No such file or directory in /root/test/index.php on line 2</span><br><span class="line">PHP Warning:  include(): Failed opening &apos;./subdir/a.php&apos; for inclusion (include_path=&apos;.:/usr/share/php&apos;) in /root/test/index.php on line 2</span><br></pre></td></tr></table></figure>
+
+<p>这一切都是因为当是相对路径的时候,调用了<code>getcwd()</code>来获取工作目录,如果你使用shell的<code>pwd</code>话也可以看自己的工作目录.</p>
+<p>由于这个比较坑的特性,php的代码如果手工使用include并且还使用了相对路径,那之后就非常难以维护了.所以我们需要尽量减少使用include相对路径,因为你知道的原因,你一旦写了一个相对路径,总会有后人copy and paste你的代码,然后把这个include也复制进去了,而这就是下一个屎坑的开始.</p>
+<p>所以,自动加载可以减缓这种大坑的产生,因为他可以减少手工include<code>相对路径</code>的风险,因为他们往往会这样include文件<code>include __DIR__ . &#39;aaa/bbb/ccc.php&#39;</code>,由于不是相对路径,所以会好很多.</p>
+<h3 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h3><p>命名空间是什么?</p>
+<p>其实就是一堆限定符.</p>
+<p>为什么要有命名空间?<br>因为我们要复用别人的代码,你想引用别人的一个库,别人库里写了个<code>hello</code>函数,你也写了个<code>hello</code>函数.这就麻烦了,所以引入命名空间,只要保证大家的命名空间不一样,那样就算大家都有相同的函数名,也不会冲突了.</p>
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code" target="_blank" rel="noopener">https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code</a></li>
+<li><a href="https://linux.die.net/man/3/getcwd" target="_blank" rel="noopener">https://linux.die.net/man/3/getcwd</a></li>
+<li><a href="https://linux.die.net/man/1/pwd" target="_blank" rel="noopener">https://linux.die.net/man/1/pwd</a></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Kernel hacking  ---&gt; </span><br><span class="line">    [*] Kernel debugging</span><br><span class="line">    Compile-time checks and compiler options  ---&gt;</span><br><span class="line">        [*] Compile the kernel with debug info</span><br><span class="line">        [*]   Provide GDB scripts for kernel debugging</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>关闭地址随机化<br>选中<code>Processor type and features</code>  然后关闭<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[*] 64-bit kernel                                                │ │  </span><br><span class="line"> │ │        General setup  ---&gt;                                          │ │  </span><br><span class="line"> │ │    [*] Enable loadable module support  ---&gt;                         │ │  </span><br><span class="line"> │ │    -*- Enable the block layer  ---&gt;                                 │ │  </span><br><span class="line"> │ │        Processor type and features  ---&gt;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<p>反选 <code>KASLR</code>， 也就是关闭地址随机化</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">│ │    [ ]   Randomize the address of the kernel image (KASLR)</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://unix.stackexchange.com/a/396853/227726" target="_blank" rel="noopener">为什么需要关闭地址随机</a></p>
-<h2 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h2><p>编译busybox，注意是静态链接，然后构建initramfs根文件系统</p>
-<h2 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h2><p>通过qemu 跑这个系统</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-x86_64  -kernel  /home/dinosaur/Downloads/linux-4.16/arch/x86/boot/bzImage  -hda qemu_rootfs.img  -append &quot;root=/dev/sda rootfstype=ext4 rw&quot;   -gdb tcp::1234</span><br></pre></td></tr></table></figure>
-
-<p>gdb 调试</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gdb vmlinux</span><br><span class="line">(gdb) target remote localhost:1234</span><br><span class="line">b vfs_write</span><br></pre></td></tr></table></figure>
-
-<p>然后输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  vfs_write (file=0xffff880006431700, buf=0x66506a &lt;error: Cannot access memory at address 0x66506a&gt;, </span><br><span class="line">    count=46, pos=0xffffc900000b7f08) at fs/read_write.c:529</span><br><span class="line">#1  0xffffffff811a08cd in SYSC_write (count=&lt;optimized out&gt;, buf=&lt;optimized out&gt;, fd=&lt;optimized out&gt;)</span><br><span class="line">    at fs/read_write.c:589</span><br><span class="line">#2  SyS_write (fd=&lt;optimized out&gt;, buf=6705258, count=46) at fs/read_write.c:581</span><br><span class="line">#3  0xffffffff81001c8b in do_syscall_64 (regs=0xffff880006431700) at arch/x86/entry/common.c:287</span><br><span class="line">#4  0xffffffff81a00071 in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:237</span><br><span class="line">#5  0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
-
 
     </div>
 
@@ -340,14 +340,23 @@
       
 
       <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/php/" rel="tag"># php</a>
+            
+          </div>
+        
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
-                <a href="/2019/09/14/tcpdump-resp/" rel="next" title="tcpdump_resp">
-                  <i class="fa fa-chevron-left"></i> tcpdump_resp
+                <a href="/2019/10/18/lex和yacc例子/" rel="next" title="lex和yacc例子">
+                  <i class="fa fa-chevron-left"></i> lex和yacc例子
                 </a>
               
             </div>
@@ -355,10 +364,6 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-              
-                <a href="/2019/09/17/go-micro-hello-world/" rel="prev" title="go-micro hello world">
-                  go-micro hello world <i class="fa fa-chevron-right"></i>
-                </a>
               
             </div>
           </div>
@@ -413,7 +418,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#编译和调试Linux内核"><span class="nav-number">1.</span> <span class="nav-text">编译和调试Linux内核</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一步"><span class="nav-number">1.1.</span> <span class="nav-text">第一步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二步"><span class="nav-number">1.2.</span> <span class="nav-text">第二步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三步"><span class="nav-number">1.3.</span> <span class="nav-text">第三步</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#自动加载"><span class="nav-number">1.</span> <span class="nav-text">自动加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#include-和-require的大坑"><span class="nav-number">2.</span> <span class="nav-text">include 和 require的大坑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命名空间"><span class="nav-number">3.</span> <span class="nav-text">命名空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关阅读"><span class="nav-number">4.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -575,9 +580,9 @@
 </script>
 <script>
   function disqus_config() {
-    this.page.url = "http://yoursite.com/2019/09/15/compile-and-debug-linux-kernel/";
-    this.page.identifier = "2019/09/15/compile-and-debug-linux-kernel/";
-    this.page.title = 'qemu调试内核';
+    this.page.url = "http://yoursite.com/2019/10/22/composer的psr4/";
+    this.page.identifier = "2019/10/22/composer的psr4/";
+    this.page.title = 'composer的psr4';
   }
   function loadComments() {
     if (window.DISQUS) {
