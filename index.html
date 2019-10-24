@@ -247,11 +247,19 @@
                 
               
 
-              <time title="创建时间：2019-10-22 15:38:14 / 修改时间：16:46:41" itemprop="dateCreated datePublished" datetime="2019-10-22T15:38:14+08:00">2019-10-22</time>
+              <time title="创建时间：2019-10-22 15:38:14" itemprop="dateCreated datePublished" datetime="2019-10-22T15:38:14+08:00">2019-10-22</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-10-24 15:34:18" itemprop="dateModified" datetime="2019-10-24T15:34:18+08:00">2019-10-24</time>
+              </span>
             
           
 
@@ -282,8 +290,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="自动加载"><a href="#自动加载" class="headerlink" title="自动加载"></a>自动加载</h3><p>php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是.</p>
-<h3 id="include-和-require的大坑"><a href="#include-和-require的大坑" class="headerlink" title="include 和 require的大坑"></a>include 和 require的大坑</h3><p>include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于<code>工作目录</code>的.</p>
+          <h1 id="composer的psr4"><a href="#composer的psr4" class="headerlink" title="composer的psr4"></a>composer的psr4</h1><p>我这次主要是要描述composer的psr4自动加载相关内容.php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是.</p>
+<h2 id="include-和-require的大坑"><a href="#include-和-require的大坑" class="headerlink" title="include 和 require的大坑"></a>include 和 require的大坑</h2><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于<code>工作目录</code>的.</p>
 <p>举个例子.</p>
 <p>当前在index.php 的目录中</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># tree</span><br><span class="line"></span><br><span class="line">test</span><br><span class="line">   ├── index.php</span><br><span class="line">   ├── relative.php</span><br><span class="line">   └── subdir</span><br><span class="line">       ├── a.php</span><br><span class="line">       └── relative.php</span><br></pre></td></tr></table></figure>
@@ -299,7 +307,7 @@
 
 <p>那么如果与index.php 同目录下会include哪一个呢? </p>
 <p>答案是:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># php index.php </span><br><span class="line">root/relative.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># php index.php </span><br><span class="line">test/relative.php</span><br></pre></td></tr></table></figure>
 
 <p>include了与index.php 同一个目录下的relative.php 文件</p>
 <p>而如果你在index.php的上一层目录执行,也就是<code>test</code>目录它甚至会报错</p>
@@ -308,13 +316,50 @@
 <p>这一切都是因为当是相对路径的时候,调用了<code>getcwd()</code>来获取工作目录,如果你使用shell的<code>pwd</code>话也可以看自己的工作目录.</p>
 <p>由于这个比较坑的特性,php的代码如果手工使用include并且还使用了相对路径,那之后就非常难以维护了.所以我们需要尽量减少使用include相对路径,因为你知道的原因,你一旦写了一个相对路径,总会有后人copy and paste你的代码,然后把这个include也复制进去了,而这就是下一个屎坑的开始.</p>
 <p>所以,自动加载可以减缓这种大坑的产生,因为他可以减少手工include<code>相对路径</code>的风险,因为他们往往会这样include文件<code>include __DIR__ . &#39;aaa/bbb/ccc.php&#39;</code>,由于不是相对路径,所以会好很多.</p>
+<h4 id="CLI模式与CGI-FASTCGI工作目录的不同"><a href="#CLI模式与CGI-FASTCGI工作目录的不同" class="headerlink" title="CLI模式与CGI/FASTCGI工作目录的不同"></a>CLI模式与CGI/FASTCGI工作目录的不同</h4><p>CLI SAPI <strong>不会</strong>将当前目录改为已运行的脚本所在的目录。</p>
+<p>以下范例显示了本模块与 CGI SAPI 模块之间的不同：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// 名为 test.php 的简单测试程序</span><br><span class="line">echo getcwd(), &quot;\n&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在使用 CGI 版本时，其输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">/tmp</span><br><span class="line"></span><br><span class="line">$ php-cgi -f another_directory/test.php</span><br><span class="line">/tmp/another_directory</span><br></pre></td></tr></table></figure>
+
+<p>明显可以看到 PHP 将当前目录改成了刚刚运行过的脚本所在的目录。</p>
+<p>使用 CLI SAPI 模式，得到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">/tmp</span><br><span class="line"></span><br><span class="line">$ php -q another_directory/test.php</span><br><span class="line">/tmp</span><br></pre></td></tr></table></figure>
+
+<h4 id="include-和require-的opcode和getcwd"><a href="#include-和require-的opcode和getcwd" class="headerlink" title="include 和require 的opcode和getcwd"></a>include 和require 的opcode和getcwd</h4><p>require 和include 词法分析和语法分析后,生成opcode是73,<code>ZEND_INCLUDE_OR_EVAL</code>,在include或者require之后,如果是相对路径</p>
+<p>最后会调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VCWD_GETCWD(cwd, MAXPATHLEN)</span><br></pre></td></tr></table></figure>
+
+<p>这个最后就是调用glibc 下面的<code>getcwd</code></p>
+<h4 id="getcwd-系统调用"><a href="#getcwd-系统调用" class="headerlink" title="getcwd 系统调用"></a>getcwd 系统调用</h4><p>每个进程task_struct会有fs_struct 结构,这个结构体会含有<code>pwd</code> 和<code>root</code>,如果使用<code>getcwd()</code>这个函数,通过glibc会通过系统调用读取fs_struct的pwd属性并返回</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">static void get_fs_root_and_pwd_rcu(struct fs_struct *fs, struct path *root,</span><br><span class="line">				    struct path *pwd)</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">		*root = fs-&gt;root;</span><br><span class="line">		*pwd = fs-&gt;pwd;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)</span><br><span class="line">&#123;</span><br><span class="line">	int error;</span><br><span class="line">	struct path pwd, root;</span><br><span class="line">	char *page = __getname();</span><br><span class="line"></span><br><span class="line">	if (!page)</span><br><span class="line">		return -ENOMEM;</span><br><span class="line"></span><br><span class="line">	rcu_read_lock();</span><br><span class="line">	get_fs_root_and_pwd_rcu(current-&gt;fs, &amp;root, &amp;pwd);  // 每个进程会关联一个fs_struct结构,fs_struct 结构有两个属性root和pwd描述了root目录和pwd目录</span><br><span class="line"></span><br><span class="line">	char *cwd = page + PATH_MAX;</span><br><span class="line">	int buflen = PATH_MAX;</span><br><span class="line"></span><br><span class="line">	prepend(&amp;cwd, &amp;buflen, &quot;\0&quot;, 1);</span><br><span class="line">	error = prepend_path(&amp;pwd, &amp;root, &amp;cwd, &amp;buflen);  </span><br><span class="line">    ...</span><br><span class="line">    copy_to_user(buf, cwd, len)                    // 将处理后的pwd 返回到用户态</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="include和require总结"><a href="#include和require总结" class="headerlink" title="include和require总结"></a>include和require总结</h4><p>include以及require如果引入<strong>相对路径</strong>的文件,那么这个相对路径都是相对于<code>getcwd()</code>,也就是当前工作目录.</p>
+<p>而cgi和cli模式又有不同</p>
+<ul>
+<li>cli模式下的当前路径就是shell <code>pwd</code>的值</li>
+<li>而cgi 这个SAPI和cli这个CLI SAPI不一样的地方在于他会帮你切换一次工作目录到第一次运行的php文件的当前目录作为工作目录.</li>
+</ul>
 <h3 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h3><p>命名空间是什么?</p>
 <p>其实就是一堆限定符.</p>
 <p>为什么要有命名空间?<br>因为我们要复用别人的代码,你想引用别人的一个库,别人库里写了个<code>hello</code>函数,你也写了个<code>hello</code>函数.这就麻烦了,所以引入命名空间,只要保证大家的命名空间不一样,那样就算大家都有相同的函数名,也不会冲突了.</p>
+<h3 id="自动加载"><a href="#自动加载" class="headerlink" title="自动加载"></a>自动加载</h3><p>开始说到自动加载了,自动加载.什么是自动加载呢? </p>
+<p>其实就是动态include,或者叫做运行时include.</p>
+<p>平时我们怎么include文件的呢? </p>
+<p>就是手工include一堆文件,就像我刚才上面的例子一样.这样至少有两个风险:</p>
+<ul>
+<li>新手使用了相对路径include</li>
+<li>得手工引入,但是include会重复引入文件,得使用<code>include_once</code> 或者<code>require_once</code></li>
+</ul>
+<p>就风险而言,新手使用相对路径引入的危险是非常大的.重复引入只是会校验多一点有一点性能影响而言.</p>
 <h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
 <li><a href="https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code" target="_blank" rel="noopener">https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code</a></li>
 <li><a href="https://linux.die.net/man/3/getcwd" target="_blank" rel="noopener">https://linux.die.net/man/3/getcwd</a></li>
 <li><a href="https://linux.die.net/man/1/pwd" target="_blank" rel="noopener">https://linux.die.net/man/1/pwd</a></li>
+<li><a href="https://blog.csdn.net/wuheshi/article/details/52872463" target="_blank" rel="noopener">https://blog.csdn.net/wuheshi/article/details/52872463</a></li>
+<li><a href="https://github.com/769344359/reading-php7-code/blob/master/include_or_require.md" target="_blank" rel="noopener">https://github.com/769344359/reading-php7-code/blob/master/include_or_require.md</a></li>
+<li><a href="https://www.php.net/manual/zh/features.commandline.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/features.commandline.php</a></li>
 </ul>
 
         
