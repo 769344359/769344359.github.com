@@ -217,6 +217,117 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/18/golang-interface-比较/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/09/18/golang-interface-比较/" class="post-title-link" itemprop="url">golang interface 比较</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-18 21:05:48" itemprop="dateCreated datePublished" datetime="2019-09-18T21:05:48+08:00">2019-09-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-10-08 15:08:33" itemprop="dateModified" datetime="2019-10-08T15:08:33+08:00">2019-10-08</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/09/18/golang-interface-比较/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/18/golang-interface-比较/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="https://golang.org/ref/spec#Comparison_operators" target="_blank" rel="noopener">来源</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Interface values are comparable. Two interface values are equal if they have identical dynamic types and equal dynamic values or if both have value nil.</span><br><span class="line">A value x of non-interface type X and a value t of interface type T are comparable when values of type X are comparable and X implements T. They are equal if t&apos;s dynamic type is identical to X and t&apos;s dynamic value is equal to x.</span><br><span class="line"></span><br><span class="line">A comparison of two interface values with identical dynamic types causes a run-time panic if values of that type are not comparable. This behavior applies not only to direct interface value comparisons but also when comparing arrays of interface values or structs with interface-valued fields.</span><br></pre></td></tr></table></figure>
+
+<p>interface 是可以比较的,当两个interface满足以下之一的时候两者相等：</p>
+<ul>
+<li>两个interface的动态类型和动态值两两相等</li>
+<li>两个interface值都是<code>nil</code></li>
+</ul>
+<p>当一个是interface,一个不是interface的时候，满足以下条件才能可比较：</p>
+<ul>
+<li>x 是类型X的值，t是类型T的值。只有X是可比较且X是T的实现的时候，x和t是可比较的</li>
+</ul>
+<p>那么当一个是interface,一个不是interface的时候，可比较的时候，怎么样才能相等呢？</p>
+<ul>
+<li>当t的动态类型和X相同且t的动态值与x相同</li>
+</ul>
+<p>当比较两个interface的时候，如果他们的类型是不可比较的，那么会产生运行时<code>panic</code>，这种panic不仅仅会发生在interface直接比较。还会发生在interface数组比较或者包含interface作为structs中的字段时候的structs之间的比较。</p>
+<h2 id="相关分析"><a href="#相关分析" class="headerlink" title="相关分析"></a><a href="https://zhuanlan.zhihu.com/p/27652856" target="_blank" rel="noopener">相关分析</a></h2>
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/17/go-micro-hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -856,7 +967,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -869,7 +980,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -985,6 +1096,8 @@
   
 
   
+    
+      
     
       
     
