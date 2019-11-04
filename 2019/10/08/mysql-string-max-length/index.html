@@ -58,14 +58,14 @@
   <meta name="description" content="本文主要是记录mysql各种类型的字符串受什么限制。  前言今天遇到一个特别的事情：把一个pdf的文档转成html然后存进mysql里面，所以我用了text 的字段来存。结果读出来的时候发现少了一截。搜索了一番才发现text居然最大只能支持16kb的字节的内容。  字节和字符如果你写过php,你可以比较清晰地知道strlen(&amp;quot;你好&amp;quot;)和mb_strlen(&amp;quot;你好&amp;">
 <meta name="keywords" content="mysql,io">
 <meta property="og:type" content="article">
-<meta property="og:title" content="mysql_string_max_length">
+<meta property="og:title" content="mysql字符串最大长度">
 <meta property="og:url" content="http://yoursite.com/2019/10/08/mysql-string-max-length/index.html">
 <meta property="og:site_name" content="dinosaur">
 <meta property="og:description" content="本文主要是记录mysql各种类型的字符串受什么限制。  前言今天遇到一个特别的事情：把一个pdf的文档转成html然后存进mysql里面，所以我用了text 的字段来存。结果读出来的时候发现少了一截。搜索了一番才发现text居然最大只能支持16kb的字节的内容。  字节和字符如果你写过php,你可以比较清晰地知道strlen(&amp;quot;你好&amp;quot;)和mb_strlen(&amp;quot;你好&amp;">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-09T04:23:37.796Z">
+<meta property="og:updated_time" content="2019-11-04T01:24:11.850Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mysql_string_max_length">
+<meta name="twitter:title" content="mysql字符串最大长度">
 <meta name="twitter:description" content="本文主要是记录mysql各种类型的字符串受什么限制。  前言今天遇到一个特别的事情：把一个pdf的文档转成html然后存进mysql里面，所以我用了text 的字段来存。结果读出来的时候发现少了一截。搜索了一番才发现text居然最大只能支持16kb的字节的内容。  字节和字符如果你写过php,你可以比较清晰地知道strlen(&amp;quot;你好&amp;quot;)和mb_strlen(&amp;quot;你好&amp;">
   <link rel="canonical" href="http://yoursite.com/2019/10/08/mysql-string-max-length/">
 
@@ -81,7 +81,7 @@
   };
 </script>
 
-  <title>mysql_string_max_length | dinosaur</title>
+  <title>mysql字符串最大长度 | dinosaur</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2G9M76S71Z"></script>
     <script>
@@ -236,7 +236,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            mysql_string_max_length
+            mysql字符串最大长度
             
 
           
@@ -264,7 +264,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-09 12:23:37" itemprop="dateModified" datetime="2019-10-09T12:23:37+08:00">2019-10-09</time>
+                <time title="修改时间：2019-11-04 09:24:11" itemprop="dateModified" datetime="2019-11-04T09:24:11+08:00">2019-11-04</time>
               </span>
             
           
@@ -360,6 +360,30 @@
 </tr>
 </tbody></table>
 <p><a href="https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html" target="_blank" rel="noopener">来源</a></p>
+<h3 id="CHAR"><a href="#CHAR" class="headerlink" title="CHAR"></a>CHAR</h3><p>CHAR 最大是255个<strong>字符</strong></p>
+<p>用如下的sql创建256个字符的char类型字符串会报错误</p>
+<blockquote>
+<p>ERROR 1074 (42000): Column length too big for column ‘name’ (max = 255); use BLOB or TEXT instead</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `test123` ( `name` char(256)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  my_error (nr=1074, MyFlags=0) at /home/dinosaur/Downloads/mysql-5.7.21/mysys/my_error.c:194</span><br><span class="line">#1  0x0000000000f93e75 in Create_field::init (this=0x7fb9b8006740, thd=0x7fb9b8000b70, fld_name=0x7fb9b8006730 &quot;name&quot;, fld_type=MYSQL_TYPE_STRING, fld_length=0x7fb9b8006738 &quot;256&quot;, fld_decimals=0x0, fld_type_modifier=0, </span><br><span class="line">    fld_default_value=0x0, fld_on_update_value=0x0, fld_comment=0x7fb9b8002fe0, fld_change=0x0, fld_interval_list=0x7fb9b8003150, fld_charset=0x0, fld_geom_type=0, fld_gcol_info=0x0)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/field.cc:10962</span><br><span class="line">#2  0x000000000163ae21 in add_field_to_list (thd=0x7fb9b8000b70, field_name=0x7fba3d30c460, type=MYSQL_TYPE_STRING, length=0x7fb9b8006738 &quot;256&quot;, decimals=0x0, type_modifier=0, default_value=0x0, on_update_value=0x0, </span><br><span class="line">    comment=0x7fb9b8002fe0, change=0x0, interval_list=0x7fb9b8003150, cs=0x0, uint_geom_type=0, gcol_info=0x0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5798</span><br><span class="line">#3  0x000000000178e3f6 in MYSQLparse (YYTHD=0x7fb9b8000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_yacc.yy:6337</span><br><span class="line">#4  0x000000000163d75a in parse_sql (thd=0x7fb9b8000b70, parser_state=0x7fba3d30d550, creation_ctx=0x0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:7131</span><br><span class="line">#5  0x0000000001639f07 in mysql_parse (thd=0x7fb9b8000b70, parser_state=0x7fba3d30d550) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5469</span><br><span class="line">#6  0x000000000162f0a3 in dispatch_command (thd=0x7fb9b8000b70, com_data=0x7fba3d30de00, command=COM_QUERY) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:1458</span><br><span class="line">#7  0x000000000162df32 in do_command (thd=0x7fb9b8000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:999</span><br><span class="line">#8  0x0000000001770f97 in handle_connection (arg=0x570d510) at /home/dinosaur/Downloads/mysql-5.7.21/sql/conn_handler/connection_handler_per_thread.cc:300</span><br><span class="line">#9  0x0000000001de0b41 in pfs_spawn_thread (arg=0x5749fc0) at /home/dinosaur/Downloads/mysql-5.7.21/storage/perfschema/pfs.cc:2190</span><br><span class="line">#10 0x00007fba478aa6ba in start_thread (arg=0x7fba3d30e700) at pthread_create.c:333</span><br><span class="line">#11 0x00007fba46d3341d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure>
+
+<h3 id="varchar最大长度"><a href="#varchar最大长度" class="headerlink" title="varchar最大长度"></a>varchar最大长度</h3><p>和char类似，想创建一个<code>65532</code>字符的varchar类型字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `test123` ( `name` varchar(65533)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<p>结果也是一样的错误</p>
+<blockquote>
+<p>ERROR 1074 (42000): Column length too big for column ‘name’ (max = 16383); use BLOB or TEXT instead</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  my_error (nr=1074, MyFlags=0) at /home/dinosaur/Downloads/mysql-5.7.21/mysys/my_error.c:194</span><br><span class="line">#1  0x00000000016c9998 in prepare_blob_field (thd=0x7fb9b8000b70, sql_field=0x7fb9b8006840) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_table.cc:4715</span><br><span class="line">#2  0x00000000016c6a33 in mysql_prepare_create_table (thd=0x7fb9b8000b70, error_schema_name=0x7fb9b8006728 &quot;test&quot;, error_table_name=0x7fb9b8006168 &quot;test123&quot;, create_info=0x7fba3d30c6b0, alter_info=0x7fba3d30c600, </span><br><span class="line">    tmp_table=false, db_options=0x7fba3d30b080, file=0x7fb9b8006ac0, key_info_buffer=0x7fba3d30c170, key_count=0x7fba3d30c16c, select_field_count=0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_table.cc:3721</span><br><span class="line">#3  0x00000000016cac22 in create_table_impl (thd=0x7fb9b8000b70, db=0x7fb9b8006728 &quot;test&quot;, table_name=0x7fb9b8006168 &quot;test123&quot;, error_table_name=0x7fb9b8006168 &quot;test123&quot;, path=0x7fba3d30c180 &quot;./test/test123&quot;, </span><br><span class="line">    create_info=0x7fba3d30c6b0, alter_info=0x7fba3d30c600, internal_tmp_table=false, select_field_count=0, no_ha_table=false, is_trans=0x7fba3d30c3da, key_info=0x7fba3d30c170, key_count=0x7fba3d30c16c)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_table.cc:5131</span><br><span class="line">#4  0x00000000016cb884 in mysql_create_table_no_lock (thd=0x7fb9b8000b70, db=0x7fb9b8006728 &quot;test&quot;, table_name=0x7fb9b8006168 &quot;test123&quot;, create_info=0x7fba3d30c6b0, alter_info=0x7fba3d30c600, select_field_count=0, </span><br><span class="line">    is_trans=0x7fba3d30c3da) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_table.cc:5417</span><br><span class="line">#5  0x00000000016cb9a2 in mysql_create_table (thd=0x7fb9b8000b70, create_table=0x7fb9b80061a0, create_info=0x7fba3d30c6b0, alter_info=0x7fba3d30c600) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_table.cc:5463</span><br><span class="line">#6  0x00000000016335be in mysql_execute_command (thd=0x7fb9b8000b70, first_level=true) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:3248</span><br><span class="line">#7  0x000000000163a31c in mysql_parse (thd=0x7fb9b8000b70, parser_state=0x7fba3d30d550) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5582</span><br><span class="line">#8  0x000000000162f0a3 in dispatch_command (thd=0x7fb9b8000b70, com_data=0x7fba3d30de00, command=COM_QUERY) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:1458</span><br><span class="line">#9  0x000000000162df32 in do_command (thd=0x7fb9b8000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:999</span><br><span class="line">#10 0x0000000001770f97 in handle_connection (arg=0x570d510) at /home/dinosaur/Downloads/mysql-5.7.21/sql/conn_handler/connection_handler_per_thread.cc:300</span><br><span class="line">#11 0x0000000001de0b41 in pfs_spawn_thread (arg=0x5749fc0) at /home/dinosaur/Downloads/mysql-5.7.21/storage/perfschema/pfs.cc:2190</span><br><span class="line">#12 0x00007fba478aa6ba in start_thread (arg=0x7fba3d30e700) at pthread_create.c:333</span><br><span class="line">#13 0x00007fba46d3341d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br><span class="line"></span><br><span class="line">(gdb) p sql_field-&gt;length </span><br><span class="line">$2 = 262132</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">static bool prepare_blob_field(THD *thd, Create_field *sql_field)</span><br><span class="line">&#123;</span><br><span class="line">  DBUG_ENTER(&quot;prepare_blob_field&quot;);</span><br><span class="line"></span><br><span class="line">  if (sql_field-&gt;length &gt; MAX_FIELD_VARCHARLENGTH &amp;&amp;      // sql_field-&gt;length = 262132</span><br><span class="line">      !(sql_field-&gt;flags &amp; BLOB_FLAG))</span><br><span class="line">  &#123;</span><br><span class="line">    /* Convert long VARCHAR columns to TEXT or BLOB */</span><br><span class="line">    char warn_buff[MYSQL_ERRMSG_SIZE];</span><br><span class="line"></span><br><span class="line">    if (sql_field-&gt;def || thd-&gt;is_strict_mode())      // 严格模式下会打印errorERROR 1074 (42000): Column length too big for </span><br><span class="line">    &#123;                                                   // column &apos;name&apos; (max = 16383); use BLOB or TEXT instead</span><br><span class="line">      my_error(ER_TOO_BIG_FIELDLENGTH, MYF(0), sql_field-&gt;field_name,</span><br><span class="line">               static_cast&lt;ulong&gt;(MAX_FIELD_VARCHARLENGTH /            // MAX_FIELD_VARCHARLENGTH = 65535</span><br><span class="line">                                  sql_field-&gt;charset-&gt;mbmaxlen));     // sql_field-&gt;charset-&gt;mbmaxlen = 4</span><br><span class="line">      DBUG_RETURN(1);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>也就是严格模式下，varchar 最大是65535字节的内容，改成<code>varchar(16383)</code>看看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE `test123` ( `name` varchar(16383)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;</span><br><span class="line">Query OK, 0 rows affected (0.26 sec)</span><br></pre></td></tr></table></figure>
+
+<p>ok,没有问题</p>
 
     </div>
 
@@ -397,8 +421,8 @@
 
             <div class="post-nav-prev post-nav-item">
               
-                <a href="/2019/10/18/lex和yacc例子/" rel="prev" title="lex和yacc例子">
-                  lex和yacc例子 <i class="fa fa-chevron-right"></i>
+                <a href="/2019/10/13/https-tls-ssl/" rel="prev" title="https_tls_ssl">
+                  https_tls_ssl <i class="fa fa-chevron-right"></i>
                 </a>
               
             </div>
@@ -454,7 +478,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字节和字符"><span class="nav-number">2.</span> <span class="nav-text">字节和字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql字符串的长度与类型关系"><span class="nav-number">3.</span> <span class="nav-text">mysql字符串的长度与类型关系</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字节和字符"><span class="nav-number">2.</span> <span class="nav-text">字节和字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql字符串的长度与类型关系"><span class="nav-number">3.</span> <span class="nav-text">mysql字符串的长度与类型关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CHAR"><span class="nav-number">3.1.</span> <span class="nav-text">CHAR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#varchar最大长度"><span class="nav-number">3.2.</span> <span class="nav-text">varchar最大长度</span></a></li></ol></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -470,7 +494,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -483,7 +507,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -618,7 +642,7 @@
   function disqus_config() {
     this.page.url = "http://yoursite.com/2019/10/08/mysql-string-max-length/";
     this.page.identifier = "2019/10/08/mysql-string-max-length/";
-    this.page.title = 'mysql_string_max_length';
+    this.page.title = 'mysql字符串最大长度';
   }
   function loadComments() {
     if (window.DISQUS) {
