@@ -56,13 +56,14 @@
 </script>
 
   <meta name="description" content="golang gc 关闭fd４月还是５月的时候写了个golang 的程序,因为要保证最多只有一个进程存在所以进程启动就去获取锁，没有获取文件锁的进程就退出。每分钟我会启动一次进程。目的就是为了进程保活。 使用文件锁就是为了他的特性：  如果文件关闭，那么锁也会被回收  遇到的问题 问题是：过了半天之后ps aux 看启动的进程，发现居然有7-8个。按照预想应该只有一个。代码大概是长这样的  123">
+<meta name="keywords" content="golang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang_gc 相关问题">
 <meta property="og:url" content="http://yoursite.com/2019/09/12/golang-lock/index.html">
 <meta property="og:site_name" content="dinosaur">
 <meta property="og:description" content="golang gc 关闭fd４月还是５月的时候写了个golang 的程序,因为要保证最多只有一个进程存在所以进程启动就去获取锁，没有获取文件锁的进程就退出。每分钟我会启动一次进程。目的就是为了进程保活。 使用文件锁就是为了他的特性：  如果文件关闭，那么锁也会被回收  遇到的问题 问题是：过了半天之后ps aux 看启动的进程，发现居然有7-8个。按照预想应该只有一个。代码大概是长这样的  123">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-10-08T07:08:33.878Z">
+<meta property="og:updated_time" content="2019-11-14T05:14:47.622Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="golang_gc 相关问题">
 <meta name="twitter:description" content="golang gc 关闭fd４月还是５月的时候写了个golang 的程序,因为要保证最多只有一个进程存在所以进程启动就去获取锁，没有获取文件锁的进程就退出。每分钟我会启动一次进程。目的就是为了进程保活。 使用文件锁就是为了他的特性：  如果文件关闭，那么锁也会被回收  遇到的问题 问题是：过了半天之后ps aux 看启动的进程，发现居然有7-8个。按照预想应该只有一个。代码大概是长这样的  123">
@@ -263,7 +264,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-10-08 15:08:33" itemprop="dateModified" datetime="2019-10-08T15:08:33+08:00">2019-10-08</time>
+                <time title="修改时间：2019-11-14 13:14:47" itemprop="dateModified" datetime="2019-11-14T13:14:47+08:00">2019-11-14</time>
               </span>
             
           
@@ -350,6 +351,15 @@
       
 
       <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/golang/" rel="tag"># golang</a>
+            
+          </div>
+        
 
         
 
@@ -435,7 +445,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -448,7 +458,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
