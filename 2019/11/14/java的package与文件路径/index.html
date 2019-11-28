@@ -58,14 +58,14 @@
   <meta name="description" content="写了很久的php的原生代码,对php相对路径自动加载这类坑的恐惧已经深入骨髓了.java和golang也有类似的内容,对于写java没多久的我来说,先记录一下 关于类名和classpath的关系,oracle的文档有相关的描述  Class Path and Package Names   Java classes are organized into packages that are mapp">
 <meta name="keywords" content="java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="java的package与文件路径">
+<meta property="og:title" content="java的package与文件路径与编译">
 <meta property="og:url" content="http://yoursite.com/2019/11/14/java的package与文件路径/index.html">
 <meta property="og:site_name" content="dinosaur">
 <meta property="og:description" content="写了很久的php的原生代码,对php相对路径自动加载这类坑的恐惧已经深入骨髓了.java和golang也有类似的内容,对于写java没多久的我来说,先记录一下 关于类名和classpath的关系,oracle的文档有相关的描述  Class Path and Package Names   Java classes are organized into packages that are mapp">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-14T07:13:22.772Z">
+<meta property="og:updated_time" content="2019-11-18T04:39:07.262Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="java的package与文件路径">
+<meta name="twitter:title" content="java的package与文件路径与编译">
 <meta name="twitter:description" content="写了很久的php的原生代码,对php相对路径自动加载这类坑的恐惧已经深入骨髓了.java和golang也有类似的内容,对于写java没多久的我来说,先记录一下 关于类名和classpath的关系,oracle的文档有相关的描述  Class Path and Package Names   Java classes are organized into packages that are mapp">
   <link rel="canonical" href="http://yoursite.com/2019/11/14/java的package与文件路径/">
 
@@ -81,7 +81,7 @@
   };
 </script>
 
-  <title>java的package与文件路径 | dinosaur</title>
+  <title>java的package与文件路径与编译 | dinosaur</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2G9M76S71Z"></script>
     <script>
@@ -236,7 +236,7 @@
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
           
-            java的package与文件路径
+            java的package与文件路径与编译
             
 
           
@@ -253,11 +253,19 @@
                 
               
 
-              <time title="创建时间：2019-11-14 14:33:37 / 修改时间：15:13:22" itemprop="dateCreated datePublished" datetime="2019-11-14T14:33:37+08:00">2019-11-14</time>
+              <time title="创建时间：2019-11-14 14:33:37" itemprop="dateCreated datePublished" datetime="2019-11-14T14:33:37+08:00">2019-11-14</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-18 12:39:07" itemprop="dateModified" datetime="2019-11-18T12:39:07+08:00">2019-11-18</time>
+              </span>
             
           
 
@@ -314,12 +322,39 @@
 <p>The entire package name is specified in the command. It is not possible, for example, to set the class path so it contains /java/MyClasses/utility and use the command java myapp.Cool. The class would not be found.</p>
 </blockquote>
 <p>You might wonder what defines the package name for a class. The answer is that the package name is part of the class and cannot be modified, except by recompiling the class.</p>
+<p>首先说编译:<br>查看<code>javac</code> 的帮助:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac --help</span><br><span class="line">Usage: javac &lt;options&gt; &lt;source files&gt;</span><br></pre></td></tr></table></figure>
+
+<p>javac 的参数是:<br><code>javac+文件路径</code></p>
+<p>举个例子:<br>现在在com的上一级目录上</p>
+<p>下面是HelloWorld.java的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package com.helloworld;</span><br><span class="line">  </span><br><span class="line">public class HelloWorld</span><br><span class="line">&#123;</span><br><span class="line">        static public int m = 1;</span><br><span class="line">        public int i = 1;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># ls </span><br><span class="line">com</span><br><span class="line"># tree </span><br><span class="line">.</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
+
+<p>我要怎么编译com/hellowrld/HelloWorld.java下面的文件呢? </p>
+<p>这么编译就可以了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac com/helloworld/*.java</span><br></pre></td></tr></table></figure>
+
+<p>然后看一下目录树,在下面多了一个<strong>class</strong>文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># tree</span><br><span class="line">.</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        ├── HelloWorld.class</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
+
+<p>重新开始,我们看看<code>-d</code> 这个参数有什么用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># mkdir classes</span><br><span class="line"># tree</span><br><span class="line">.</span><br><span class="line">├── classess</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
+
+<p>那么我们编译之后会在设置的<code>-d</code>的目录里面添加相关目录:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># javac -d ./classes/    com/helloworld/*.java</span><br><span class="line"># tree</span><br><span class="line">.</span><br><span class="line">├── classes</span><br><span class="line">│   └── com</span><br><span class="line">│       └── helloworld</span><br><span class="line">│           └── HelloWorld.class</span><br><span class="line">├── classess</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
+
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
 <li><a href="https://blog.csdn.net/sinat_30955745/article/details/84348725" target="_blank" rel="noopener">https://blog.csdn.net/sinat_30955745/article/details/84348725</a></li>
 <li><a href="https://www.cnblogs.com/f-ck-need-u/p/8127529.html" target="_blank" rel="noopener">https://www.cnblogs.com/f-ck-need-u/p/8127529.html</a></li>
 <li><a href="https://www.cnblogs.com/moveofgod/p/3809653.html" target="_blank" rel="noopener">https://www.cnblogs.com/moveofgod/p/3809653.html</a></li>
 <li><a href="https://www3.ntu.edu.sg/home/ehchua/programming/java/J9c_PackageClasspath.html" target="_blank" rel="noopener">https://www3.ntu.edu.sg/home/ehchua/programming/java/J9c_PackageClasspath.html</a></li>
-<li><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#BEHCGBFB" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#BEHCGBFB</a></li>
+<li><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#</a></li>
+<li><a href="https://stackoverflow.com/questions/4800781/how-to-compile-multiple-java-source-files-in-command-line" target="_blank" rel="noopener">https://stackoverflow.com/questions/4800781/how-to-compile-multiple-java-source-files-in-command-line</a></li>
+<li><a href="https://stackoverflow.com/questions/2441760/differences-between-classpath-and-sourcepath-options-of-javac" target="_blank" rel="noopener">https://stackoverflow.com/questions/2441760/differences-between-classpath-and-sourcepath-options-of-javac</a></li>
+<li><a href="https://community.oracle.com/thread/1566469" target="_blank" rel="noopener">https://community.oracle.com/thread/1566469</a></li>
+<li><a href="https://blog.csdn.net/qq_25665807/article/details/74747868" target="_blank" rel="noopener">https://blog.csdn.net/qq_25665807/article/details/74747868</a></li>
 </ul>
 
     </div>
@@ -355,6 +390,10 @@
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/21/composer-ext/" rel="prev" title="composer-ext">
+                  composer-ext <i class="fa fa-chevron-right"></i>
+                </a>
               
             </div>
           </div>
@@ -425,7 +464,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -438,7 +477,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -573,7 +612,7 @@
   function disqus_config() {
     this.page.url = "http://yoursite.com/2019/11/14/java的package与文件路径/";
     this.page.identifier = "2019/11/14/java的package与文件路径/";
-    this.page.title = 'java的package与文件路径';
+    this.page.title = 'java的package与文件路径与编译';
   }
   function loadComments() {
     if (window.DISQUS) {
