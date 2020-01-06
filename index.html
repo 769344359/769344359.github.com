@@ -217,7 +217,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/12/函数表达式-闭包和箭头函数/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/23/mysql-error-sqlstate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -232,7 +232,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/12/12/函数表达式-闭包和箭头函数/" class="post-title-link" itemprop="url">函数表达式 闭包和箭头函数</a>
+            <a href="/2019/12/23/mysql-error-sqlstate/" class="post-title-link" itemprop="url">mysql_error_sqlstate</a>
           
         </h1>
 
@@ -247,11 +247,19 @@
                 
               
 
-              <time title="创建时间：2019-12-12 17:58:30 / 修改时间：17:59:17" itemprop="dateCreated datePublished" datetime="2019-12-12T17:58:30+08:00">2019-12-12</time>
+              <time title="创建时间：2019-12-23 22:10:37" itemprop="dateCreated datePublished" datetime="2019-12-23T22:10:37+08:00">2019-12-23</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-25 13:25:49" itemprop="dateModified" datetime="2019-12-25T13:25:49+08:00">2019-12-25</time>
+              </span>
             
           
 
@@ -266,8 +274,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/12/12/函数表达式-闭包和箭头函数/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/12/函数表达式-闭包和箭头函数/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/12/23/mysql-error-sqlstate/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/23/mysql-error-sqlstate/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -282,10 +290,156 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/function" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/function</a></li>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Expression_closures" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Expression_closures</a></li>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/arrow_functions" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/arrow_functions</a></li>
+          <p>当我们使用jdbc 或者pdo或者其他mysql的驱动的时候，经常看到错误会有两个错误码<br>举个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error number: 1005; Symbol: ER_CANT_CREATE_TABLE; SQLSTATE: HY000</span><br></pre></td></tr></table></figure>
+
+<p><code>1005</code>和<code>HY000</code><br>或者是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry &apos;34&apos; for key &apos;PRIMARY&apos;,</span><br></pre></td></tr></table></figure>
+
+<p><code>23000</code>和<code>1062</code></p>
+<p>那么两者的关系是怎么样的呢？</p>
+<blockquote>
+<blockquote>
+<p>Error code: This value is numeric. It is MySQL-specific and is not portable to other database systems.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>SQLSTATE value: This value is a five-character string (for example, ‘42S02’). SQLSTATE values are taken from ANSI SQL and ODBC and are more standardized than the numeric error codes.</p>
+</blockquote>
+<p>不管怎么样，你会看到两个错误一个是<code>SQLSTATE</code>,一个是 <code>errorcode</code>,两者区别就是SQLSTATE更加标准或者通用一些，而errorcode则是mysql自己的   </p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://stackoverflow.com/questions/54734922/whats-the-difference-between-error-number-and-sqlstate-code" target="_blank" rel="noopener">https://stackoverflow.com/questions/54734922/whats-the-difference-between-error-number-and-sqlstate-code</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/clickhouse-编译安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/19/clickhouse-编译安装/" class="post-title-link" itemprop="url">clickhouse 编译安装</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-19 10:26:59" itemprop="dateCreated datePublished" datetime="2019-12-19T10:26:59+08:00">2019-12-19</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-01-03 17:37:36" itemprop="dateModified" datetime="2020-01-03T17:37:36+08:00">2020-01-03</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/19/clickhouse-编译安装/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/19/clickhouse-编译安装/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h2><ul>
+<li><p>github 拉代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/ClickHouse/ClickHouse.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建子目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd ClickHouse/</span><br><span class="line">mkdir build</span><br><span class="line">cmake ..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译需要升级到gcc-8 g++8:</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GCC version must be at least 8.  For example, if GCC 8 is available under</span><br><span class="line"> gcc-8, g++-8 names, do the following: export CC=gcc-8 CXX=g++-8;</span><br></pre></td></tr></table></figure>
+
+<p>我的操作系统是<code>ubuntu</code>所以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo  apt-get install gcc-8 g++-8</span><br><span class="line">$ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8</span><br><span class="line">update-alternatives: using /usr/bin/gcc-8 to provide /usr/bin/gcc (gcc) in auto mode</span><br></pre></td></tr></table></figure>
+
+<p>然后看<code>gcc</code>版本升级到<code>8.3.0</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -v</span><br><span class="line">Using built-in specs.</span><br><span class="line">...</span><br><span class="line">gcc version 8.3.0 (Ubuntu 8.3.0-6ubuntu1~18.04.1)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删掉cmake相关缓存<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm -rf   CMakeCache.txt CMakeFiles</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>重新跑有这样的错误:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Submodules are not initialized.  Run</span><br><span class="line"></span><br><span class="line">	git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+
+<p>然后初始化<code>git submodule</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+
+<p>因为我用的是<code>v2ray</code> + <code>proxychains4</code>,勉强把那些包下下来了<br>然后继续跑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -DCMAKE_BUILD_TYPE=Debug  -DCMAKE_INSTALL_PREFIX=/home/ubuntu/click  ..</span><br></pre></td></tr></table></figure>
+
+<p>然后我发现内存要比较大，而且硬盘要ssd，不然会编译特别慢</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://askubuntu.com/questions/1028601/install-gcc-8-only-on-ubuntu-18-04" target="_blank" rel="noopener">https://askubuntu.com/questions/1028601/install-gcc-8-only-on-ubuntu-18-04</a></li>
+<li><a href="https://www.jianshu.com/p/0bef91a67860" target="_blank" rel="noopener">https://www.jianshu.com/p/0bef91a67860</a></li>
 </ul>
 
         
@@ -870,106 +1024,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/09/vue编译流程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/12/09/vue编译流程/" class="post-title-link" itemprop="url">vue编译流程</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-12-09 17:11:42 / 修改时间：17:55:33" itemprop="dateCreated datePublished" datetime="2019-12-09T17:11:42+08:00">2019-12-09</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/12/09/vue编译流程/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/09/vue编译流程/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">at compileToFunctions (vue.js:10686)</span><br><span class="line">at Vue.$mount (vue.js:10913)</span><br><span class="line">at Vue._init (vue.js:4631)</span><br><span class="line">at new Vue (vue.js:4720)</span><br><span class="line">at index-vue.js:10</span><br></pre></td></tr></table></figure>
-
-<p>先看函数<code>initMixin</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// expose real self</span><br><span class="line">vm._self = vm;</span><br><span class="line">initLifecycle(vm);</span><br><span class="line">initEvents(vm);</span><br><span class="line">initRender(vm);</span><br><span class="line">callHook(vm, &apos;beforeCreate&apos;);   // beforeCreate回调</span><br><span class="line">initInjections(vm); // resolve injections before data/props</span><br><span class="line">initState(vm);</span><br><span class="line">initProvide(vm); // resolve provide after data/props</span><br><span class="line">callHook(vm, &apos;created&apos;);    // created 回调</span><br><span class="line"></span><br><span class="line">/* istanbul ignore if */</span><br><span class="line">if (&quot;development&quot; !== &apos;production&apos; &amp;&amp; config.performance &amp;&amp; mark) &#123;</span><br><span class="line">  vm._name = formatComponentName(vm, false);</span><br><span class="line">  mark(endTag);</span><br><span class="line">  measure((&quot;vue &quot; + (vm._name) + &quot; init&quot;), startTag, endTag);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (vm.$options.el) &#123;</span><br><span class="line">  vm.$mount(vm.$options.el);  // 加载el</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>下面核心看看函数<code>$mount</code>里面的编译过程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">at getBindingAttr (vue.js:6658)</span><br><span class="line">at processKey (vue.js:9355)</span><br><span class="line">at processElement (vue.js:9339)</span><br><span class="line">at Object.start (vue.js:9188)</span><br><span class="line">at handleStartTag (vue.js:8985)</span><br><span class="line">at parseHTML (vue.js:8845)</span><br><span class="line">at parse (vue.js:9133)</span><br><span class="line">at baseCompile (vue.js:10827)</span><br><span class="line">at compile (vue.js:10802)</span><br><span class="line">at compileToFunctions (vue.js:10719)</span><br></pre></td></tr></table></figure>
-
-<p>从<code>parseHtml</code>开始</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">function parseHTML (html, options) &#123;</span><br><span class="line">    ...</span><br><span class="line">    while (html) &#123;   // 核心大循环</span><br><span class="line">                last = html;  // html是一个字符串</span><br><span class="line">                if (!lastTag || !isPlainTextElement(lastTag)) &#123;</span><br><span class="line">                    ...</span><br><span class="line">                    if (textEnd &lt; 0) &#123;</span><br><span class="line">                        text = html;</span><br><span class="line">                        html = &apos;&apos;;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;else&#123;</span><br><span class="line">                    var rest$1 = html.replace(&#123;...&#125;);</span><br><span class="line">                    index += html.length - rest$1.length;</span><br><span class="line">                    html = rest$1;</span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function advance (n) &#123;</span><br><span class="line">        index += n;</span><br><span class="line">        html = html.substring(n);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://www.codercto.com/a/87030.html" target="_blank" rel="noopener">https://www.codercto.com/a/87030.html</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/namespace与docker/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1111,7 +1165,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-10 13:16:44" itemprop="dateModified" datetime="2019-12-10T13:16:44+08:00">2019-12-10</time>
+                <time title="修改时间：2020-01-02 10:54:00" itemprop="dateModified" datetime="2020-01-02T10:54:00+08:00">2020-01-02</time>
               </span>
             
           
@@ -1143,7 +1197,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换<br>mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像<code>jls</code>一样,可能是我没有看完完整的mysql文档吧</p>
+          <h2 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h2><p><code>type and program language</code> 这本书介绍了类型系统. 什么是类型系统呢? </p>
+<p>这本书讲了表达式和求值</p>
+<p>sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换<br>mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像<code>jls</code>一样,可能是我没有看完完整的mysql文档吧</p>
 <h2 id="mysql类型"><a href="#mysql类型" class="headerlink" title="mysql类型"></a>mysql类型</h2><p>mysql类型分为以下几种:</p>
 <ul>
 <li>numeric</li>
@@ -1230,7 +1286,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1243,7 +1299,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -1269,7 +1325,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
