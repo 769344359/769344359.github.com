@@ -63,7 +63,7 @@
 <meta property="og:site_name" content="dinosaur">
 <meta property="og:description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  这本书讲了表达式和求值 sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像jls一样,可能是我没有看完完整的mysql文档吧 mysql类型mysql类型分为以下几种:  numeric date and time str">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-01-02T02:54:00.151Z">
+<meta property="og:updated_time" content="2020-03-31T01:57:15.790Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 隐式转换">
 <meta name="twitter:description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  这本书讲了表达式和求值 sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像jls一样,可能是我没有看完完整的mysql文档吧 mysql类型mysql类型分为以下几种:  numeric date and time str">
@@ -264,7 +264,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-02 10:54:00" itemprop="dateModified" datetime="2020-01-02T10:54:00+08:00">2020-01-02</time>
+                <time title="修改时间：2020-03-31 09:57:15" itemprop="dateModified" datetime="2020-03-31T09:57:15+08:00">2020-03-31</time>
               </span>
             
           
@@ -317,11 +317,70 @@
 <h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(case when number_col=&apos;&apos; OR number_col IS NULL THEN 1 END) FROM test;</span><br></pre></td></tr></table></figure>
 
 <p>假如number_col列是数字类型(比如<code>int</code>),则会发生隐式转换 <code>number_col = &#39;&#39;</code>里面,空字符串<code>&#39;&#39;</code>会转换成 0</p>
-<h2 id="隐式转换在什么时候发生"><a href="#隐式转换在什么时候发生" class="headerlink" title="隐式转换在什么时候发生?"></a>隐式转换在什么时候发生?</h2><p>sql\parse_tree_items.h中<code>比较操作符</code>的ast树相关节点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class PTI_comp_op : public Parse_tree_item</span><br><span class="line">&#123;</span><br><span class="line">  typedef Parse_tree_item super;</span><br><span class="line"></span><br><span class="line">  Item *left;</span><br><span class="line">  chooser_compare_func_creator boolfunc2creator;</span><br><span class="line">  Item *right;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line">  PTI_comp_op(const POS &amp;pos, Item *left_arg,</span><br><span class="line">              chooser_compare_func_creator boolfunc2creator_arg,</span><br><span class="line">              Item *right_arg)</span><br><span class="line">  : super(pos), left(left_arg), boolfunc2creator(boolfunc2creator_arg),</span><br><span class="line">    right(right_arg)</span><br><span class="line">  &#123;&#125;</span><br><span class="line"></span><br><span class="line">  virtual bool itemize(Parse_context *pc, Item **res);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="隐式转换在什么时候发生"><a href="#隐式转换在什么时候发生" class="headerlink" title="隐式转换在什么时候发生?"></a>隐式转换在什么时候发生?</h2><p>相关sql</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1=&apos;222&apos;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Thread 28 &quot;mysqld&quot; hit Breakpoint 1, my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">465     &#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">#1  0x0000000001f7279d in my_strntod_8bit (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, str=0x7f3a500061d0 &quot;222&quot;, length=3, end=0x7f3ad4d46998, err=0x7f3ad4d469bc)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/strings/ctype-simple.c:741</span><br><span class="line">#2  0x0000000000fdaaf2 in double_from_string_with_check (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, cptr=0x7f3a500061d0 &quot;222&quot;, end=0x7f3a500061d3 &quot;&quot;)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3577</span><br><span class="line">#3  0x0000000000fdacc5 in Item_string::val_real (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3594</span><br><span class="line">#4  0x0000000000f9e9b9 in Item::val_result (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.h:1592</span><br><span class="line">#5  0x0000000000fedf4b in Item_cache_real::cache_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10089</span><br><span class="line">#6  0x0000000000fec91a in Item_cache::has_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:9650</span><br><span class="line">#7  0x0000000000fedfbb in Item_cache_real::val_real (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10098</span><br><span class="line">#8  0x0000000000fff539 in Arg_comparator::compare_real (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:1748</span><br><span class="line">#9  0x0000000001014cc8 in Arg_comparator::compare (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.h:92</span><br><span class="line">#10 0x00000000010017e7 in Item_func_eq::val_int (this=0x7f3a50006520) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:2507</span><br><span class="line">#11 0x0000000000fe6144 in Item::send (this=0x7f3a50006520, protocol=0x7f3a50001d10, buffer=0x7f3ad4d46e10) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:7563</span><br><span class="line">#12 0x00000000015d4c48 in THD::send_result_set_row (this=0x7f3a50000b70, row_items=0x7f3a500058c8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:4677</span><br><span class="line">#13 0x00000000015ceed3 in Query_result_send::send_data (this=0x7f3a50006770, items=...) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:2717</span><br><span class="line">#14 0x00000000015e697a in JOIN::exec (this=0x7f3a500069f0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_executor.cc:158</span><br><span class="line">#15 0x00000000016892ba in handle_query (thd=0x7f3a50000b70, lex=0x7f3a50002e78, result=0x7f3a50006770, added_options=0, removed_options=0)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_select.cc:184</span><br><span class="line">#16 0x000000000163939e in execute_sqlcom_select (thd=0x7f3a50000b70, all_tables=0x0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5156</span><br><span class="line">#17 0x0000000001632405 in mysql_execute_command (thd=0x7f3a50000b70, first_level=true) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:2792</span><br><span class="line">#18 0x000000000163a31c in mysql_parse (thd=0x7f3a50000b70, parser_state=0x7f3ad4d48550) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5582</span><br><span class="line">#19 0x000000000162f0a3 in dispatch_command (thd=0x7f3a50000b70, com_data=0x7f3ad4d48e00, command=COM_QUERY) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:1458</span><br><span class="line">#20 0x000000000162df32 in do_command (thd=0x7f3a50000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:999</span><br><span class="line">#21 0x0000000001770f97 in handle_connection (arg=0x5271810) at /home/dinosaur/Downloads/mysql-5.7.21/sql/conn_handler/connection_handler_per_thread.cc:300</span><br><span class="line">#22 0x0000000001de0b41 in pfs_spawn_thread (arg=0x526e200) at /home/dinosaur/Downloads/mysql-5.7.21/storage/perfschema/pfs.cc:2190</span><br><span class="line">#23 0x00007f3ade33b6ba in start_thread (arg=0x7f3ad4d49700) at pthread_create.c:333</span><br><span class="line">#24 0x00007f3add76d41d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式转换规则"><a href="#隐式转换规则" class="headerlink" title="隐式转换规则"></a>隐式转换规则</h2><blockquote>
+<p>If one or both arguments are NULL, the result of the comparison is NULL, except for the NULL-safe &lt;=&gt; equality comparison operator. For NULL &lt;=&gt; NULL, the result is true. No conversion is needed.</p>
+</blockquote>
+<blockquote>
+<p>If both arguments in a comparison operation are strings, they are compared as strings.</p>
+</blockquote>
+<blockquote>
+<p>If both arguments are integers, they are compared as integers.</p>
+</blockquote>
+<blockquote>
+<p>Hexadecimal values are treated as binary strings if not compared to a number.</p>
+</blockquote>
+<blockquote>
+<p>If one of the arguments is a TIMESTAMP or DATETIME column and the other argument is a constant, the constant is converted to a timestamp before the comparison is performed. This is done to be more ODBC-friendly. This is not done for the arguments to IN(). To be safe, always use complete datetime, date, or time strings when doing comparisons. For example, to achieve best results when using BETWEEN with date or time values, use CAST() to explicitly convert the values to the desired data type.</p>
+</blockquote>
+<blockquote>
+<p>A single-row subquery from a table or tables is not considered a constant. For example, if a subquery returns an integer to be compared to a DATETIME value, the comparison is done as two integers. The integer is not converted to a temporal value. To compare the operands as DATETIME values, use CAST() to explicitly convert the subquery value to DATETIME.</p>
+</blockquote>
+<blockquote>
+<p>If one of the arguments is a decimal value, comparison depends on the other argument. The arguments are compared as decimal values if the other argument is a decimal or integer value, or as floating-point values if the other argument is a floating-point value.</p>
+</blockquote>
+<blockquote>
+<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</p>
+</blockquote>
+<h2 id="mysql-隐式转换可能不走索引"><a href="#mysql-隐式转换可能不走索引" class="headerlink" title="mysql 隐式转换可能不走索引"></a>mysql 隐式转换可能不走索引</h2><p>文档只描述了字符串转数字的情况</p>
+<p>举例</p>
+<p>下面是表的例子先看表的样子,表里面underlying_code 是varchar类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">show create table `base_underlying_information`</span><br><span class="line">CREATE TABLE `base_underlying_information` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &apos;主键ID&apos;,</span><br><span class="line">  `sec_id` varchar(10) NOT NULL COMMENT &apos;标的ID&apos;,</span><br><span class="line">  `uni_code` varchar(30) NOT NULL COMMENT &apos;标识，规则code-last-type&apos;,</span><br><span class="line">  `underlying_code` varchar(50) NOT NULL COMMENT &apos;标的代码&apos;,</span><br><span class="line">  ... 省略一堆其他字段</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  </span><br><span class="line">  KEY `idx_underlying_code` (`underlying_code`),</span><br><span class="line">) ENGINE=InnoDB  CHARSET=utf8</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>隐式转换的时候<br>当sql中 条件是数字而 <code>603023</code>的时候</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = 603023</span><br></pre></td></tr></table></figure>
+
+<p>这时候的explain 是发现没有走索引<br>因为满足以下条件</p>
+<blockquote>
+<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, <strong>a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ALL	idx_underlying_code	\N	\N	\N	506079	10.00	Using where</span><br></pre></td></tr></table></figure>
+
+<p>发生了隐式转换</p>
+<p>下面是文档的描述</p>
+<blockquote>
+<p>For comparisons of a string column with a number, MySQL cannot use an index on the column to look up the value quickly. If str_col is an indexed string column, the index cannot be used when performing the lookup in the following statement:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl_name WHERE str_col=1;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>The reason for this is that there are many different strings that may convert to the value 1, such as ‘1’, ‘ 1’, or ‘1a’.</p>
+</blockquote>
+<ul>
+<li>没有隐式转换的时候<br>因为表里面是varchar 条件里面也是varchar 所以是没有隐式转换  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = &apos;603023&apos;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ref	idx_underlying_code	idx_underlying_code	152	const	1	100.00	\N</span><br></pre></td></tr></table></figure>
 
 <p>看了一下词法分析好像没有做转换的,看了一下词法分析也没有做,那应该是运行时的时候做的,那是哪个函数呢?  </p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<ul>
 <li><a href="http://postgres.cn/docs/9.6/extend-type-system.html" target="_blank" rel="noopener">http://postgres.cn/docs/9.6/extend-type-system.html</a></li>
 <li><a href="https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html</a></li>
 <li><a href="https://blog.csdn.net/n88Lpo/article/details/101013055" target="_blank" rel="noopener">https://blog.csdn.net/n88Lpo/article/details/101013055</a></li>
@@ -419,7 +478,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型系统"><span class="nav-number">1.</span> <span class="nav-text">类型系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql类型"><span class="nav-number">2.</span> <span class="nav-text">mysql类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子"><span class="nav-number">3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换在什么时候发生"><span class="nav-number">4.</span> <span class="nav-text">隐式转换在什么时候发生?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关阅读"><span class="nav-number">5.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型系统"><span class="nav-number">1.</span> <span class="nav-text">类型系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql类型"><span class="nav-number">2.</span> <span class="nav-text">mysql类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子"><span class="nav-number">3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换在什么时候发生"><span class="nav-number">4.</span> <span class="nav-text">隐式转换在什么时候发生?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换规则"><span class="nav-number">5.</span> <span class="nav-text">隐式转换规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-隐式转换可能不走索引"><span class="nav-number">6.</span> <span class="nav-text">mysql 隐式转换可能不走索引</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -435,7 +494,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">39</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
