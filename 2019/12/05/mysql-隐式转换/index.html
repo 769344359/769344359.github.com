@@ -55,18 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  这本书讲了表达式和求值 sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像jls一样,可能是我没有看完完整的mysql文档吧 mysql类型mysql类型分为以下几种:  numeric date and time str">
+  <meta name="description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  为什么会有隐式转换我写了很久弱类型语言,一直遇到各种隐式转换 但是最近(2020/04/26)我大概知道隐式转换的本质了 .说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素 举个例子比如一个集合颜色{red,yellow,white,blue}不同类型的变">
 <meta name="keywords" content="mysql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mysql 隐式转换">
 <meta property="og:url" content="http://yoursite.com/2019/12/05/mysql-隐式转换/index.html">
 <meta property="og:site_name" content="dinosaur">
-<meta property="og:description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  这本书讲了表达式和求值 sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像jls一样,可能是我没有看完完整的mysql文档吧 mysql类型mysql类型分为以下几种:  numeric date and time str">
+<meta property="og:description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  为什么会有隐式转换我写了很久弱类型语言,一直遇到各种隐式转换 但是最近(2020/04/26)我大概知道隐式转换的本质了 .说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素 举个例子比如一个集合颜色{red,yellow,white,blue}不同类型的变">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-03-31T01:57:15.790Z">
+<meta property="og:updated_time" content="2020-04-27T05:03:52.738Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql 隐式转换">
-<meta name="twitter:description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  这本书讲了表达式和求值 sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像jls一样,可能是我没有看完完整的mysql文档吧 mysql类型mysql类型分为以下几种:  numeric date and time str">
+<meta name="twitter:description" content="类型系统type and program language 这本书介绍了类型系统. 什么是类型系统呢?  为什么会有隐式转换我写了很久弱类型语言,一直遇到各种隐式转换 但是最近(2020/04/26)我大概知道隐式转换的本质了 .说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素 举个例子比如一个集合颜色{red,yellow,white,blue}不同类型的变">
   <link rel="canonical" href="http://yoursite.com/2019/12/05/mysql-隐式转换/">
 
 
@@ -264,7 +264,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-31 09:57:15" itemprop="dateModified" datetime="2020-03-31T09:57:15+08:00">2020-03-31</time>
+                <time title="修改时间：2020-04-27 13:03:52" itemprop="dateModified" datetime="2020-04-27T13:03:52+08:00">2020-04-27</time>
               </span>
             
           
@@ -305,6 +305,11 @@
 
       
         <h2 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h2><p><code>type and program language</code> 这本书介绍了类型系统. 什么是类型系统呢? </p>
+<h2 id="为什么会有隐式转换"><a href="#为什么会有隐式转换" class="headerlink" title="为什么会有隐式转换"></a>为什么会有隐式转换</h2><p>我写了很久弱类型语言,一直遇到各种隐式转换</p>
+<p>但是最近(2020/04/26)我大概知道隐式转换的本质了 .<br>说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素</p>
+<p>举个例子<br>比如一个集合颜色<code>{red,yellow,white,blue}</code><br>不同类型的变量说到底也不是一个集合的内容,是没法直接比较.那么编译器就帮你做了一个映射,映射成一个类型,然后可以比较了,就那么简单.</p>
+<p>那么隐式转换的问题是什么呢?其实是开发人员可能没有注意到发生了隐式转换,执行路径和预期不一致</p>
+<p>那么隐式转换的好处是什么呢?可以少写很多代码,可以更快</p>
 <p>这本书讲了表达式和求值</p>
 <p>sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换<br>mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像<code>jls</code>一样,可能是我没有看完完整的mysql文档吧</p>
 <h2 id="mysql类型"><a href="#mysql类型" class="headerlink" title="mysql类型"></a>mysql类型</h2><p>mysql类型分为以下几种:</p>
@@ -478,7 +483,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型系统"><span class="nav-number">1.</span> <span class="nav-text">类型系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql类型"><span class="nav-number">2.</span> <span class="nav-text">mysql类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子"><span class="nav-number">3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换在什么时候发生"><span class="nav-number">4.</span> <span class="nav-text">隐式转换在什么时候发生?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换规则"><span class="nav-number">5.</span> <span class="nav-text">隐式转换规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-隐式转换可能不走索引"><span class="nav-number">6.</span> <span class="nav-text">mysql 隐式转换可能不走索引</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型系统"><span class="nav-number">1.</span> <span class="nav-text">类型系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么会有隐式转换"><span class="nav-number">2.</span> <span class="nav-text">为什么会有隐式转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql类型"><span class="nav-number">3.</span> <span class="nav-text">mysql类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子"><span class="nav-number">4.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换在什么时候发生"><span class="nav-number">5.</span> <span class="nav-text">隐式转换在什么时候发生?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐式转换规则"><span class="nav-number">6.</span> <span class="nav-text">隐式转换规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-隐式转换可能不走索引"><span class="nav-number">7.</span> <span class="nav-text">mysql 隐式转换可能不走索引</span></a></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -494,7 +499,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
