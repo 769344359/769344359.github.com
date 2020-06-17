@@ -217,6 +217,449 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/07/php-反射/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/01/07/php-反射/" class="post-title-link" itemprop="url">php 反射</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-07 17:33:31 / 修改时间：17:35:36" itemprop="dateCreated datePublished" datetime="2020-01-07T17:33:31+08:00">2020-01-07</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/01/07/php-反射/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/07/php-反射/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>反射是一个很特别的api,php的反射是一个很特别的回调</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  zim_reflection_class_hasProperty (execute_data=0x7ffff3a14220, return_value=0x7ffff3a14180) at /home/ubuntu/php-src-php-7.4.1/ext/reflection/php_reflection.c:4186</span><br><span class="line">#1  0x0000555555af49b2 in ZEND_DO_FCALL_SPEC_RETVAL_USED_HANDLER () at /home/ubuntu/php-src-php-7.4.1/Zend/zend_vm_execute.h:1729</span><br><span class="line">#2  0x0000555555b58295 in execute_ex (ex=0x7ffff3a14020) at /home/ubuntu/php-src-php-7.4.1/Zend/zend_vm_execute.h:53588</span><br><span class="line">#3  0x0000555555b5c32d in zend_execute (op_array=0x7ffff3a61c00, return_value=0x0) at /home/ubuntu/php-src-php-7.4.1/Zend/zend_vm_execute.h:57664</span><br><span class="line">#4  0x0000555555a80b27 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/ubuntu/php-src-php-7.4.1/Zend/zend.c:1663</span><br><span class="line">#5  0x00005555559e2bad in php_execute_script (primary_file=0x7fffffffd0e0) at /home/ubuntu/php-src-php-7.4.1/main/main.c:2619</span><br><span class="line">#6  0x0000555555b5ee34 in do_cli (argc=2, argv=0x55555678ab30) at /home/ubuntu/php-src-php-7.4.1/sapi/cli/php_cli.c:961</span><br><span class="line">#7  0x0000555555b5ff9e in main (argc=2, argv=0x55555678ab30) at /home/ubuntu/php-src-php-7.4.1/sapi/cli/php_cli.c:1352</span><br></pre></td></tr></table></figure>
+
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/23/mysql-error-sqlstate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/23/mysql-error-sqlstate/" class="post-title-link" itemprop="url">mysql_error_sqlstate</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-23 22:10:37" itemprop="dateCreated datePublished" datetime="2019-12-23T22:10:37+08:00">2019-12-23</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-25 13:25:49" itemprop="dateModified" datetime="2019-12-25T13:25:49+08:00">2019-12-25</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/23/mysql-error-sqlstate/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/23/mysql-error-sqlstate/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>当我们使用jdbc 或者pdo或者其他mysql的驱动的时候，经常看到错误会有两个错误码<br>举个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error number: 1005; Symbol: ER_CANT_CREATE_TABLE; SQLSTATE: HY000</span><br></pre></td></tr></table></figure>
+
+<p><code>1005</code>和<code>HY000</code><br>或者是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry &apos;34&apos; for key &apos;PRIMARY&apos;,</span><br></pre></td></tr></table></figure>
+
+<p><code>23000</code>和<code>1062</code></p>
+<p>那么两者的关系是怎么样的呢？</p>
+<blockquote>
+<blockquote>
+<p>Error code: This value is numeric. It is MySQL-specific and is not portable to other database systems.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>SQLSTATE value: This value is a five-character string (for example, ‘42S02’). SQLSTATE values are taken from ANSI SQL and ODBC and are more standardized than the numeric error codes.</p>
+</blockquote>
+<p>不管怎么样，你会看到两个错误一个是<code>SQLSTATE</code>,一个是 <code>errorcode</code>,两者区别就是SQLSTATE更加标准或者通用一些，而errorcode则是mysql自己的   </p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://stackoverflow.com/questions/54734922/whats-the-difference-between-error-number-and-sqlstate-code" target="_blank" rel="noopener">https://stackoverflow.com/questions/54734922/whats-the-difference-between-error-number-and-sqlstate-code</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/clickhouse-编译安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/19/clickhouse-编译安装/" class="post-title-link" itemprop="url">clickhouse 编译安装</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-19 10:26:59" itemprop="dateCreated datePublished" datetime="2019-12-19T10:26:59+08:00">2019-12-19</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-11 10:17:20" itemprop="dateModified" datetime="2020-06-11T10:17:20+08:00">2020-06-11</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/19/clickhouse-编译安装/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/19/clickhouse-编译安装/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h2><ul>
+<li><p>github 拉代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/ClickHouse/ClickHouse.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建子目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd ClickHouse/</span><br><span class="line">mkdir build</span><br><span class="line">cmake ..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译需要升级到gcc-8 g++8:</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GCC version must be at least 8.  For example, if GCC 8 is available under</span><br><span class="line"> gcc-8, g++-8 names, do the following: export CC=gcc-8 CXX=g++-8;</span><br></pre></td></tr></table></figure>
+
+<p>我的操作系统是<code>ubuntu</code>所以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo  apt-get install gcc-8 g++-8</span><br><span class="line">$ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8</span><br><span class="line">update-alternatives: using /usr/bin/gcc-8 to provide /usr/bin/gcc (gcc) in auto mode</span><br></pre></td></tr></table></figure>
+
+<p>然后看<code>gcc</code>版本升级到<code>8.3.0</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -v</span><br><span class="line">Using built-in specs.</span><br><span class="line">...</span><br><span class="line">gcc version 8.3.0 (Ubuntu 8.3.0-6ubuntu1~18.04.1)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删掉cmake相关缓存<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm -rf   CMakeCache.txt CMakeFiles</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>重新跑有这样的错误:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Submodules are not initialized.  Run</span><br><span class="line"></span><br><span class="line">	git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+
+<p>然后初始化<code>git submodule</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+
+<p>因为我用的是<code>v2ray</code> + <code>proxychains4</code>,勉强把那些包下下来了<br>然后继续跑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -DCMAKE_BUILD_TYPE=Debug  -DCMAKE_INSTALL_PREFIX=/home/ubuntu/click  ..</span><br></pre></td></tr></table></figure>
+
+<p>然后我发现内存要比较大，而且硬盘要ssd，不然会编译特别慢</p>
+<h2 id="使用docker-compse启动"><a href="#使用docker-compse启动" class="headerlink" title="使用docker-compse启动"></a>使用docker-compse启动</h2><p><a href="https://blog.csdn.net/yan_zuoyu/article/details/80811808" target="_blank" rel="noopener">相关参考</a></p>
+<ul>
+<li>第一步创建文件 <code>config.xml</code>和<code>users.xml</code></li>
+<li>第二步 新建docker-compose.yml</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">version: &apos;3&apos;</span><br><span class="line">services:</span><br><span class="line">  clickhouse-server:</span><br><span class="line">    image: yandex/clickhouse-server</span><br><span class="line">    container_name: clickhouse-server</span><br><span class="line">    hostname: clickhouse-server</span><br><span class="line">    ports:</span><br><span class="line">      - 8123:8123</span><br><span class="line">    expose:</span><br><span class="line">      - 9000</span><br><span class="line">      - 9009</span><br><span class="line">    volumes:</span><br><span class="line">      - ./config.xml:/etc/clickhouse-server/config.xml</span><br><span class="line">      - ./users.xml:/etc/clickhouse-server/users.xml</span><br><span class="line">      - ./data:/var/lib/clickhouse</span><br><span class="line">      - ./log/clickhouse-server.log:/var/log/clickhouse-server/clickhouse-server.log</span><br><span class="line">      - ./log/clickhouse-server.err.log:/var/log/clickhouse-server/clickhouse-server.err.log</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第二步</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+
+<p>使用clickhouse-client 连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --rm --link clickhouse-server:clickhouse-server --net clickhouse_default yandex/clickhouse-client --host clickhouse-server --user seluser --password 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://askubuntu.com/questions/1028601/install-gcc-8-only-on-ubuntu-18-04" target="_blank" rel="noopener">https://askubuntu.com/questions/1028601/install-gcc-8-only-on-ubuntu-18-04</a></li>
+<li><a href="https://www.jianshu.com/p/0bef91a67860" target="_blank" rel="noopener">https://www.jianshu.com/p/0bef91a67860</a></li>
+<li><a href="https://vsupalov.com/debug-docker-compose-service/" target="_blank" rel="noopener">https://vsupalov.com/debug-docker-compose-service/</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/12/java-Class-forName/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/12/java-Class-forName/" class="post-title-link" itemprop="url">java Class_forName</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-12 17:32:03 / 修改时间：17:37:19" itemprop="dateCreated datePublished" datetime="2019-12-12T17:32:03+08:00">2019-12-12</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/12/java-Class-forName/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/12/java-Class-forName/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在看到jdbc使用的例子里面,看到了Class.forName(“xxx”)的相关调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(&quot;com.mysql.jdbc.Driver&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>这有什么用的?<br>其实可以约等于PHP的<code>class_exist</code>,或者说是golang的空引入<br><code>import _ &quot;github.com/go-sql-driver/mysql</code><br>就是为了调用一下static 块的代码,初始化一下</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://www.cnblogs.com/xingzc/p/5760166.html" target="_blank" rel="noopener">https://www.cnblogs.com/xingzc/p/5760166.html</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/12/mysql严格模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -782,487 +1225,6 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/mysql-隐式转换/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/12/05/mysql-隐式转换/" class="post-title-link" itemprop="url">mysql 隐式转换</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-12-05 14:30:56" itemprop="dateCreated datePublished" datetime="2019-12-05T14:30:56+08:00">2019-12-05</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-27 13:03:52" itemprop="dateModified" datetime="2020-04-27T13:03:52+08:00">2020-04-27</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/12/05/mysql-隐式转换/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/05/mysql-隐式转换/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h2><p><code>type and program language</code> 这本书介绍了类型系统. 什么是类型系统呢? </p>
-<h2 id="为什么会有隐式转换"><a href="#为什么会有隐式转换" class="headerlink" title="为什么会有隐式转换"></a>为什么会有隐式转换</h2><p>我写了很久弱类型语言,一直遇到各种隐式转换</p>
-<p>但是最近(2020/04/26)我大概知道隐式转换的本质了 .<br>说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素</p>
-<p>举个例子<br>比如一个集合颜色<code>{red,yellow,white,blue}</code><br>不同类型的变量说到底也不是一个集合的内容,是没法直接比较.那么编译器就帮你做了一个映射,映射成一个类型,然后可以比较了,就那么简单.</p>
-<p>那么隐式转换的问题是什么呢?其实是开发人员可能没有注意到发生了隐式转换,执行路径和预期不一致</p>
-<p>那么隐式转换的好处是什么呢?可以少写很多代码,可以更快</p>
-<p>这本书讲了表达式和求值</p>
-<p>sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换<br>mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像<code>jls</code>一样,可能是我没有看完完整的mysql文档吧</p>
-<h2 id="mysql类型"><a href="#mysql类型" class="headerlink" title="mysql类型"></a>mysql类型</h2><p>mysql类型分为以下几种:</p>
-<ul>
-<li>numeric</li>
-<li>date and time</li>
-<li>string </li>
-<li>json</li>
-</ul>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(case when number_col=&apos;&apos; OR number_col IS NULL THEN 1 END) FROM test;</span><br></pre></td></tr></table></figure>
-
-<p>假如number_col列是数字类型(比如<code>int</code>),则会发生隐式转换 <code>number_col = &#39;&#39;</code>里面,空字符串<code>&#39;&#39;</code>会转换成 0</p>
-<h2 id="隐式转换在什么时候发生"><a href="#隐式转换在什么时候发生" class="headerlink" title="隐式转换在什么时候发生?"></a>隐式转换在什么时候发生?</h2><p>相关sql</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1=&apos;222&apos;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Thread 28 &quot;mysqld&quot; hit Breakpoint 1, my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">465     &#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">#1  0x0000000001f7279d in my_strntod_8bit (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, str=0x7f3a500061d0 &quot;222&quot;, length=3, end=0x7f3ad4d46998, err=0x7f3ad4d469bc)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/strings/ctype-simple.c:741</span><br><span class="line">#2  0x0000000000fdaaf2 in double_from_string_with_check (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, cptr=0x7f3a500061d0 &quot;222&quot;, end=0x7f3a500061d3 &quot;&quot;)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3577</span><br><span class="line">#3  0x0000000000fdacc5 in Item_string::val_real (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3594</span><br><span class="line">#4  0x0000000000f9e9b9 in Item::val_result (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.h:1592</span><br><span class="line">#5  0x0000000000fedf4b in Item_cache_real::cache_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10089</span><br><span class="line">#6  0x0000000000fec91a in Item_cache::has_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:9650</span><br><span class="line">#7  0x0000000000fedfbb in Item_cache_real::val_real (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10098</span><br><span class="line">#8  0x0000000000fff539 in Arg_comparator::compare_real (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:1748</span><br><span class="line">#9  0x0000000001014cc8 in Arg_comparator::compare (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.h:92</span><br><span class="line">#10 0x00000000010017e7 in Item_func_eq::val_int (this=0x7f3a50006520) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:2507</span><br><span class="line">#11 0x0000000000fe6144 in Item::send (this=0x7f3a50006520, protocol=0x7f3a50001d10, buffer=0x7f3ad4d46e10) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:7563</span><br><span class="line">#12 0x00000000015d4c48 in THD::send_result_set_row (this=0x7f3a50000b70, row_items=0x7f3a500058c8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:4677</span><br><span class="line">#13 0x00000000015ceed3 in Query_result_send::send_data (this=0x7f3a50006770, items=...) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:2717</span><br><span class="line">#14 0x00000000015e697a in JOIN::exec (this=0x7f3a500069f0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_executor.cc:158</span><br><span class="line">#15 0x00000000016892ba in handle_query (thd=0x7f3a50000b70, lex=0x7f3a50002e78, result=0x7f3a50006770, added_options=0, removed_options=0)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_select.cc:184</span><br><span class="line">#16 0x000000000163939e in execute_sqlcom_select (thd=0x7f3a50000b70, all_tables=0x0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5156</span><br><span class="line">#17 0x0000000001632405 in mysql_execute_command (thd=0x7f3a50000b70, first_level=true) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:2792</span><br><span class="line">#18 0x000000000163a31c in mysql_parse (thd=0x7f3a50000b70, parser_state=0x7f3ad4d48550) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5582</span><br><span class="line">#19 0x000000000162f0a3 in dispatch_command (thd=0x7f3a50000b70, com_data=0x7f3ad4d48e00, command=COM_QUERY) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:1458</span><br><span class="line">#20 0x000000000162df32 in do_command (thd=0x7f3a50000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:999</span><br><span class="line">#21 0x0000000001770f97 in handle_connection (arg=0x5271810) at /home/dinosaur/Downloads/mysql-5.7.21/sql/conn_handler/connection_handler_per_thread.cc:300</span><br><span class="line">#22 0x0000000001de0b41 in pfs_spawn_thread (arg=0x526e200) at /home/dinosaur/Downloads/mysql-5.7.21/storage/perfschema/pfs.cc:2190</span><br><span class="line">#23 0x00007f3ade33b6ba in start_thread (arg=0x7f3ad4d49700) at pthread_create.c:333</span><br><span class="line">#24 0x00007f3add76d41d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure>
-
-<h2 id="隐式转换规则"><a href="#隐式转换规则" class="headerlink" title="隐式转换规则"></a>隐式转换规则</h2><blockquote>
-<p>If one or both arguments are NULL, the result of the comparison is NULL, except for the NULL-safe &lt;=&gt; equality comparison operator. For NULL &lt;=&gt; NULL, the result is true. No conversion is needed.</p>
-</blockquote>
-<blockquote>
-<p>If both arguments in a comparison operation are strings, they are compared as strings.</p>
-</blockquote>
-<blockquote>
-<p>If both arguments are integers, they are compared as integers.</p>
-</blockquote>
-<blockquote>
-<p>Hexadecimal values are treated as binary strings if not compared to a number.</p>
-</blockquote>
-<blockquote>
-<p>If one of the arguments is a TIMESTAMP or DATETIME column and the other argument is a constant, the constant is converted to a timestamp before the comparison is performed. This is done to be more ODBC-friendly. This is not done for the arguments to IN(). To be safe, always use complete datetime, date, or time strings when doing comparisons. For example, to achieve best results when using BETWEEN with date or time values, use CAST() to explicitly convert the values to the desired data type.</p>
-</blockquote>
-<blockquote>
-<p>A single-row subquery from a table or tables is not considered a constant. For example, if a subquery returns an integer to be compared to a DATETIME value, the comparison is done as two integers. The integer is not converted to a temporal value. To compare the operands as DATETIME values, use CAST() to explicitly convert the subquery value to DATETIME.</p>
-</blockquote>
-<blockquote>
-<p>If one of the arguments is a decimal value, comparison depends on the other argument. The arguments are compared as decimal values if the other argument is a decimal or integer value, or as floating-point values if the other argument is a floating-point value.</p>
-</blockquote>
-<blockquote>
-<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</p>
-</blockquote>
-<h2 id="mysql-隐式转换可能不走索引"><a href="#mysql-隐式转换可能不走索引" class="headerlink" title="mysql 隐式转换可能不走索引"></a>mysql 隐式转换可能不走索引</h2><p>文档只描述了字符串转数字的情况</p>
-<p>举例</p>
-<p>下面是表的例子先看表的样子,表里面underlying_code 是varchar类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">show create table `base_underlying_information`</span><br><span class="line">CREATE TABLE `base_underlying_information` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &apos;主键ID&apos;,</span><br><span class="line">  `sec_id` varchar(10) NOT NULL COMMENT &apos;标的ID&apos;,</span><br><span class="line">  `uni_code` varchar(30) NOT NULL COMMENT &apos;标识，规则code-last-type&apos;,</span><br><span class="line">  `underlying_code` varchar(50) NOT NULL COMMENT &apos;标的代码&apos;,</span><br><span class="line">  ... 省略一堆其他字段</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  </span><br><span class="line">  KEY `idx_underlying_code` (`underlying_code`),</span><br><span class="line">) ENGINE=InnoDB  CHARSET=utf8</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>隐式转换的时候<br>当sql中 条件是数字而 <code>603023</code>的时候</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = 603023</span><br></pre></td></tr></table></figure>
-
-<p>这时候的explain 是发现没有走索引<br>因为满足以下条件</p>
-<blockquote>
-<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, <strong>a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</strong></p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ALL	idx_underlying_code	\N	\N	\N	506079	10.00	Using where</span><br></pre></td></tr></table></figure>
-
-<p>发生了隐式转换</p>
-<p>下面是文档的描述</p>
-<blockquote>
-<p>For comparisons of a string column with a number, MySQL cannot use an index on the column to look up the value quickly. If str_col is an indexed string column, the index cannot be used when performing the lookup in the following statement:</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl_name WHERE str_col=1;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>The reason for this is that there are many different strings that may convert to the value 1, such as ‘1’, ‘ 1’, or ‘1a’.</p>
-</blockquote>
-<ul>
-<li>没有隐式转换的时候<br>因为表里面是varchar 条件里面也是varchar 所以是没有隐式转换  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = &apos;603023&apos;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ref	idx_underlying_code	idx_underlying_code	152	const	1	100.00	\N</span><br></pre></td></tr></table></figure>
-
-<p>看了一下词法分析好像没有做转换的,看了一下词法分析也没有做,那应该是运行时的时候做的,那是哪个函数呢?  </p>
-<ul>
-<li><a href="http://postgres.cn/docs/9.6/extend-type-system.html" target="_blank" rel="noopener">http://postgres.cn/docs/9.6/extend-type-system.html</a></li>
-<li><a href="https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html</a></li>
-<li><a href="https://blog.csdn.net/n88Lpo/article/details/101013055" target="_blank" rel="noopener">https://blog.csdn.net/n88Lpo/article/details/101013055</a></li>
-<li><a href="https://dev.mysql.com/doc/refman/5.7/en/type-conversion.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/type-conversion.html</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/04/stop/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/12/04/stop/" class="post-title-link" itemprop="url">docker stop</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-12-04 00:32:00" itemprop="dateCreated datePublished" datetime="2019-12-04T00:32:00+08:00">2019-12-04</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/12/04/stop/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/stop/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>docker的stop本质就是kill -9 ,一个特别的信号而已。具体实现得看代码<br>// todo</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/02/ik分词/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/12/02/ik分词/" class="post-title-link" itemprop="url">ik分词</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-12-02 12:25:03" itemprop="dateCreated datePublished" datetime="2019-12-02T12:25:03+08:00">2019-12-02</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-04 17:58:10" itemprop="dateModified" datetime="2019-12-04T17:58:10+08:00">2019-12-04</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/12/02/ik分词/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/02/ik分词/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>es上面安装ik分词</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.0/elasticsearch-analysis-ik-7.4.0.zip</span><br></pre></td></tr></table></figure>
-
-<p>返回</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Downloading https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.0/elasticsearch-analysis-ik-7.4.0.zip</span><br></pre></td></tr></table></figure>
-
-<p>分词核心函数</p>
-<p>相关阅读</p>
-<ul>
-<li><a href="https://github.com/medcl/elasticsearch-analysis-ik" target="_blank" rel="noopener">https://github.com/medcl/elasticsearch-analysis-ik</a></li>
-<li><a href="https://blog.csdn.net/jiandabang/article/details/83539783" target="_blank" rel="noopener">https://blog.csdn.net/jiandabang/article/details/83539783</a></li>
-<li><a href="https://blog.csdn.net/wl044090432/article/details/71723051" target="_blank" rel="noopener">https://blog.csdn.net/wl044090432/article/details/71723051</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/正则模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/11/30/正则模式/" class="post-title-link" itemprop="url">正则模式</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-11-30 23:34:50" itemprop="dateCreated datePublished" datetime="2019-11-30T23:34:50+08:00">2019-11-30</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/30/正则模式/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/30/正则模式/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近在看一个php-cs-fix的时候，发现除了贪婪模式和非贪婪模式还有其他模式<br><a href="https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659" target="_blank" rel="noopener">https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659</a></p>
-<ul>
-<li>相关阅读<br><a href="https://segmentfault.com/a/1190000010544411" target="_blank" rel="noopener">https://segmentfault.com/a/1190000010544411</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
@@ -1312,7 +1274,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1325,7 +1287,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>

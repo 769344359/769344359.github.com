@@ -217,6 +217,487 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/mysql-隐式转换/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/05/mysql-隐式转换/" class="post-title-link" itemprop="url">mysql 隐式转换</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-05 14:30:56" itemprop="dateCreated datePublished" datetime="2019-12-05T14:30:56+08:00">2019-12-05</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-27 13:03:52" itemprop="dateModified" datetime="2020-04-27T13:03:52+08:00">2020-04-27</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/05/mysql-隐式转换/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/05/mysql-隐式转换/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h2><p><code>type and program language</code> 这本书介绍了类型系统. 什么是类型系统呢? </p>
+<h2 id="为什么会有隐式转换"><a href="#为什么会有隐式转换" class="headerlink" title="为什么会有隐式转换"></a>为什么会有隐式转换</h2><p>我写了很久弱类型语言,一直遇到各种隐式转换</p>
+<p>但是最近(2020/04/26)我大概知道隐式转换的本质了 .<br>说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素</p>
+<p>举个例子<br>比如一个集合颜色<code>{red,yellow,white,blue}</code><br>不同类型的变量说到底也不是一个集合的内容,是没法直接比较.那么编译器就帮你做了一个映射,映射成一个类型,然后可以比较了,就那么简单.</p>
+<p>那么隐式转换的问题是什么呢?其实是开发人员可能没有注意到发生了隐式转换,执行路径和预期不一致</p>
+<p>那么隐式转换的好处是什么呢?可以少写很多代码,可以更快</p>
+<p>这本书讲了表达式和求值</p>
+<p>sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换<br>mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像<code>jls</code>一样,可能是我没有看完完整的mysql文档吧</p>
+<h2 id="mysql类型"><a href="#mysql类型" class="headerlink" title="mysql类型"></a>mysql类型</h2><p>mysql类型分为以下几种:</p>
+<ul>
+<li>numeric</li>
+<li>date and time</li>
+<li>string </li>
+<li>json</li>
+</ul>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(case when number_col=&apos;&apos; OR number_col IS NULL THEN 1 END) FROM test;</span><br></pre></td></tr></table></figure>
+
+<p>假如number_col列是数字类型(比如<code>int</code>),则会发生隐式转换 <code>number_col = &#39;&#39;</code>里面,空字符串<code>&#39;&#39;</code>会转换成 0</p>
+<h2 id="隐式转换在什么时候发生"><a href="#隐式转换在什么时候发生" class="headerlink" title="隐式转换在什么时候发生?"></a>隐式转换在什么时候发生?</h2><p>相关sql</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1=&apos;222&apos;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Thread 28 &quot;mysqld&quot; hit Breakpoint 1, my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">465     &#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">#1  0x0000000001f7279d in my_strntod_8bit (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, str=0x7f3a500061d0 &quot;222&quot;, length=3, end=0x7f3ad4d46998, err=0x7f3ad4d469bc)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/strings/ctype-simple.c:741</span><br><span class="line">#2  0x0000000000fdaaf2 in double_from_string_with_check (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, cptr=0x7f3a500061d0 &quot;222&quot;, end=0x7f3a500061d3 &quot;&quot;)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3577</span><br><span class="line">#3  0x0000000000fdacc5 in Item_string::val_real (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3594</span><br><span class="line">#4  0x0000000000f9e9b9 in Item::val_result (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.h:1592</span><br><span class="line">#5  0x0000000000fedf4b in Item_cache_real::cache_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10089</span><br><span class="line">#6  0x0000000000fec91a in Item_cache::has_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:9650</span><br><span class="line">#7  0x0000000000fedfbb in Item_cache_real::val_real (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10098</span><br><span class="line">#8  0x0000000000fff539 in Arg_comparator::compare_real (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:1748</span><br><span class="line">#9  0x0000000001014cc8 in Arg_comparator::compare (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.h:92</span><br><span class="line">#10 0x00000000010017e7 in Item_func_eq::val_int (this=0x7f3a50006520) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:2507</span><br><span class="line">#11 0x0000000000fe6144 in Item::send (this=0x7f3a50006520, protocol=0x7f3a50001d10, buffer=0x7f3ad4d46e10) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:7563</span><br><span class="line">#12 0x00000000015d4c48 in THD::send_result_set_row (this=0x7f3a50000b70, row_items=0x7f3a500058c8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:4677</span><br><span class="line">#13 0x00000000015ceed3 in Query_result_send::send_data (this=0x7f3a50006770, items=...) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:2717</span><br><span class="line">#14 0x00000000015e697a in JOIN::exec (this=0x7f3a500069f0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_executor.cc:158</span><br><span class="line">#15 0x00000000016892ba in handle_query (thd=0x7f3a50000b70, lex=0x7f3a50002e78, result=0x7f3a50006770, added_options=0, removed_options=0)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_select.cc:184</span><br><span class="line">#16 0x000000000163939e in execute_sqlcom_select (thd=0x7f3a50000b70, all_tables=0x0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5156</span><br><span class="line">#17 0x0000000001632405 in mysql_execute_command (thd=0x7f3a50000b70, first_level=true) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:2792</span><br><span class="line">#18 0x000000000163a31c in mysql_parse (thd=0x7f3a50000b70, parser_state=0x7f3ad4d48550) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5582</span><br><span class="line">#19 0x000000000162f0a3 in dispatch_command (thd=0x7f3a50000b70, com_data=0x7f3ad4d48e00, command=COM_QUERY) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:1458</span><br><span class="line">#20 0x000000000162df32 in do_command (thd=0x7f3a50000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:999</span><br><span class="line">#21 0x0000000001770f97 in handle_connection (arg=0x5271810) at /home/dinosaur/Downloads/mysql-5.7.21/sql/conn_handler/connection_handler_per_thread.cc:300</span><br><span class="line">#22 0x0000000001de0b41 in pfs_spawn_thread (arg=0x526e200) at /home/dinosaur/Downloads/mysql-5.7.21/storage/perfschema/pfs.cc:2190</span><br><span class="line">#23 0x00007f3ade33b6ba in start_thread (arg=0x7f3ad4d49700) at pthread_create.c:333</span><br><span class="line">#24 0x00007f3add76d41d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure>
+
+<h2 id="隐式转换规则"><a href="#隐式转换规则" class="headerlink" title="隐式转换规则"></a>隐式转换规则</h2><blockquote>
+<p>If one or both arguments are NULL, the result of the comparison is NULL, except for the NULL-safe &lt;=&gt; equality comparison operator. For NULL &lt;=&gt; NULL, the result is true. No conversion is needed.</p>
+</blockquote>
+<blockquote>
+<p>If both arguments in a comparison operation are strings, they are compared as strings.</p>
+</blockquote>
+<blockquote>
+<p>If both arguments are integers, they are compared as integers.</p>
+</blockquote>
+<blockquote>
+<p>Hexadecimal values are treated as binary strings if not compared to a number.</p>
+</blockquote>
+<blockquote>
+<p>If one of the arguments is a TIMESTAMP or DATETIME column and the other argument is a constant, the constant is converted to a timestamp before the comparison is performed. This is done to be more ODBC-friendly. This is not done for the arguments to IN(). To be safe, always use complete datetime, date, or time strings when doing comparisons. For example, to achieve best results when using BETWEEN with date or time values, use CAST() to explicitly convert the values to the desired data type.</p>
+</blockquote>
+<blockquote>
+<p>A single-row subquery from a table or tables is not considered a constant. For example, if a subquery returns an integer to be compared to a DATETIME value, the comparison is done as two integers. The integer is not converted to a temporal value. To compare the operands as DATETIME values, use CAST() to explicitly convert the subquery value to DATETIME.</p>
+</blockquote>
+<blockquote>
+<p>If one of the arguments is a decimal value, comparison depends on the other argument. The arguments are compared as decimal values if the other argument is a decimal or integer value, or as floating-point values if the other argument is a floating-point value.</p>
+</blockquote>
+<blockquote>
+<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</p>
+</blockquote>
+<h2 id="mysql-隐式转换可能不走索引"><a href="#mysql-隐式转换可能不走索引" class="headerlink" title="mysql 隐式转换可能不走索引"></a>mysql 隐式转换可能不走索引</h2><p>文档只描述了字符串转数字的情况</p>
+<p>举例</p>
+<p>下面是表的例子先看表的样子,表里面underlying_code 是varchar类型</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">show create table `base_underlying_information`</span><br><span class="line">CREATE TABLE `base_underlying_information` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &apos;主键ID&apos;,</span><br><span class="line">  `sec_id` varchar(10) NOT NULL COMMENT &apos;标的ID&apos;,</span><br><span class="line">  `uni_code` varchar(30) NOT NULL COMMENT &apos;标识，规则code-last-type&apos;,</span><br><span class="line">  `underlying_code` varchar(50) NOT NULL COMMENT &apos;标的代码&apos;,</span><br><span class="line">  ... 省略一堆其他字段</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  </span><br><span class="line">  KEY `idx_underlying_code` (`underlying_code`),</span><br><span class="line">) ENGINE=InnoDB  CHARSET=utf8</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>隐式转换的时候<br>当sql中 条件是数字而 <code>603023</code>的时候</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = 603023</span><br></pre></td></tr></table></figure>
+
+<p>这时候的explain 是发现没有走索引<br>因为满足以下条件</p>
+<blockquote>
+<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, <strong>a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</strong></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ALL	idx_underlying_code	\N	\N	\N	506079	10.00	Using where</span><br></pre></td></tr></table></figure>
+
+<p>发生了隐式转换</p>
+<p>下面是文档的描述</p>
+<blockquote>
+<p>For comparisons of a string column with a number, MySQL cannot use an index on the column to look up the value quickly. If str_col is an indexed string column, the index cannot be used when performing the lookup in the following statement:</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl_name WHERE str_col=1;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>The reason for this is that there are many different strings that may convert to the value 1, such as ‘1’, ‘ 1’, or ‘1a’.</p>
+</blockquote>
+<ul>
+<li>没有隐式转换的时候<br>因为表里面是varchar 条件里面也是varchar 所以是没有隐式转换  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = &apos;603023&apos;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ref	idx_underlying_code	idx_underlying_code	152	const	1	100.00	\N</span><br></pre></td></tr></table></figure>
+
+<p>看了一下词法分析好像没有做转换的,看了一下词法分析也没有做,那应该是运行时的时候做的,那是哪个函数呢?  </p>
+<ul>
+<li><a href="http://postgres.cn/docs/9.6/extend-type-system.html" target="_blank" rel="noopener">http://postgres.cn/docs/9.6/extend-type-system.html</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html</a></li>
+<li><a href="https://blog.csdn.net/n88Lpo/article/details/101013055" target="_blank" rel="noopener">https://blog.csdn.net/n88Lpo/article/details/101013055</a></li>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/type-conversion.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/type-conversion.html</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/04/stop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/04/stop/" class="post-title-link" itemprop="url">docker stop</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-04 00:32:00" itemprop="dateCreated datePublished" datetime="2019-12-04T00:32:00+08:00">2019-12-04</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/04/stop/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/stop/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>docker的stop本质就是kill -9 ,一个特别的信号而已。具体实现得看代码<br>// todo</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/02/ik分词/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/02/ik分词/" class="post-title-link" itemprop="url">ik分词</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-02 12:25:03" itemprop="dateCreated datePublished" datetime="2019-12-02T12:25:03+08:00">2019-12-02</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-04 17:58:10" itemprop="dateModified" datetime="2019-12-04T17:58:10+08:00">2019-12-04</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/02/ik分词/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/02/ik分词/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>es上面安装ik分词</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.0/elasticsearch-analysis-ik-7.4.0.zip</span><br></pre></td></tr></table></figure>
+
+<p>返回</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Downloading https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.0/elasticsearch-analysis-ik-7.4.0.zip</span><br></pre></td></tr></table></figure>
+
+<p>分词核心函数</p>
+<p>相关阅读</p>
+<ul>
+<li><a href="https://github.com/medcl/elasticsearch-analysis-ik" target="_blank" rel="noopener">https://github.com/medcl/elasticsearch-analysis-ik</a></li>
+<li><a href="https://blog.csdn.net/jiandabang/article/details/83539783" target="_blank" rel="noopener">https://blog.csdn.net/jiandabang/article/details/83539783</a></li>
+<li><a href="https://blog.csdn.net/wl044090432/article/details/71723051" target="_blank" rel="noopener">https://blog.csdn.net/wl044090432/article/details/71723051</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/正则模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/11/30/正则模式/" class="post-title-link" itemprop="url">正则模式</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-30 23:34:50" itemprop="dateCreated datePublished" datetime="2019-11-30T23:34:50+08:00">2019-11-30</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/11/30/正则模式/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/30/正则模式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近在看一个php-cs-fix的时候，发现除了贪婪模式和非贪婪模式还有其他模式<br><a href="https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659" target="_blank" rel="noopener">https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659</a></p>
+<ul>
+<li>相关阅读<br><a href="https://segmentfault.com/a/1190000010544411" target="_blank" rel="noopener">https://segmentfault.com/a/1190000010544411</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/mysql-explain-impossible-condition/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -873,535 +1354,6 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/21/composer-ext/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/11/21/composer-ext/" class="post-title-link" itemprop="url">composer-ext</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-11-21 13:21:37 / 修改时间：13:29:37" itemprop="dateCreated datePublished" datetime="2019-11-21T13:21:37+08:00">2019-11-21</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/21/composer-ext/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/21/composer-ext/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>看到phpstorm的相关警告,经常会看到phpstorm会警告没有<code>ext-json</code>,我才最近发现composer.json会添加相关的扩展校验.</p>
-<p>举个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&quot;require&quot;: &#123;</span><br><span class="line">    &quot;php&quot;: &quot;&gt;=5.4.0&quot;,</span><br><span class="line">    &quot;topthink/framework&quot;: &quot;^5.0&quot;,</span><br><span class="line">    &quot;php-imap/php-imap&quot;: &quot;~2.0&quot;,</span><br><span class="line">    &quot;phpoffice/phpspreadsheet&quot;: &quot;^1.3&quot;,</span><br><span class="line">    &quot;hprose/hprose&quot;: &quot;^2.0&quot;,</span><br><span class="line">    &quot;ext-json&quot;: &quot;*&quot;   // 这就是解析require json 扩展</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-
-<p>这个就是校验是否含有<code>json</code>扩展,那么composer是怎么实现的呢?其实是通过<code>extension_loaded</code>这个函数取查看扩展版本的</p>
-<p>实现是在composer的129行<a href="https://github.com/composer/composer/blob/79a300eaac89be9a4b05cd992930f343ba4f084d/src/Composer/DependencyResolver/Problem.php" target="_blank" rel="noopener">实现</a>,通过<code>extension_loaded</code>获取扩展.</p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://www.php.net/manual/en/function.extension-loaded.php" target="_blank" rel="noopener">https://www.php.net/manual/en/function.extension-loaded.php</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/14/java的package与文件路径/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/11/14/java的package与文件路径/" class="post-title-link" itemprop="url">java的package与文件路径与编译</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-11-14 14:33:37" itemprop="dateCreated datePublished" datetime="2019-11-14T14:33:37+08:00">2019-11-14</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-18 12:39:07" itemprop="dateModified" datetime="2019-11-18T12:39:07+08:00">2019-11-18</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/14/java的package与文件路径/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/14/java的package与文件路径/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>写了很久的php的原生代码,对php相对路径自动加载这类坑的恐惧已经深入骨髓了.<br>java和golang也有类似的内容,对于写java没多久的我来说,先记录一下</p>
-<p>关于类名和classpath的关系,oracle的文档有相关的<a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#BEHCGBFB" target="_blank" rel="noopener">描述</a></p>
-<blockquote>
-<p>Class Path and Package Names</p>
-</blockquote>
-<blockquote>
-<p>Java classes are organized into packages that are mapped to directories in the file system. But, unlike the file system, whenever you specify a package name, you specify the whole package name and never part of it. For example, the package name for java.awt.Button is always specified as java.awt.</p>
-</blockquote>
-<blockquote>
-<p>For example, suppose you want the JRE to find a class named Cool.class in the package utility.myapp. If the path to that directory is /java/MyClasses/utility/myapp, then you would set the class path so that it contains /java/MyClasses. To run that application, you could use the following java command:</p>
-</blockquote>
-<blockquote>
-<p>java -classpath /java/MyClasses utility.myapp.Cool<br>When the application runs, the JVM uses the class path settings to find any other classes defined in the utility.myapp package that are used by the Cool class.</p>
-</blockquote>
-<blockquote>
-<p>The entire package name is specified in the command. It is not possible, for example, to set the class path so it contains /java/MyClasses/utility and use the command java myapp.Cool. The class would not be found.</p>
-</blockquote>
-<p>You might wonder what defines the package name for a class. The answer is that the package name is part of the class and cannot be modified, except by recompiling the class.</p>
-<p>首先说编译:<br>查看<code>javac</code> 的帮助:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac --help</span><br><span class="line">Usage: javac &lt;options&gt; &lt;source files&gt;</span><br></pre></td></tr></table></figure>
-
-<p>javac 的参数是:<br><code>javac+文件路径</code></p>
-<p>举个例子:<br>现在在com的上一级目录上</p>
-<p>下面是HelloWorld.java的代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package com.helloworld;</span><br><span class="line">  </span><br><span class="line">public class HelloWorld</span><br><span class="line">&#123;</span><br><span class="line">        static public int m = 1;</span><br><span class="line">        public int i = 1;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># ls </span><br><span class="line">com</span><br><span class="line"># tree </span><br><span class="line">.</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
-
-<p>我要怎么编译com/hellowrld/HelloWorld.java下面的文件呢? </p>
-<p>这么编译就可以了:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac com/helloworld/*.java</span><br></pre></td></tr></table></figure>
-
-<p>然后看一下目录树,在下面多了一个<strong>class</strong>文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># tree</span><br><span class="line">.</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        ├── HelloWorld.class</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
-
-<p>重新开始,我们看看<code>-d</code> 这个参数有什么用:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># mkdir classes</span><br><span class="line"># tree</span><br><span class="line">.</span><br><span class="line">├── classess</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
-
-<p>那么我们编译之后会在设置的<code>-d</code>的目录里面添加相关目录:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># javac -d ./classes/    com/helloworld/*.java</span><br><span class="line"># tree</span><br><span class="line">.</span><br><span class="line">├── classes</span><br><span class="line">│   └── com</span><br><span class="line">│       └── helloworld</span><br><span class="line">│           └── HelloWorld.class</span><br><span class="line">├── classess</span><br><span class="line">└── com</span><br><span class="line">    └── helloworld</span><br><span class="line">        └── HelloWorld.java</span><br></pre></td></tr></table></figure>
-
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://blog.csdn.net/sinat_30955745/article/details/84348725" target="_blank" rel="noopener">https://blog.csdn.net/sinat_30955745/article/details/84348725</a></li>
-<li><a href="https://www.cnblogs.com/f-ck-need-u/p/8127529.html" target="_blank" rel="noopener">https://www.cnblogs.com/f-ck-need-u/p/8127529.html</a></li>
-<li><a href="https://www.cnblogs.com/moveofgod/p/3809653.html" target="_blank" rel="noopener">https://www.cnblogs.com/moveofgod/p/3809653.html</a></li>
-<li><a href="https://www3.ntu.edu.sg/home/ehchua/programming/java/J9c_PackageClasspath.html" target="_blank" rel="noopener">https://www3.ntu.edu.sg/home/ehchua/programming/java/J9c_PackageClasspath.html</a></li>
-<li><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/classpath.html#</a></li>
-<li><a href="https://stackoverflow.com/questions/4800781/how-to-compile-multiple-java-source-files-in-command-line" target="_blank" rel="noopener">https://stackoverflow.com/questions/4800781/how-to-compile-multiple-java-source-files-in-command-line</a></li>
-<li><a href="https://stackoverflow.com/questions/2441760/differences-between-classpath-and-sourcepath-options-of-javac" target="_blank" rel="noopener">https://stackoverflow.com/questions/2441760/differences-between-classpath-and-sourcepath-options-of-javac</a></li>
-<li><a href="https://community.oracle.com/thread/1566469" target="_blank" rel="noopener">https://community.oracle.com/thread/1566469</a></li>
-<li><a href="https://blog.csdn.net/qq_25665807/article/details/74747868" target="_blank" rel="noopener">https://blog.csdn.net/qq_25665807/article/details/74747868</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/31/ast构造/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/31/ast构造/" class="post-title-link" itemprop="url">ast构造</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-10-31 15:09:23 / 修改时间：16:13:24" itemprop="dateCreated datePublished" datetime="2019-10-31T15:09:23+08:00">2019-10-31</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/10/31/ast构造/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/31/ast构造/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="抽象语法树-Abstract-Syntax-Tree"><a href="#抽象语法树-Abstract-Syntax-Tree" class="headerlink" title="抽象语法树(Abstract Syntax Tree)"></a>抽象语法树(Abstract Syntax Tree)</h2><p>上一篇简单介绍了lex和yacc</p>
-<p>这次主要是介绍构造一个抽象语法树</p>
-<p>比如<code>1+2+3</code>构造成</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">1</span><br></pre></td></tr></table></figure>
-
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/22/composer的psr4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/22/composer的psr4/" class="post-title-link" itemprop="url">composer的psr4</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-10-22 15:38:14" itemprop="dateCreated datePublished" datetime="2019-10-22T15:38:14+08:00">2019-10-22</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-14 12:58:22" itemprop="dateModified" datetime="2019-11-14T12:58:22+08:00">2019-11-14</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/10/22/composer的psr4/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/22/composer的psr4/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="composer的psr4"><a href="#composer的psr4" class="headerlink" title="composer的psr4"></a>composer的psr4</h1><p>我这次主要是要描述composer的psr4自动加载相关内容.php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是.</p>
-<h2 id="include-和-require的大坑"><a href="#include-和-require的大坑" class="headerlink" title="include 和 require的大坑"></a>include 和 require的大坑</h2><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于<code>工作目录</code>的.</p>
-<p>举个例子.</p>
-<p>当前在index.php 的目录中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># tree</span><br><span class="line"></span><br><span class="line">test</span><br><span class="line">   ├── index.php</span><br><span class="line">   ├── relative.php</span><br><span class="line">   └── subdir</span><br><span class="line">       ├── a.php</span><br><span class="line">       └── relative.php</span><br></pre></td></tr></table></figure>
-
-<p><code>index.php</code> 的代码很简单,就是包含一个路径</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &quot;./subdir/a.php&quot;;</span><br></pre></td></tr></table></figure>
-
-<p>两个relative.php 文件分别输出自己的路径<br><code>subdir/relative.php</code>文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test/subdir/relative.php&quot;</span><br></pre></td></tr></table></figure>
-
-<p><code>relative.php</code>文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test/relative.php&quot;;</span><br></pre></td></tr></table></figure>
-
-<p>那么如果与index.php 同目录下会include哪一个呢? </p>
-<p>答案是:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># php index.php </span><br><span class="line">test/relative.php</span><br></pre></td></tr></table></figure>
-
-<p>include了与index.php 同一个目录下的relative.php 文件</p>
-<p>而如果你在index.php的上一层目录执行,也就是<code>test</code>目录它甚至会报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php test/index.php </span><br><span class="line">PHP Warning:  include(./subdir/a.php): failed to open stream: No such file or directory in /root/test/index.php on line 2</span><br><span class="line">PHP Warning:  include(): Failed opening &apos;./subdir/a.php&apos; for inclusion (include_path=&apos;.:/usr/share/php&apos;) in /root/test/index.php on line 2</span><br></pre></td></tr></table></figure>
-
-<p>这一切都是因为当是相对路径的时候,调用了<code>getcwd()</code>来获取工作目录,如果你使用shell的<code>pwd</code>话也可以看自己的工作目录.</p>
-<p>由于这个比较坑的特性,php的代码如果手工使用include并且还使用了相对路径,那之后就非常难以维护了.所以我们需要尽量减少使用include相对路径,因为你知道的原因,你一旦写了一个相对路径,总会有后人copy and paste你的代码,然后把这个include也复制进去了,而这就是下一个屎坑的开始.</p>
-<p>所以,自动加载可以减缓这种大坑的产生,因为他可以减少手工include<code>相对路径</code>的风险,因为他们往往会这样include文件<code>include __DIR__ . &#39;aaa/bbb/ccc.php&#39;</code>,由于不是相对路径,所以会好很多.</p>
-<h4 id="CLI模式与CGI-FASTCGI工作目录的不同"><a href="#CLI模式与CGI-FASTCGI工作目录的不同" class="headerlink" title="CLI模式与CGI/FASTCGI工作目录的不同"></a>CLI模式与CGI/FASTCGI工作目录的不同</h4><p>CLI SAPI <strong>不会</strong>将当前目录改为已运行的脚本所在的目录。</p>
-<p>以下范例显示了本模块与 CGI SAPI 模块之间的不同：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// 名为 test.php 的简单测试程序</span><br><span class="line">echo getcwd(), &quot;\n&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>在使用 CGI 版本时，其输出为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">/tmp</span><br><span class="line"></span><br><span class="line">$ php-cgi -f another_directory/test.php</span><br><span class="line">/tmp/another_directory</span><br></pre></td></tr></table></figure>
-
-<p>明显可以看到 PHP 将当前目录改成了刚刚运行过的脚本所在的目录。</p>
-<p>使用 CLI SAPI 模式，得到：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">/tmp</span><br><span class="line"></span><br><span class="line">$ php -q another_directory/test.php</span><br><span class="line">/tmp</span><br></pre></td></tr></table></figure>
-
-<h4 id="include-和require-的opcode和getcwd"><a href="#include-和require-的opcode和getcwd" class="headerlink" title="include 和require 的opcode和getcwd"></a>include 和require 的opcode和getcwd</h4><p>require 和include 词法分析和语法分析后,生成opcode是73,<code>ZEND_INCLUDE_OR_EVAL</code>,在include或者require之后,如果是相对路径</p>
-<p>最后会调用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VCWD_GETCWD(cwd, MAXPATHLEN)</span><br></pre></td></tr></table></figure>
-
-<p>这个最后就是调用glibc 下面的<code>getcwd</code></p>
-<h4 id="getcwd-系统调用"><a href="#getcwd-系统调用" class="headerlink" title="getcwd 系统调用"></a>getcwd 系统调用</h4><p>每个进程task_struct会有fs_struct 结构,这个结构体会含有<code>pwd</code> 和<code>root</code>,如果使用<code>getcwd()</code>这个函数,通过glibc会通过系统调用读取fs_struct的pwd属性并返回</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">static void get_fs_root_and_pwd_rcu(struct fs_struct *fs, struct path *root,</span><br><span class="line">				    struct path *pwd)</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">		*root = fs-&gt;root;</span><br><span class="line">		*pwd = fs-&gt;pwd;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)</span><br><span class="line">&#123;</span><br><span class="line">	int error;</span><br><span class="line">	struct path pwd, root;</span><br><span class="line">	char *page = __getname();</span><br><span class="line"></span><br><span class="line">	if (!page)</span><br><span class="line">		return -ENOMEM;</span><br><span class="line"></span><br><span class="line">	rcu_read_lock();</span><br><span class="line">	get_fs_root_and_pwd_rcu(current-&gt;fs, &amp;root, &amp;pwd);  // 每个进程会关联一个fs_struct结构,fs_struct 结构有两个属性root和pwd描述了root目录和pwd目录</span><br><span class="line"></span><br><span class="line">	char *cwd = page + PATH_MAX;</span><br><span class="line">	int buflen = PATH_MAX;</span><br><span class="line"></span><br><span class="line">	prepend(&amp;cwd, &amp;buflen, &quot;\0&quot;, 1);</span><br><span class="line">	error = prepend_path(&amp;pwd, &amp;root, &amp;cwd, &amp;buflen);  </span><br><span class="line">    ...</span><br><span class="line">    copy_to_user(buf, cwd, len)                    // 将处理后的pwd 返回到用户态</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="include和require总结"><a href="#include和require总结" class="headerlink" title="include和require总结"></a>include和require总结</h4><p>include以及require如果引入<strong>相对路径</strong>的文件,那么这个相对路径都是相对于<code>getcwd()</code>,也就是当前工作目录.</p>
-<p>而cgi和cli模式又有不同</p>
-<ul>
-<li>cli模式下的当前路径就是shell <code>pwd</code>的值</li>
-<li>而cgi 这个SAPI和cli这个CLI SAPI不一样的地方在于他会帮你切换一次工作目录到第一次运行的php文件的当前目录作为工作目录.</li>
-</ul>
-<h2 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h2><p>命名空间是什么?</p>
-<p>其实就是一堆限定符.</p>
-<p>为什么要有命名空间?<br>因为我们要复用别人的代码,你想引用别人的一个库,别人库里写了个<code>hello</code>函数,你也写了个<code>hello</code>函数.这就麻烦了,所以引入命名空间,只要保证大家的命名空间不一样,那样就算大家都有相同的函数名,也不会冲突了.</p>
-<h2 id="自动加载"><a href="#自动加载" class="headerlink" title="自动加载"></a>自动加载</h2><p>开始说到自动加载了,自动加载.什么是自动加载呢? </p>
-<p>其实就是动态include,或者叫做运行时include.</p>
-<p>平时我们怎么include文件的呢? </p>
-<p>就是手工include一堆文件,就像我刚才上面的例子一样.这样至少有两个风险:</p>
-<ul>
-<li>新手使用了相对路径include</li>
-<li>得手工引入,但是include会重复引入文件,得使用<code>include_once</code> 或者<code>require_once</code></li>
-</ul>
-<p>就风险而言,新手使用相对路径引入的危险是非常大的.重复引入只是会校验多一点有一点性能影响而言.</p>
-<h4 id="spl-autoload-register"><a href="#spl-autoload-register" class="headerlink" title="spl_autoload_register"></a>spl_autoload_register</h4><p><code>spl_autoload_*</code>这一类的函数都是php自动加载的核心函数,实现自动加载则是依赖<code>spl_autoload_register</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/* &#123;&#123;&#123; proto bool spl_autoload_register([mixed autoload_function [, bool throw [, bool prepend]]])</span><br><span class="line"> Register given function as __autoload() implementation */</span><br><span class="line">PHP_FUNCTION(spl_autoload_register)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">		if (zend_hash_add_mem(SPL_G(autoload_functions), lc_name, &amp;alfi, sizeof(autoload_func_info)) == NULL) &#123;</span><br><span class="line">			...</span><br><span class="line">		&#125;</span><br><span class="line">		... </span><br><span class="line">&#125; /* &#125;&#125;&#125; */</span><br></pre></td></tr></table></figure>
-
-<p>然后相关的调用会在<code>zend_hash_exists(EG(class_table), lc_name)</code> 判断是否在全局的<code>EG(class_table)</code> 里面<br>下面的<code>spl_autoload_call</code>是一个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">PHP_FUNCTION(spl_autoload_call)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	if (SPL_G(autoload_functions)) &#123;     // spl_autoload_register 放进去的 SPL_G(autoload_functions)</span><br><span class="line">		int l_autoload_running = SPL_G(autoload_running);</span><br><span class="line">		SPL_G(autoload_running) = 1;</span><br><span class="line">		lc_name = zend_string_alloc(Z_STRLEN_P(class_name), 0);</span><br><span class="line">		zend_str_tolower_copy(ZSTR_VAL(lc_name), Z_STRVAL_P(class_name), Z_STRLEN_P(class_name));</span><br><span class="line">		zend_hash_internal_pointer_reset_ex(SPL_G(autoload_functions), &amp;pos);</span><br><span class="line">		while (zend_hash_get_current_key_ex(SPL_G(autoload_functions), &amp;func_name, &amp;num_idx, &amp;pos) == HASH_KEY_IS_STRING) &#123;   // 循环回调函数</span><br><span class="line">			alfi = zend_hash_get_current_data_ptr_ex(SPL_G(autoload_functions), &amp;pos);</span><br><span class="line">			zend_call_method(Z_ISUNDEF(alfi-&gt;obj)? NULL : &amp;alfi-&gt;obj, alfi-&gt;ce, &amp;alfi-&gt;func_ptr, ZSTR_VAL(func_name), ZSTR_LEN(func_name), retval, 1, class_name, NULL);    // 调用注册的回调函数</span><br><span class="line"></span><br><span class="line">			if (zend_hash_exists(EG(class_table), lc_name)) &#123;   // 回调找到了类名,则跳出循环</span><br><span class="line"></span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			zend_hash_move_forward_ex(SPL_G(autoload_functions), &amp;pos);</span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125; </span><br><span class="line">	..</span><br><span class="line">&#125; /* &#125;&#125;&#125; */</span><br></pre></td></tr></table></figure>
-
-<p>自动加载流程其实很简单<br>自动加载的例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// test.php</span><br><span class="line">spl_autoload_register(function ($class) &#123;</span><br><span class="line">    include  &quot;$class&quot; . &apos;.php&apos;;</span><br><span class="line">&#125;);</span><br><span class="line">$obj = new ClassA();</span><br></pre></td></tr></table></figure>
-
-<p>以及类<code>ClassA.php</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class ClassA&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>下面是堆栈</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  zif_spl_autoload_call (execute_data=0x7fffef61e0a0, return_value=0x7fffffffa2f0) at /home/dinosaur/Downloads/php-7.2.2/ext/spl/php_spl.c:393</span><br><span class="line">#1  0x0000000000932807 in zend_call_function (fci=0x7fffffffa330, fci_cache=0x7fffffffa300) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_execute_API.c:833</span><br><span class="line">#2  0x0000000000933000 in zend_lookup_class_ex (name=0x7fffe6920b58, key=0x7fffe70e63f0, use_autoload=1) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_execute_API.c:990</span><br><span class="line">#3  0x0000000000933dbd in zend_fetch_class_by_name (class_name=0x7fffe6920b58, key=0x7fffe70e63f0, fetch_type=512) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_execute_API.c:1425</span><br><span class="line">#4  0x00000000009b7e46 in ZEND_NEW_SPEC_CONST_HANDLER () at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:3211</span><br><span class="line">#5  0x0000000000a380a4 in execute_ex (ex=0x7fffef61e030) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:59929</span><br><span class="line">#6  0x0000000000a3d0ab in zend_execute (op_array=0x7fffef683300, return_value=0x0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:63760</span><br><span class="line">#7  0x000000000094cd22 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend.c:1496</span><br><span class="line">#8  0x00000000008b0b4a in php_execute_script (primary_file=0x7fffffffcaa0) at /home/dinosaur/Downloads/php-7.2.2/main/main.c:2590</span><br><span class="line">#9  0x0000000000a3fd23 in do_cli (argc=2, argv=0x1441a60) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1011</span><br><span class="line">#10 0x0000000000a40ee0 in main (argc=2, argv=0x1441a60) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1404</span><br></pre></td></tr></table></figure>
-
-<p>所以整个自动加载的核心流程就是在查找类的时候会去调用<code>spl_autoload_call</code>，这个函数则会回调注册的自动加载函数，直到遍历所有的回调函数都没有找到或者在某个遍历的时候找到了直接返回。</p>
-<h2 id="psr规范与psr4"><a href="#psr规范与psr4" class="headerlink" title="psr规范与psr4"></a>psr规范与psr4</h2><p><code>psr</code>是<code>PHP Standards Recommendations</code>的简称,而psr4和psr0有都是和自动加载相关的内容.</p>
-<p>其实就是规定了一个简单的替换</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\Aura\Web\Response\Status	Aura\Web	/path/to/aura-web/src/	/path/to/aura-web/src/Response/Status.php</span><br></pre></td></tr></table></figure>
-
-<p>psr4规定了我们如何去加载一个文件: 将完全限定名用前缀地址替换,后面则是后面的文件.<br>举个例子:<br>你要加载的类是:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\Aura\Web\Response\Status</span><br></pre></td></tr></table></figure>
-
-<p>那么你可以使用<code>Aura\Web</code> 映射<code>/path/to/aura-web/src/</code>,那么类<code>\Aura\Web\Response\Status</code>就会去<code>/path/to/aura-web/src/Response/Status.php</code>文件找</p>
-<p>可以说有点像nginx的路由配置:<br>下面是nginx的配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ /images/ &#123;</span><br><span class="line">　　　　# 匹配任何已 /images/ 开头的任何查询并且停止搜索。任何正则表达式将不会被测试。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>那么上面的<code>\Aura\Web\Response\Status</code>的psr4 有点像这样:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ /Aura/Web/ &#123;</span><br><span class="line">　　　　root /path/to/aura-web/src/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code" target="_blank" rel="noopener">https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code</a></li>
-<li><a href="https://linux.die.net/man/3/getcwd" target="_blank" rel="noopener">https://linux.die.net/man/3/getcwd</a></li>
-<li><a href="https://linux.die.net/man/1/pwd" target="_blank" rel="noopener">https://linux.die.net/man/1/pwd</a></li>
-<li><a href="https://blog.csdn.net/wuheshi/article/details/52872463" target="_blank" rel="noopener">https://blog.csdn.net/wuheshi/article/details/52872463</a></li>
-<li><a href="https://github.com/769344359/reading-php7-code/blob/master/include_or_require.md" target="_blank" rel="noopener">https://github.com/769344359/reading-php7-code/blob/master/include_or_require.md</a></li>
-<li><a href="https://www.php.net/manual/zh/features.commandline.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/features.commandline.php</a></li>
-<li><a href="https://www.php.net/manual/zh/language.oop5.autoload.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/language.oop5.autoload.php</a></li>
-<li><a href="https://www.php-fig.org/psr/" target="_blank" rel="noopener">https://www.php-fig.org/psr/</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
@@ -1451,7 +1403,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1464,7 +1416,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
