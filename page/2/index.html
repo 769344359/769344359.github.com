@@ -217,6 +217,221 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/11/raft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/05/11/raft/" class="post-title-link" itemprop="url">raft</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 13:28:47" itemprop="dateCreated datePublished" datetime="2020-05-11T13:28:47+08:00">2020-05-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-12 10:10:43" itemprop="dateModified" datetime="2020-05-12T10:10:43+08:00">2020-05-12</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/05/11/raft/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/11/raft/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>raft 节点一共三个状态</p>
+<p>Follower  Leader   Candidate</p>
+<p>核心性质: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Election Safety: at most one leader can be elected in a</span><br><span class="line">given term. §5.2</span><br><span class="line">Leader Append-Only: a leader never overwrites or deletes</span><br><span class="line">entries in its log; it only appends new entries. §5.3</span><br><span class="line">Log Matching: if two logs contain an entry with the same</span><br><span class="line">index and term, then the logs are identical in all entries</span><br><span class="line">up through the given index. §5.3</span><br><span class="line">Leader Completeness: if a log entry is committed in a</span><br><span class="line">given term, then that entry will be present in the logs</span><br><span class="line">of the leaders for all higher-numbered terms. §5.4</span><br><span class="line">State Machine Safety: if a server has applied a log entry</span><br><span class="line">at a given index to its state machine, no other server</span><br><span class="line">will ever apply a different log entry for the same index.</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Election Safety: at most one leader can be elected in a<br>given term. §5.2</p>
+</blockquote>
+<p>1 每个Candidate 每个term只能投一票<br>2 得到票数&gt; 所有投票者/2  最多只有一个人</p>
+<blockquote>
+<p>Leader Append-Only: a leader never overwrites or deletes<br>entries in its log; it only appends new entries. §5.3</p>
+</blockquote>
+<p>AOF</p>
+<blockquote>
+<p>Log Matching: if two logs contain an entry with the same<br>index and term, then the logs are identical in all entries<br>up through the given index. §5.3</p>
+</blockquote>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/08/php-opcode-to-handler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/05/08/php-opcode-to-handler/" class="post-title-link" itemprop="url">php opcode to handler</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-08 14:01:20" itemprop="dateCreated datePublished" datetime="2020-05-08T14:01:20+08:00">2020-05-08</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-12 12:54:53" itemprop="dateModified" datetime="2020-05-12T12:54:53+08:00">2020-05-12</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/05/08/php-opcode-to-handler/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/08/php-opcode-to-handler/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>php 的opcode 对应很多的handler  </p>
+<p>选哪个handler 是怎么选择的呢? </p>
+<p>和tcp协议一个连接 是一个五元组一样</p>
+<p>php的opcode 的handler 是一个三元组<br>分别是 <code>opcode</code> , <code>op1</code> , <code>op2</code></p>
+<p>核心函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ZEND_API void ZEND_FASTCALL zend_vm_set_opcode_handler(zend_op* op)</span><br><span class="line">&#123;</span><br><span class="line">	zend_uchar opcode = zend_user_opcodes[op-&gt;opcode];</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    // zend_opcode_handlers 是什么呢?  是一堆函数指针的数组 ,每个opcode + op1+ op2 决定一个 函数指针</span><br><span class="line">	op-&gt;handler = zend_opcode_handlers[zend_vm_get_opcode_handler_idx(zend_spec_handlers[opcode], op)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以核心的核心就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zend_vm_get_opcode_handler_idx(zend_spec_handlers[opcode], op)</span><br></pre></td></tr></table></figure>
+
+<p>他做了什么呢?<br>其实就是算出zend_opcode_handlers这个函数指针数组的偏移值</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/06/一个sql的组成/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1040,210 +1255,11 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/04/induction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/03/04/induction/" class="post-title-link" itemprop="url">induction</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-03-04 12:17:19" itemprop="dateCreated datePublished" datetime="2020-03-04T12:17:19+08:00">2020-03-04</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/03/04/induction/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/04/induction/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我非常蠢，一直觉得很多算法题我都不会写。看算法题目觉得很多东西都是像数学老师的<code>显然可得</code>，这些定义或者前提或者结论是怎么样的显然可得？<br>我一直觉得不显然，看到<code>The Formal Semantics of Programming Languages</code>这本书，突然觉得可能是我的直觉是很差的。别人觉得显然的东西其实我觉得不显然  </p>
-<p>m</p>
-<p>最近再看<br>看到这一小节<code>Well-founded induction</code>，感觉很有用的公式</p>
-<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
-<li><a href="https://drive.google.com/open?id=1-6YpokyEQLXyXD_HaFbwK0qT4WI7PqUc" target="_blank" rel="noopener">https://drive.google.com/open?id=1-6YpokyEQLXyXD_HaFbwK0qT4WI7PqUc</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/20/编译原理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/02/20/编译原理/" class="post-title-link" itemprop="url">编译原理</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-02-20 14:24:02" itemprop="dateCreated datePublished" datetime="2020-02-20T14:24:02+08:00">2020-02-20</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-17 13:23:45" itemprop="dateModified" datetime="2020-06-17T13:23:45+08:00">2020-06-17</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/02/20/编译原理/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/20/编译原理/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="什么是编译？"><a href="#什么是编译？" class="headerlink" title="什么是编译？"></a>什么是编译？</h2><p>一个从一种状态集转换为另外一个状态集的过程</p>
-<h2 id="什么是优化？"><a href="#什么是优化？" class="headerlink" title="什么是优化？"></a>什么是优化？</h2><h2 id="什么是类型，类型就是集合的约束"><a href="#什么是类型，类型就是集合的约束" class="headerlink" title="什么是类型，类型就是集合的约束"></a>什么是类型，类型就是集合的约束</h2><p>一个类型就是一个集合</p>
-<h2 id="什么是隐式转换"><a href="#什么是隐式转换" class="headerlink" title="什么是隐式转换"></a>什么是隐式转换</h2><p>就是一个集合被编译器材<strong>自动</strong>从一个集合映射到另外一个集合</p>
-<p>为什么需要隐式转换? 因为不同的类型(或者说是范畴上的对象)和另外一个类型的东西是无法比较的.一个类型可以看做一个群,这个群内可以有二元操作,但是两个群是没法直接比较的.</p>
-<h2 id="同构"><a href="#同构" class="headerlink" title="同构"></a>同构</h2><p>什么是同构? 这是我最想弄明白的东西,真的很奇妙</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1288,7 +1304,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1435,60 +1451,8 @@
       
     
       
-        
-      
     
       
-    
-  
-    
-      
-<script type="text/x-mathjax-config">
-
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
-      processEscapes: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-      equationNumbers: {
-        autoNumber: 'AMS'
-      }
-    }
-  });
-
-  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
-    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
-      if (data.display) {
-        var next = data.script.nextSibling;
-        while (next && next.nodeName.toLowerCase() === '#text') {
-          next = next.nextSibling;
-        }
-        if (next && next.nodeName.toLowerCase() === 'br') {
-          next.parentNode.removeChild(next);
-        }
-      }
-    });
-  });
-
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for (i = 0; i < all.length; i += 1) {
-      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
-      if (element.nodeName.toLowerCase() == 'li') {
-        element = element.parentNode;
-      }
-      element.classList.add('has-jax');
-    }
-  });
-</script>
-<script>
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
-    MathJax.Hub.Typeset();
-  }, window.MathJax);
-</script>
-
     
   
 

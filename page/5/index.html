@@ -217,6 +217,211 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/26/java-异常/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/11/26/java-异常/" class="post-title-link" itemprop="url">java 异常</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-26 13:06:07 / 修改时间：13:19:20" itemprop="dateCreated datePublished" datetime="2019-11-26T13:06:07+08:00">2019-11-26</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/11/26/java-异常/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/26/java-异常/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="异常例子"><a href="#异常例子" class="headerlink" title="异常例子"></a>异常例子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import java.io.*;</span><br><span class="line">public class className</span><br><span class="line">&#123;</span><br><span class="line">  public void deposit(double amount) throws RemoteException</span><br><span class="line">  &#123;</span><br><span class="line">    // Method implementation</span><br><span class="line">    throw new RemoteException();</span><br><span class="line">  &#125;</span><br><span class="line">  //Remainder of class definition</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="异常的实质是什么"><a href="#异常的实质是什么" class="headerlink" title="异常的实质是什么?"></a>异常的实质是什么?</h2><p>实质就是一个获取堆栈的类,这个类特别的地方在于可以获取堆栈,核心也在于获取堆栈和捕获异常</p>
+<h2 id="checked-exception"><a href="#checked-exception" class="headerlink" title="checked exception"></a>checked exception</h2><p><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-11.html" target="_blank" rel="noopener">来源</a></p>
+<blockquote>
+<p>The unchecked exception classes are the run-time exception classes and the error classes.</p>
+</blockquote>
+<blockquote>
+<p>The checked exception classes are all exception classes other than the unchecked exception classes. That is, the checked exception classes are Throwable and all its subclasses other than RuntimeException and its subclasses and Error and its subclasses.</p>
+</blockquote>
+<p><code>uncheckded exception</code>就是运行时异常类和<code>error</code>类,其他都是<code>checked exception</code>  </p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/25/java-string-相关内容/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/11/25/java-string-相关内容/" class="post-title-link" itemprop="url">java string 相关内容</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-25 12:43:34" itemprop="dateCreated datePublished" datetime="2019-11-25T12:43:34+08:00">2019-11-25</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-11-28 21:29:21" itemprop="dateModified" datetime="2019-11-28T21:29:21+08:00">2019-11-28</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/11/25/java-string-相关内容/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/25/java-string-相关内容/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>版本是java8</p>
+<h2 id="基本类型和对象"><a href="#基本类型和对象" class="headerlink" title="基本类型和对象"></a>基本类型和对象</h2><p>java的string是什么呢?<br>很明显是对象</p>
+<h2 id="特化的"><a href="#特化的" class="headerlink" title="特化的+"></a>特化的+</h2><blockquote>
+<p>15.18.1. String Concatenation Operator +<br>If only one operand expression is of type String, then string conversion (§5.1.11) is performed on the other operand to produce a string at run time.<br><a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.18.1" target="_blank" rel="noopener">来源</a></p>
+</blockquote>
+<p>java的字符串连接符是<code>+</code>,而php的是<code>.</code></p>
+<h2 id="stringbuilder"><a href="#stringbuilder" class="headerlink" title="stringbuilder"></a>stringbuilder</h2><h2 id="string常量折叠"><a href="#string常量折叠" class="headerlink" title="string常量折叠"></a>string常量折叠</h2><p>由于上面提到的jls8中的<code>String Concatenation Operator +</code>提到相关内容,如果操作符中只有一个string类型的话,类型转换会发生在运行时.没有规定两个都是string的时候怎么处理,所以javac将他折叠了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">/** If tree is a concatenation of string literals, replace it</span><br><span class="line">  *  by a single literal representing the concatenated string.</span><br><span class="line">  */</span><br><span class="line"> protected JCExpression foldStrings(JCExpression tree) &#123;</span><br><span class="line">     if (!allowStringFolding)</span><br><span class="line">         return tree;</span><br><span class="line">     ListBuffer&lt;JCExpression&gt; opStack = new ListBuffer&lt;&gt;();</span><br><span class="line">     ListBuffer&lt;JCLiteral&gt; litBuf = new ListBuffer&lt;&gt;();</span><br><span class="line">     boolean needsFolding = false;</span><br><span class="line">     JCExpression curr = tree;</span><br><span class="line">     while (true) &#123;</span><br><span class="line">         if (curr.hasTag(JCTree.Tag.PLUS)) &#123;</span><br><span class="line">             JCBinary op = (JCBinary)curr;</span><br><span class="line">             needsFolding |= foldIfNeeded(op.rhs, litBuf, opStack, false);</span><br><span class="line">             curr = op.lhs;</span><br><span class="line">         &#125; else &#123;</span><br><span class="line">             needsFolding |= foldIfNeeded(curr, litBuf, opStack, true);</span><br><span class="line">             break; //last one!</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     if (needsFolding) &#123;</span><br><span class="line">         List&lt;JCExpression&gt; ops = opStack.toList();</span><br><span class="line">         JCExpression res = ops.head;</span><br><span class="line">         for (JCExpression op : ops.tail) &#123;</span><br><span class="line">             res = F.at(op.getStartPosition()).Binary(optag(TokenKind.PLUS), res, op);</span><br><span class="line">             storeEnd(res, getEndPos(op));</span><br><span class="line">         &#125;</span><br><span class="line">         return res;</span><br><span class="line">     &#125; else &#123;</span><br><span class="line">         return tree;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>[foldStrings]<a href="https://github.com/openjdk/jdk/blob/6bab0f539fba8fb441697846347597b4a0ade428/src/jdk.compiler/share/classes/com/sun/tools/javac/parser/JavacParser.java#L950" target="_blank" rel="noopener">https://github.com/openjdk/jdk/blob/6bab0f539fba8fb441697846347597b4a0ade428/src/jdk.compiler/share/classes/com/sun/tools/javac/parser/JavacParser.java#L950</a></p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://stackoverflow.com/questions/355089/difference-between-stringbuilder-and-stringbuffer" target="_blank" rel="noopener">https://stackoverflow.com/questions/355089/difference-between-stringbuilder-and-stringbuffer</a></li>
+<li><a href="https://github.com/openjdk/jdk/blob/6bab0f539fba8fb441697846347597b4a0ade428/src/jdk.compiler/share/classes/com/sun/tools/javac/parser/JavacParser.java#L950" target="_blank" rel="noopener">https://github.com/openjdk/jdk/blob/6bab0f539fba8fb441697846347597b4a0ade428/src/jdk.compiler/share/classes/com/sun/tools/javac/parser/JavacParser.java#L950</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/21/composer-ext/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1329,283 +1534,11 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/02/learn-es-invert-index/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/02/learn-es-invert-index/" class="post-title-link" itemprop="url">倒排索引</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-10-02 09:47:25" itemprop="dateCreated datePublished" datetime="2019-10-02T09:47:25+08:00">2019-10-02</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-12 14:56:34" itemprop="dateModified" datetime="2019-12-12T14:56:34+08:00">2019-12-12</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/10/02/learn-es-invert-index/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/10/02/learn-es-invert-index/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="es编译"><a href="#es编译" class="headerlink" title="es编译"></a>es编译</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gradle idea</span><br></pre></td></tr></table></figure>
-
-<p>跑了很久</p>
-<blockquote>
-<p>BUILD SUCCESSFUL in 49m 34s<br>334 actionable tasks: 334 executed</p>
-</blockquote>
-<p>es 堆栈</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">prepareRequest:61, RestCatAction (org.elasticsearch.rest.action.cat)</span><br><span class="line">handleRequest:80, BaseRestHandler (org.elasticsearch.rest)</span><br><span class="line">handleRequest:69, SecurityRestFilter (org.elasticsearch.xpack.security.rest)</span><br><span class="line">dispatchRequest:240, RestController (org.elasticsearch.rest)</span><br><span class="line">tryAllHandlers:337, RestController (org.elasticsearch.rest)</span><br><span class="line">dispatchRequest:174, RestController (org.elasticsearch.rest)</span><br><span class="line">dispatchRequest:324, AbstractHttpServerTransport (org.elasticsearch.http)</span><br><span class="line">handleIncomingRequest:374, AbstractHttpServerTransport (org.elasticsearch.http)</span><br><span class="line">incomingRequest:303, AbstractHttpServerTransport (org.elasticsearch.http)</span><br><span class="line">channelRead0:66, Netty4HttpRequestHandler (org.elasticsearch.http.netty4)</span><br><span class="line">channelRead0:31, Netty4HttpRequestHandler (org.elasticsearch.http.netty4)</span><br><span class="line">channelRead:105, SimpleChannelInboundHandler (io.netty.channel)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:58, Netty4HttpPipeliningHandler (org.elasticsearch.http.netty4)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:102, MessageToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">channelRead:111, MessageToMessageCodec (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:102, MessageToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:102, MessageToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:323, ByteToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">channelRead:297, ByteToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:286, IdleStateHandler (io.netty.handler.timeout)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:1434, DefaultChannelPipeline$HeadContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:965, DefaultChannelPipeline (io.netty.channel)</span><br><span class="line">read:163, AbstractNioByteChannel$NioByteUnsafe (io.netty.channel.nio)</span><br><span class="line">processSelectedKey:644, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">processSelectedKeysPlain:544, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">processSelectedKeys:498, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">run:458, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">run:897, SingleThreadEventExecutor$5 (io.netty.util.concurrent)</span><br><span class="line">run:834, Thread (java.lang)</span><br></pre></td></tr></table></figure>
-
-<p>以及</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">handleRequest:97, BaseRestHandler (org.elasticsearch.rest)</span><br><span class="line">handleRequest:69, SecurityRestFilter (org.elasticsearch.xpack.security.rest)</span><br><span class="line">dispatchRequest:240, RestController (org.elasticsearch.rest)</span><br><span class="line">tryAllHandlers:337, RestController (org.elasticsearch.rest)</span><br><span class="line">dispatchRequest:174, RestController (org.elasticsearch.rest)</span><br><span class="line">dispatchRequest:324, AbstractHttpServerTransport (org.elasticsearch.http)</span><br><span class="line">handleIncomingRequest:374, AbstractHttpServerTransport (org.elasticsearch.http)</span><br><span class="line">incomingRequest:303, AbstractHttpServerTransport (org.elasticsearch.http)</span><br><span class="line">channelRead0:66, Netty4HttpRequestHandler (org.elasticsearch.http.netty4)</span><br><span class="line">channelRead0:31, Netty4HttpRequestHandler (org.elasticsearch.http.netty4)</span><br><span class="line">channelRead:105, SimpleChannelInboundHandler (io.netty.channel)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:58, Netty4HttpPipeliningHandler (org.elasticsearch.http.netty4)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:102, MessageToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">channelRead:111, MessageToMessageCodec (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:102, MessageToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:102, MessageToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:323, ByteToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">channelRead:297, ByteToMessageDecoder (io.netty.handler.codec)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:286, IdleStateHandler (io.netty.handler.timeout)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:340, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">channelRead:1434, DefaultChannelPipeline$HeadContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:362, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">invokeChannelRead:348, AbstractChannelHandlerContext (io.netty.channel)</span><br><span class="line">fireChannelRead:965, DefaultChannelPipeline (io.netty.channel)</span><br><span class="line">read:163, AbstractNioByteChannel$NioByteUnsafe (io.netty.channel.nio)</span><br><span class="line">processSelectedKey:644, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">processSelectedKeysPlain:544, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">processSelectedKeys:498, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">run:458, NioEventLoop (io.netty.channel.nio)</span><br><span class="line">run:897, SingleThreadEventExecutor$5 (io.netty.util.concurrent)</span><br><span class="line">run:834, Thread (java.lang)</span><br></pre></td></tr></table></figure>
-
-<h4 id="倒排索引简介"><a href="#倒排索引简介" class="headerlink" title="倒排索引简介"></a>倒排索引简介</h4><ul>
-<li><a href="https://peuople.eng.unimelb.edu.au/jzobel/fulltext/compsurv06.pdf" target="_blank" rel="noopener">相关论文文档</a></li>
-</ul>
-<p><strong>到排索引解决什么问题？</strong> </p>
-<p>当我们有一个文档<code>a.txt</code>,里面有一堆文字<code>hello wrold ,i am dinosaur</code>。</p>
-<p>我们需要从所有文档里面判断这个文档里面是否存在<code>world</code> 这个词汇，应该怎么做呢？</p>
-<p>当文档的数量很少的时候，可以</p>
-<ul>
-<li>1 打开文件</li>
-<li>2 从头开始去读取文件内容判断是否包含<code>world</code></li>
-</ul>
-<p>那么当我们不仅仅只有一个文档<code>a.txt</code>,我们还有<code>b.txt</code>和<code>c.txt</code>的时候，我们怎么判断某个词<code>word</code>是否在这些文档里面呢？如果<code>word</code>在里面，又在那些文档的第几行呢？</p>
-<p>如果我们还用之前的从头开始一个个文件读的话，如果文档数量少还好，如果文档很多，我们就<code>非常慢</code>才能读完所有的文档。</p>
-<p>倒排索引解决的其中一个问题就是如何快速定位某个词是是否在这些文档中，如果在又在哪些文档里面。</p>
-<h4 id="相关例子"><a href="#相关例子" class="headerlink" title="相关例子"></a>相关例子</h4><ul>
-<li><a href="https://nlp.stanford.edu/IR-book/html/htmledition/a-first-take-at-building-an-inverted-index-1.html" target="_blank" rel="noopener">例子一</a></li>
-<li><a href="https://www.geeksforgeeks.org/inverted-index/" target="_blank" rel="noopener">例子二</a></li>
-</ul>
-<h4 id="baseline-invert-index"><a href="#baseline-invert-index" class="headerlink" title="baseline invert index"></a>baseline invert index</h4><p>倒排索引包括主要两个部分： </p>
-<ul>
-<li>第一部分$word$包含$t$两个域：  <ul>
-<li>$f_{t}$: 文档(document)中包含词$t$的<strong>文档个数</strong>，也就是说有多少个文档含有词$t$,那么$f_{t}$等于几。</li>
-<li>指向$inverted list$的指针 </li>
-</ul>
-</li>
-<li>第二部分$invert list$是一个列表，列表的每个元素包括以下两个域： <ul>
-<li>$docid$: 文档对应的id,可以理解为文档主键</li>
-<li>$f_{d}$: 该$docid$ 中包含词$t$的数量</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://imgchr.com/i/uwiAvq" target="_blank" rel="noopener"><img src="https://s2.ax1x.com/2019/10/02/uwiAvq.png" alt="uwiAvq.png"></a></p>
-<p>我自己写了的demo代码<a href="https://github.com/769344359/invert_index" target="_blank" rel="noopener">github 地址</a>,输出如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">keeper  3|[&#123;1 1&#125; &#123;4 1&#125; &#123;5 1&#125;]</span><br><span class="line">    In  1|[&#123;2 1&#125;]</span><br><span class="line"> house  2|[&#123;2 1&#125; &#123;3 1&#125;]</span><br><span class="line"> nignt  2|[&#123;4 1&#125; &#123;5 1&#125;]</span><br><span class="line">   did  1|[&#123;4 1&#125;]</span><br><span class="line">  dark  1|[&#123;6 1&#125;]</span><br><span class="line">   old  4|[&#123;1 1&#125; &#123;2 1&#125; &#123;3 1&#125; &#123;4 1&#125;]</span><br><span class="line"> night  3|[&#123;1 1&#125; &#123;5 1&#125; &#123;6 1&#125;]</span><br><span class="line">   had  1|[&#123;3 1&#125;]</span><br><span class="line">sleeps  1|[&#123;6 1&#125;]</span><br><span class="line">  keep  3|[&#123;1 1&#125; &#123;3 1&#125; &#123;5 1&#125;]</span><br><span class="line">   big  2|[&#123;2 1&#125; &#123;3 1&#125;]</span><br><span class="line"> keeps  3|[&#123;1 1&#125; &#123;5 1&#125; &#123;6 1&#125;]</span><br><span class="line">   the  6|[&#123;1 1&#125; &#123;2 1&#125; &#123;3 1&#125; &#123;4 1&#125; &#123;5 1&#125; &#123;6 1&#125;]</span><br><span class="line"> never  1|[&#123;4 1&#125;]</span><br><span class="line">   and  1|[&#123;6 1&#125;]</span><br><span class="line">   And  1|[&#123;6 1&#125;]</span><br><span class="line">    in  5|[&#123;1 1&#125; &#123;2 1&#125; &#123;3 1&#125; &#123;5 1&#125; &#123;6 1&#125;]</span><br><span class="line">   The  3|[&#123;1 1&#125; &#123;3 1&#125; &#123;5 1&#125;]</span><br><span class="line"> sleep  1|[&#123;4 1&#125;]</span><br><span class="line"> Where  1|[&#123;4 1&#125;]</span><br><span class="line">  town  2|[&#123;1 1&#125; &#123;3 1&#125;]</span><br><span class="line">  gown  1|[&#123;2 1&#125;]</span><br></pre></td></tr></table></figure>
-
-<h4 id="构造倒排索引的步骤"><a href="#构造倒排索引的步骤" class="headerlink" title="构造倒排索引的步骤"></a>构造倒排索引的步骤</h4><ul>
-<li>1 读取文档</li>
-<li>2 分词</li>
-<li>3 对分词正规化（normalized）</li>
-<li>4 建立包含词频和偏移量的倒排索引</li>
-</ul>
-<h2 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h2><p><a href="https://www.cnblogs.com/forfuture1978/archive/2010/06/06/1752837.html" target="_blank" rel="noopener">https://www.cnblogs.com/forfuture1978/archive/2010/06/06/1752837.html</a></p>
-<p>Lucene 的堆栈,主要的逻辑都在<code>invert</code>方法里面 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">incrementToken:48, FilteringTokenFilter (org.apache.lucene.analysis)</span><br><span class="line">invert:812, DefaultIndexingChain$PerField (org.apache.lucene.index)</span><br><span class="line">processField:442, DefaultIndexingChain (org.apache.lucene.index)</span><br><span class="line">processDocument:406, DefaultIndexingChain (org.apache.lucene.index)</span><br><span class="line">updateDocument:250, DocumentsWriterPerThread (org.apache.lucene.index)</span><br><span class="line">updateDocument:495, DocumentsWriter (org.apache.lucene.index)</span><br><span class="line">updateDocument:1594, IndexWriter (org.apache.lucene.index)</span><br><span class="line">addDocument:1213, IndexWriter (org.apache.lucene.index)</span><br><span class="line">indexDoc:198, IndexFiles (com.dinosaur)</span><br><span class="line">visitFile:155, IndexFiles$1 (com.dinosaur)</span><br><span class="line">visitFile:151, IndexFiles$1 (com.dinosaur)</span><br><span class="line">walkFileTree:2670, Files (java.nio.file)</span><br><span class="line">walkFileTree:2742, Files (java.nio.file)</span><br><span class="line">indexDocs:151, IndexFiles (com.dinosaur)</span><br><span class="line">main:113, IndexFiles (com.dinosaur)</span><br></pre></td></tr></table></figure>
-
-<p>Lucene分词的核心在于incrementToken获取token</p>
-<p>举个例子</p>
-<p>Lucene的标准分词器</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);  // final的单例</span><br><span class="line">@Override</span><br><span class="line">public final boolean incrementToken() throws IOException &#123;</span><br><span class="line">  ...</span><br><span class="line">      scanner.getText(termAtt);  // scanner 返回一个词并将那个词设置到termAtt上面</span><br><span class="line">  ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>相关阅读</li>
-<li><a href="https://blog.csdn.net/qq924862077/article/details/80985377" target="_blank" rel="noopener">https://blog.csdn.net/qq924862077/article/details/80985377</a></li>
-<li><a href="https://segmentfault.com/a/1190000017831398" target="_blank" rel="noopener">https://segmentfault.com/a/1190000017831398</a></li>
-<li><a href="https://github.com/elastic/elasticsearch/issues/34361" target="_blank" rel="noopener">https://github.com/elastic/elasticsearch/issues/34361</a></li>
-<li><a href="https://lanffy.github.io/2019/04/08/Elasticsearch-Compile-Source-And-Debug" target="_blank" rel="noopener">https://lanffy.github.io/2019/04/08/Elasticsearch-Compile-Source-And-Debug</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/28/maven打包NoClassDefFoundError-on-Maven-dependency/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/09/28/maven打包NoClassDefFoundError-on-Maven-dependency/" class="post-title-link" itemprop="url">maven打包NoClassDefFoundError</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-09-28 18:47:47" itemprop="dateCreated datePublished" datetime="2019-09-28T18:47:47+08:00">2019-09-28</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-14 13:16:16" itemprop="dateModified" datetime="2019-11-14T13:16:16+08:00">2019-11-14</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/09/28/maven打包NoClassDefFoundError-on-Maven-dependency/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/09/28/maven打包NoClassDefFoundError-on-Maven-dependency/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="maven打包NoClassDefFoundError"><a href="#maven打包NoClassDefFoundError" class="headerlink" title="maven打包NoClassDefFoundError"></a>maven打包NoClassDefFoundError</h2><p>刚刚在学习怎么使用maven，可以编译通过，但是运行命令<code>java -jar xxx.jar</code> 的时候却报了错误<code>NoClassDefFoundError</code></p>
-<h3 id="踩坑开始"><a href="#踩坑开始" class="headerlink" title="踩坑开始"></a>踩坑开始</h3><p>踩坑第一步是去stack overflow 找了一个答案，使用插件<code>maven-shade-plugin</code>，其实这个也是正确的答案</p>
-<h4 id="这是正确答案"><a href="#这是正确答案" class="headerlink" title="这是正确答案"></a>这是正确答案</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;project&gt;</span><br><span class="line">  ...</span><br><span class="line">  &lt;build&gt;</span><br><span class="line">    &lt;plugins&gt;</span><br><span class="line">      &lt;plugin&gt;</span><br><span class="line">        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;3.2.1&lt;/version&gt;</span><br><span class="line">        &lt;executions&gt;</span><br><span class="line">          &lt;execution&gt;</span><br><span class="line">            &lt;phase&gt;package&lt;/phase&gt;</span><br><span class="line">            &lt;goals&gt;</span><br><span class="line">              &lt;goal&gt;shade&lt;/goal&gt;</span><br><span class="line">            &lt;/goals&gt;</span><br><span class="line">          &lt;/execution&gt;</span><br><span class="line">        &lt;/executions&gt;</span><br><span class="line">      &lt;/plugin&gt;</span><br><span class="line">    &lt;/plugins&gt;</span><br><span class="line">  &lt;/build&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
-
-<p><a href="https://stackoverflow.com/a/10569417/6229548" target="_blank" rel="noopener">相关链接</a></p>
-<h4 id="我踩坑在哪里呢？"><a href="#我踩坑在哪里呢？" class="headerlink" title="我踩坑在哪里呢？"></a>我踩坑在哪里呢？</h4><p>我当时不了解xml节点<code>&lt;pluginManagement&gt;</code>下面的<code>plugins</code>节点</p>
-<ul>
-<li>这个是错误的写法</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;project&gt;</span><br><span class="line">  ...</span><br><span class="line">  &lt;build&gt;</span><br><span class="line">  &lt;pluginManagement&gt;</span><br><span class="line">    &lt;plugins&gt;</span><br><span class="line">      &lt;plugin&gt;</span><br><span class="line">        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;3.2.1&lt;/version&gt;</span><br><span class="line">        &lt;executions&gt;</span><br><span class="line">          &lt;execution&gt;</span><br><span class="line">            &lt;phase&gt;package&lt;/phase&gt;</span><br><span class="line">            &lt;goals&gt;</span><br><span class="line">              &lt;goal&gt;shade&lt;/goal&gt;</span><br><span class="line">            &lt;/goals&gt;</span><br><span class="line">          &lt;/execution&gt;</span><br><span class="line">        &lt;/executions&gt;</span><br><span class="line">      &lt;/plugin&gt;</span><br><span class="line">    &lt;/plugins&gt;</span><br><span class="line">    &lt;/pluginManagement&gt;</span><br><span class="line">  &lt;/build&gt;</span><br><span class="line">  ...</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
-
-<h4 id="最终我的写法"><a href="#最终我的写法" class="headerlink" title="最终我的写法"></a>最终我的写法</h4><p>最终写法就是得放在<code>build</code> 节点的下一级，不能放在<code>pluginManagement</code>里面的<code>&lt;plugins&gt;</code>节点里面</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;project&gt;</span><br><span class="line">  ...</span><br><span class="line">  &lt;build&gt;</span><br><span class="line">  &lt;plugins&gt;</span><br><span class="line">      &lt;plugin&gt;</span><br><span class="line">        &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;3.2.1&lt;/version&gt;</span><br><span class="line">        &lt;executions&gt;</span><br><span class="line">          &lt;execution&gt;</span><br><span class="line">            &lt;phase&gt;package&lt;/phase&gt;</span><br><span class="line">            &lt;goals&gt;</span><br><span class="line">              &lt;goal&gt;shade&lt;/goal&gt;</span><br><span class="line">            &lt;/goals&gt;</span><br><span class="line">          &lt;/execution&gt;</span><br><span class="line">        &lt;/executions&gt;</span><br><span class="line">      &lt;/plugin&gt;</span><br><span class="line">   &lt;/plugins&gt;</span><br><span class="line">  &lt;pluginManagement&gt;</span><br><span class="line">    ...</span><br><span class="line">  &lt;/pluginManagement&gt;</span><br><span class="line">&lt;/build&gt;</span><br><span class="line">...</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
-
-<p>然后运行<code>mvn package</code> 就能打包所有依赖进去</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1650,7 +1583,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-count">62</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1797,60 +1730,8 @@
       
     
       
-        
-      
     
       
-    
-  
-    
-      
-<script type="text/x-mathjax-config">
-
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
-      processEscapes: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-      equationNumbers: {
-        autoNumber: 'AMS'
-      }
-    }
-  });
-
-  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
-    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
-      if (data.display) {
-        var next = data.script.nextSibling;
-        while (next && next.nodeName.toLowerCase() === '#text') {
-          next = next.nextSibling;
-        }
-        if (next && next.nodeName.toLowerCase() === 'br') {
-          next.parentNode.removeChild(next);
-        }
-      }
-    });
-  });
-
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for (i = 0; i < all.length; i += 1) {
-      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
-      if (element.nodeName.toLowerCase() == 'li') {
-        element = element.parentNode;
-      }
-      element.classList.add('has-jax');
-    }
-  });
-</script>
-<script>
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
-    MathJax.Hub.Typeset();
-  }, window.MathJax);
-</script>
-
     
   
 
