@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一点也不懂nlp的我 吉布斯分布 https://blog.csdn.net/tomheaven/article/details/62078935 http://nebula2.deanza.edu/~lanasheridan/4C/Phys4C-Lecture20.pdf  Hammersley-Clifford_Theorem http://read.pudn.com/downloads329">
+<meta name="keywords" content="nlp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="crf">
+<meta property="og:url" content="http://yoursite.com/2020/09/18/crf/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="一点也不懂nlp的我 吉布斯分布 https://blog.csdn.net/tomheaven/article/details/62078935 http://nebula2.deanza.edu/~lanasheridan/4C/Phys4C-Lecture20.pdf  Hammersley-Clifford_Theorem http://read.pudn.com/downloads329">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-25T09:35:02.382Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="crf">
+<meta name="twitter:description" content="一点也不懂nlp的我 吉布斯分布 https://blog.csdn.net/tomheaven/article/details/62078935 http://nebula2.deanza.edu/~lanasheridan/4C/Phys4C-Lecture20.pdf  Hammersley-Clifford_Theorem http://read.pudn.com/downloads329">
+  <link rel="canonical" href="http://yoursite.com/2020/09/18/crf/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>crf | dinosaur</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2G9M76S71Z"></script>
+    <script>
+      var host = window.location.hostname;
+      if (host !== "localhost" || !true) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-2G9M76S71Z');
+      }
+    </script>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dinosaur</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/18/crf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            crf
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-18 12:13:15" itemprop="dateCreated datePublished" datetime="2020-09-18T12:13:15+08:00">2020-09-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-25 17:35:02" itemprop="dateModified" datetime="2020-09-25T17:35:02+08:00">2020-09-25</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/09/18/crf/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/09/18/crf/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一点也不懂nlp的我</p>
+<h3 id="吉布斯分布"><a href="#吉布斯分布" class="headerlink" title="吉布斯分布"></a>吉布斯分布</h3><ul>
+<li><a href="https://blog.csdn.net/tomheaven/article/details/62078935" target="_blank" rel="noopener">https://blog.csdn.net/tomheaven/article/details/62078935</a></li>
+<li><a href="http://nebula2.deanza.edu/~lanasheridan/4C/Phys4C-Lecture20.pdf" target="_blank" rel="noopener">http://nebula2.deanza.edu/~lanasheridan/4C/Phys4C-Lecture20.pdf</a></li>
+</ul>
+<h3 id="Hammersley-Clifford-Theorem"><a href="#Hammersley-Clifford-Theorem" class="headerlink" title="Hammersley-Clifford_Theorem"></a>Hammersley-Clifford_Theorem</h3><ul>
+<li><a href="http://read.pudn.com/downloads329/ebook/1447911/Hammersley-Clifford_Theorem.pdf" target="_blank" rel="noopener">http://read.pudn.com/downloads329/ebook/1447911/Hammersley-Clifford_Theorem.pdf</a></li>
+</ul>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><ul>
+<li><a href="https://baike.baidu.com/item/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">https://baike.baidu.com/item/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0</a></li>
+</ul>
+<h3 id="crf"><a href="#crf" class="headerlink" title="crf"></a>crf</h3><ul>
+<li><a href="http://www.hankcs.com/wp-content/uploads/2016/08/%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA%E7%90%86%E8%AE%BA%E7%BB%BC%E8%BF%B0.pdf" target="_blank" rel="noopener">http://www.hankcs.com/wp-content/uploads/2016/08/%E6%9D%A1%E4%BB%B6%E9%9A%8F%E6%9C%BA%E5%9C%BA%E7%90%86%E8%AE%BA%E7%BB%BC%E8%BF%B0.pdf</a></li>
+<li><a href="https://people.cs.umass.edu/~wallach/technical_reports/wallach04conditional.pdf" target="_blank" rel="noopener">https://people.cs.umass.edu/~wallach/technical_reports/wallach04conditional.pdf</a></li>
+<li><a href="https://repository.upenn.edu/cgi/viewcontent.cgi?article=1162&amp;context=cis_papers" target="_blank" rel="noopener">https://repository.upenn.edu/cgi/viewcontent.cgi?article=1162&amp;context=cis_papers</a> </li>
+<li><a href="https://folk.idi.ntnu.no/helgel/thesis/forelesning.pdf" target="_blank" rel="noopener">https://folk.idi.ntnu.no/helgel/thesis/forelesning.pdf</a></li>
+</ul>
+<h3 id="计算参数的方式"><a href="#计算参数的方式" class="headerlink" title="计算参数的方式"></a>计算参数的方式</h3><p>crf 的参数非常多,怎么求呢?<br>通过<strong>最大似然估计</strong></p>
+<p>最大似然函数的本质是什么? </p>
+<p>本质就是: 已知统计的分布 , 那么我们假定我们统计到的数据是最大可能出现的.那么这个最大的概率对应的参数就是我们想要的参数</p>
+<p>拟牛顿法</p>
+<h3 id="标注方式"><a href="#标注方式" class="headerlink" title="标注方式"></a>标注方式</h3><ul>
+<li>B（词首），M（词中），E（词尾）和S（单独成词）</li>
+<li><a href="https://www.cnblogs.com/hiyoung/archive/2018/09/25/9703976.html" target="_blank" rel="noopener">https://www.cnblogs.com/hiyoung/archive/2018/09/25/9703976.html</a></li>
+</ul>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Y = &#123; B , M , E , S&#125;</span><br><span class="line">X = &#123;今,天,天,气,真, 热&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="liner-crf-参数求解"><a href="#liner-crf-参数求解" class="headerlink" title="liner crf 参数求解"></a>liner crf 参数求解</h3><ul>
+<li><a href="https://www.cnblogs.com/pinard/p/7068574.html" target="_blank" rel="noopener">https://www.cnblogs.com/pinard/p/7068574.html</a></li>
+</ul>
+<h4 id="如何训练"><a href="#如何训练" class="headerlink" title="如何训练"></a>如何训练</h4><ul>
+<li>标注<br>我们要怎么标注呢?<br>比如我有两个人民日报的句子</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 句子1 </span><br><span class="line">全总/j  致/v  全国/n  各族/r  职工/n  慰问信/n  </span><br><span class="line">// 句子2</span><br><span class="line">勉励/v  广大/b  职工/n  发挥/v  工人阶级/n  主力军/n  作用/n  ，/w  为/p  企业/n  改革/vn  发展/vn  建功立业/l</span><br></pre></td></tr></table></figure>
+
+<p>怎么标注呢</p>
+<p>下面是例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 句子1</span><br><span class="line">全/B 总/E 致/S 全/B 国/E  各/B 族/E 职/B 工/E  慰/B 问/M 信/E</span><br><span class="line">// 句子2</span><br><span class="line">勉/B 励/E  广/B 大E  职/B 工/E  发/B 挥/E  工/B 人/M 阶/M 级/E  主/B 力/M 军/E  作/B 用/E  ，/S  为/S  企/B 业/E  改/B 革/E  发/B 展/E  建/B 功/M 立/M 业/E</span><br></pre></td></tr></table></figure>
+
+<p>参数估计<br>$$  P(Y|X) = \frac{P(x,y)}{P(x)} \\=\frac{1}{Z(X)} e^{\sum_{n=1}^{20} n^{2}} $$</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/nlp/" rel="tag"># nlp</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2020/09/01/我的es之路/" rel="next" title="我的es之旅">
+                  <i class="fa fa-chevron-left"></i> 我的es之旅
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2020/09/25/invariants/" rel="prev" title="invariants">
+                  invariants <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    
+  <div class="comments" id="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#吉布斯分布"><span class="nav-number">1.</span> <span class="nav-text">吉布斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hammersley-Clifford-Theorem"><span class="nav-number">2.</span> <span class="nav-text">Hammersley-Clifford_Theorem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">3.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crf"><span class="nav-number">4.</span> <span class="nav-text">crf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算参数的方式"><span class="nav-number">5.</span> <span class="nav-text">计算参数的方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标注方式"><span class="nav-number">6.</span> <span class="nav-text">标注方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数"><span class="nav-number">7.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#liner-crf-参数求解"><span class="nav-number">8.</span> <span class="nav-text">liner crf 参数求解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#如何训练"><span class="nav-number">8.1.</span> <span class="nav-text">如何训练</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    主题 – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
+    
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://dinosaur-1.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  function disqus_config() {
+    this.page.url = "http://yoursite.com/2020/09/18/crf/";
+    this.page.identifier = "2020/09/18/crf/";
+    this.page.title = 'crf';
+  }
+  function loadComments() {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://dinosaur-1.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  }
+    window.addEventListener('load', loadComments, false);
+  
+</script>
+
+</body>
+</html>

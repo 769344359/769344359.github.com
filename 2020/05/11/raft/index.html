@@ -55,17 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="raft 节点一共三个状态 Follower  Leader   Candidate 核心性质:  12345678910111213Election Safety: at most one leader can be elected in agiven term. §5.2Leader Append-Only: a leader never overwrites or deletesentrie">
+  <meta name="description" content="性质推导状态机(state machine)状态机是如何定义呢?  https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA 确认(ACK)假设A要向B发送消息,我们假设下面这个表达式:  1(number: int , message : string)   =&amp;gt; ( acknumber:">
+<meta name="keywords" content="raft">
 <meta property="og:type" content="article">
 <meta property="og:title" content="raft">
 <meta property="og:url" content="http://yoursite.com/2020/05/11/raft/index.html">
 <meta property="og:site_name" content="dinosaur">
-<meta property="og:description" content="raft 节点一共三个状态 Follower  Leader   Candidate 核心性质:  12345678910111213Election Safety: at most one leader can be elected in agiven term. §5.2Leader Append-Only: a leader never overwrites or deletesentrie">
+<meta property="og:description" content="性质推导状态机(state machine)状态机是如何定义呢?  https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA 确认(ACK)假设A要向B发送消息,我们假设下面这个表达式:  1(number: int , message : string)   =&amp;gt; ( acknumber:">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-12T02:10:43.687Z">
+<meta property="og:updated_time" content="2020-09-01T01:02:02.463Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="raft">
-<meta name="twitter:description" content="raft 节点一共三个状态 Follower  Leader   Candidate 核心性质:  12345678910111213Election Safety: at most one leader can be elected in agiven term. §5.2Leader Append-Only: a leader never overwrites or deletesentrie">
+<meta name="twitter:description" content="性质推导状态机(state machine)状态机是如何定义呢?  https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA 确认(ACK)假设A要向B发送消息,我们假设下面这个表达式:  1(number: int , message : string)   =&amp;gt; ( acknumber:">
   <link rel="canonical" href="http://yoursite.com/2020/05/11/raft/">
 
 
@@ -263,7 +264,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-12 10:10:43" itemprop="dateModified" datetime="2020-05-12T10:10:43+08:00">2020-05-12</time>
+                <time title="修改时间：2020-09-01 09:02:02" itemprop="dateModified" datetime="2020-09-01T09:02:02+08:00">2020-09-01</time>
               </span>
             
           
@@ -303,22 +304,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>raft 节点一共三个状态</p>
-<p>Follower  Leader   Candidate</p>
-<p>核心性质: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Election Safety: at most one leader can be elected in a</span><br><span class="line">given term. §5.2</span><br><span class="line">Leader Append-Only: a leader never overwrites or deletes</span><br><span class="line">entries in its log; it only appends new entries. §5.3</span><br><span class="line">Log Matching: if two logs contain an entry with the same</span><br><span class="line">index and term, then the logs are identical in all entries</span><br><span class="line">up through the given index. §5.3</span><br><span class="line">Leader Completeness: if a log entry is committed in a</span><br><span class="line">given term, then that entry will be present in the logs</span><br><span class="line">of the leaders for all higher-numbered terms. §5.4</span><br><span class="line">State Machine Safety: if a server has applied a log entry</span><br><span class="line">at a given index to its state machine, no other server</span><br><span class="line">will ever apply a different log entry for the same index.</span><br></pre></td></tr></table></figure>
+        <h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><h3 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h3><h3 id="状态机-state-machine"><a href="#状态机-state-machine" class="headerlink" title="状态机(state machine)"></a>状态机(state machine)</h3><p>状态机是如何定义呢? </p>
+<p><a href="https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA" target="_blank" rel="noopener">https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA</a></p>
+<h3 id="确认-ACK"><a href="#确认-ACK" class="headerlink" title="确认(ACK)"></a>确认(ACK)</h3><p>假设A要向B发送消息,我们假设<br>下面这个表达式: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(number: int , message : string)   =&gt; ( acknumber: int )</span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>Election Safety: at most one leader can be elected in a<br>given term. §5.2</p>
-</blockquote>
-<p>1 每个Candidate 每个term只能投一票<br>2 得到票数&gt; 所有投票者/2  最多只有一个人</p>
-<blockquote>
-<p>Leader Append-Only: a leader never overwrites or deletes<br>entries in its log; it only appends new entries. §5.3</p>
-</blockquote>
-<p>AOF</p>
-<blockquote>
-<p>Log Matching: if two logs contain an entry with the same<br>index and term, then the logs are identical in all entries<br>up through the given index. §5.3</p>
-</blockquote>
+<p>含义是这样的:</p>
+<ul>
+<li>输入: 一个number + 这个number 对应的消息 ,</li>
+<li>返回:  如果B收到就把A的number原样发送回来</li>
+</ul>
 
     </div>
 
@@ -329,6 +324,15 @@
       
 
       <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/raft/" rel="tag"># raft</a>
+            
+          </div>
+        
 
         
 
@@ -402,6 +406,8 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#性质"><span class="nav-number">1.</span> <span class="nav-text">性质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#推导"><span class="nav-number">2.</span> <span class="nav-text">推导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#状态机-state-machine"><span class="nav-number">3.</span> <span class="nav-text">状态机(state machine)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#确认-ACK"><span class="nav-number">4.</span> <span class="nav-text">确认(ACK)</span></a></li></ol></div>
+        
       </div>
       <!--/noindex-->
 
@@ -416,7 +422,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">74</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -429,7 +435,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>

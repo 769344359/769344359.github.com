@@ -217,7 +217,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/09/协程切换/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/规则系统/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -232,7 +232,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/12/09/协程切换/" class="post-title-link" itemprop="url">协程切换</a>
+            <a href="/2020/03/15/规则系统/" class="post-title-link" itemprop="url">规则系统</a>
           
         </h1>
 
@@ -247,7 +247,7 @@
                 
               
 
-              <time title="创建时间：2019-12-09 23:10:25" itemprop="dateCreated datePublished" datetime="2019-12-09T23:10:25+08:00">2019-12-09</time>
+              <time title="创建时间：2020-03-15 19:31:44" itemprop="dateCreated datePublished" datetime="2020-03-15T19:31:44+08:00">2020-03-15</time>
             </span>
           
             
@@ -258,7 +258,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-12 14:56:34" itemprop="dateModified" datetime="2019-12-12T14:56:34+08:00">2019-12-12</time>
+                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
               </span>
             
           
@@ -274,8 +274,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/12/09/协程切换/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/09/协程切换/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2020/03/15/规则系统/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/15/规则系统/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -290,107 +290,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint 2, 0x00007fffedb6c090 in swoole::Context::Context(unsigned long, void (*)(void*), void*)@plt ()</span><br><span class="line">   from /usr/local/phpfork/lib/php/extensions/debug-non-zts-20170718/swoole.so</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  0x00007fffedb6c090 in swoole::Context::Context(unsigned long, void (*)(void*), void*)@plt ()</span><br><span class="line">   from /usr/local/phpfork/lib/php/extensions/debug-non-zts-20170718/swoole.so</span><br><span class="line">#1  0x00007fffedc207b1 in swoole::Coroutine::Coroutine (this=0x17a8540, fn=0x7fffedc1cdb2 &lt;swoole::PHPCoroutine::main_func(void*)&gt;, private_data=0x7fffffffa0a0)</span><br><span class="line">    at /home/dinosaur/swoole-src/include/coroutine.h:204</span><br><span class="line">#2  0x00007fffedc205ee in swoole::Coroutine::create (fn=0x7fffedc1cdb2 &lt;swoole::PHPCoroutine::main_func(void*)&gt;, args=0x7fffffffa0a0)</span><br><span class="line">    at /home/dinosaur/swoole-src/include/coroutine.h:121</span><br><span class="line">#3  0x00007fffedc1d7d0 in swoole::PHPCoroutine::create (fci_cache=0x7fffffffa140, argc=0, argv=0x0) at /home/dinosaur/swoole-src/swoole_coroutine.cc:857</span><br><span class="line">#4  0x00007fffedc1eebd in zif_swoole_coroutine_create (execute_data=0x7fffef61e090, return_value=0x7fffffffa1e0)</span><br><span class="line">    at /home/dinosaur/swoole-src/swoole_coroutine.cc:964</span><br><span class="line">#5  0x0000000000aaf137 in ZEND_DO_FCALL_BY_NAME_SPEC_RETVAL_UNUSED_HANDLER () at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:738</span><br><span class="line">#6  0x0000000000b42992 in execute_ex (ex=0x7fffef61e030) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:59743</span><br><span class="line">#7  0x0000000000b47d9d in zend_execute (op_array=0x7fffef684b00, return_value=0x0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:63760</span><br><span class="line">#8  0x0000000000a3afe0 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend.c:1496</span><br><span class="line">#9  0x000000000098c749 in php_execute_script (primary_file=0x7fffffffc8c0) at /home/dinosaur/Downloads/php-7.2.2/main/main.c:2590</span><br><span class="line">#10 0x0000000000b4b2a5 in do_cli (argc=2, argv=0x1561f20) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1011</span><br><span class="line">#11 0x0000000000b4c491 in main (argc=2, argv=0x1561f20) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1404</span><br></pre></td></tr></table></figure>
-
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/namespace与docker/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/12/08/namespace与docker/" class="post-title-link" itemprop="url">namespace与docker</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-12-08 21:36:51" itemprop="dateCreated datePublished" datetime="2019-12-08T21:36:51+08:00">2019-12-08</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/12/08/namespace与docker/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/08/namespace与docker/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>CLONE_NEWUTS (since Linux 2.6.19)<br>              If CLONE_NEWUTS is set, then create the process in a new UTS<br>              namespace, whose identifiers are initialized by duplicating<br>              the identifiers from the UTS namespace of the calling process.<br>              If this flag is not set, then (as with fork(2)) the process is<br>              created in the same UTS namespace as the calling process.</p>
-</blockquote>
+          <p>我一直对所谓的可扩展性什么的很有疑惑，或者说我们要怎么设计一个规则系统，怎么知道这个规则的集合的边界在哪里</p>
+<p>第一个例子： 流水线 </p>
+<p>流水线上每个节点都是一个回调，我们可以随意添加或者删除</p>
+<p>有向无环图<br>等价于原始递归函数</p>
+<p>这个规则系统的路径则需要输入来确定，所以和语言是等价的</p>
+<p>所以一个规则系统等价于一个语言，所以我们可以使用一些内容来等价和变换</p>
 <ul>
-<li>相关阅读<br><a href="http://man7.org/linux/man-pages/man2/clone.2.html" target="_blank" rel="noopener">manpage</a><br><a href="https://segmentfault.com/a/1190000006908598" target="_blank" rel="noopener">相关来源</a></li>
+<li><a href="https://zh.wikipedia.org/zh-hans/%E5%8E%9F%E5%A7%8B%E9%80%92%E5%BD%92%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">https://zh.wikipedia.org/zh-hans/%E5%8E%9F%E5%A7%8B%E9%80%92%E5%BD%92%E5%87%BD%E6%95%B0</a></li>
 </ul>
 
         
@@ -413,7 +320,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/mysql-隐式转换/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/10/math/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -428,7 +335,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/12/05/mysql-隐式转换/" class="post-title-link" itemprop="url">mysql 隐式转换</a>
+            <a href="/2020/03/10/math/" class="post-title-link" itemprop="url">math</a>
           
         </h1>
 
@@ -443,7 +350,7 @@
                 
               
 
-              <time title="创建时间：2019-12-05 14:30:56" itemprop="dateCreated datePublished" datetime="2019-12-05T14:30:56+08:00">2019-12-05</time>
+              <time title="创建时间：2020-03-10 12:38:22" itemprop="dateCreated datePublished" datetime="2020-03-10T12:38:22+08:00">2020-03-10</time>
             </span>
           
             
@@ -454,7 +361,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-04-27 13:03:52" itemprop="dateModified" datetime="2020-04-27T13:03:52+08:00">2020-04-27</time>
+                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
               </span>
             
           
@@ -470,8 +377,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/12/05/mysql-隐式转换/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/05/mysql-隐式转换/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2020/03/10/math/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/10/math/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -486,93 +393,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h2><p><code>type and program language</code> 这本书介绍了类型系统. 什么是类型系统呢? </p>
-<h2 id="为什么会有隐式转换"><a href="#为什么会有隐式转换" class="headerlink" title="为什么会有隐式转换"></a>为什么会有隐式转换</h2><p>我写了很久弱类型语言,一直遇到各种隐式转换</p>
-<p>但是最近(2020/04/26)我大概知道隐式转换的本质了 .<br>说到底,弱类型语言也是有类型的语言,变量是有类型的.变量就是一个类型集合里面的一个元素</p>
-<p>举个例子<br>比如一个集合颜色<code>{red,yellow,white,blue}</code><br>不同类型的变量说到底也不是一个集合的内容,是没法直接比较.那么编译器就帮你做了一个映射,映射成一个类型,然后可以比较了,就那么简单.</p>
-<p>那么隐式转换的问题是什么呢?其实是开发人员可能没有注意到发生了隐式转换,执行路径和预期不一致</p>
-<p>那么隐式转换的好处是什么呢?可以少写很多代码,可以更快</p>
-<p>这本书讲了表达式和求值</p>
-<p>sql也是一种弱类型语言,所以也有弱类型的大坑隐式转换<br>mysql的类型系统有人详细描述过吗?或者有相关的文档来说明吗?就像<code>jls</code>一样,可能是我没有看完完整的mysql文档吧</p>
-<h2 id="mysql类型"><a href="#mysql类型" class="headerlink" title="mysql类型"></a>mysql类型</h2><p>mysql类型分为以下几种:</p>
-<ul>
-<li>numeric</li>
-<li>date and time</li>
-<li>string </li>
-<li>json</li>
-</ul>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(case when number_col=&apos;&apos; OR number_col IS NULL THEN 1 END) FROM test;</span><br></pre></td></tr></table></figure>
+          <p>其中一种是基于锁<br>我之前一直对acid理解有问题，锁和事务的关系，其实是这样的：</p>
+<p>1 read(x) 和write(x)是不可以交换顺序的<br>2 write(x) write(x) 是不可以交换顺序的<br>3 write(x) 和read(x) 也是不可以交换顺序的</p>
+<p>我们的事务  t1和t2 如果完全按照先执行t1再执行t2 就一点问题都没有，就是有点慢，并发低。</p>
+<p>那么我们就用一些等价的方法，尽量减少阻塞。我们不锁住整个事务，只对冲突的部分进行锁定，其他就因为等价所以顺序没有关系，因为其他部分没有顺序关系，所以不用上锁，所以并发会上去</p>
+<hr>
+<p>类型是什么？<br>类型描述了一个特别的集合</p>
+<p>结构体是什么？ </p>
+<p>结构图本质是类型的组合，也就是关系</p>
+<p>举个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct&#123;</span><br><span class="line">    int a,</span><br><span class="line">    int b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>假如number_col列是数字类型(比如<code>int</code>),则会发生隐式转换 <code>number_col = &#39;&#39;</code>里面,空字符串<code>&#39;&#39;</code>会转换成 0</p>
-<h2 id="隐式转换在什么时候发生"><a href="#隐式转换在什么时候发生" class="headerlink" title="隐式转换在什么时候发生?"></a>隐式转换在什么时候发生?</h2><p>相关sql</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 1=&apos;222&apos;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Thread 28 &quot;mysqld&quot; hit Breakpoint 1, my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">465     &#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  my_strtod (str=0x7f3a500061d0 &quot;222&quot;, end=0x7f3ad4d46998, error=0x7f3ad4d469bc) at /home/dinosaur/Downloads/mysql-5.7.21/strings/dtoa.c:465</span><br><span class="line">#1  0x0000000001f7279d in my_strntod_8bit (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, str=0x7f3a500061d0 &quot;222&quot;, length=3, end=0x7f3ad4d46998, err=0x7f3ad4d469bc)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/strings/ctype-simple.c:741</span><br><span class="line">#2  0x0000000000fdaaf2 in double_from_string_with_check (cs=0x2e8ea60 &lt;my_charset_utf8_general_ci&gt;, cptr=0x7f3a500061d0 &quot;222&quot;, end=0x7f3a500061d3 &quot;&quot;)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3577</span><br><span class="line">#3  0x0000000000fdacc5 in Item_string::val_real (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:3594</span><br><span class="line">#4  0x0000000000f9e9b9 in Item::val_result (this=0x7f3a500061d8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.h:1592</span><br><span class="line">#5  0x0000000000fedf4b in Item_cache_real::cache_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10089</span><br><span class="line">#6  0x0000000000fec91a in Item_cache::has_value (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:9650</span><br><span class="line">#7  0x0000000000fedfbb in Item_cache_real::val_real (this=0x7f3a50006928) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:10098</span><br><span class="line">#8  0x0000000000fff539 in Arg_comparator::compare_real (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:1748</span><br><span class="line">#9  0x0000000001014cc8 in Arg_comparator::compare (this=0x7f3a500065f8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.h:92</span><br><span class="line">#10 0x00000000010017e7 in Item_func_eq::val_int (this=0x7f3a50006520) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item_cmpfunc.cc:2507</span><br><span class="line">#11 0x0000000000fe6144 in Item::send (this=0x7f3a50006520, protocol=0x7f3a50001d10, buffer=0x7f3ad4d46e10) at /home/dinosaur/Downloads/mysql-5.7.21/sql/item.cc:7563</span><br><span class="line">#12 0x00000000015d4c48 in THD::send_result_set_row (this=0x7f3a50000b70, row_items=0x7f3a500058c8) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:4677</span><br><span class="line">#13 0x00000000015ceed3 in Query_result_send::send_data (this=0x7f3a50006770, items=...) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_class.cc:2717</span><br><span class="line">#14 0x00000000015e697a in JOIN::exec (this=0x7f3a500069f0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_executor.cc:158</span><br><span class="line">#15 0x00000000016892ba in handle_query (thd=0x7f3a50000b70, lex=0x7f3a50002e78, result=0x7f3a50006770, added_options=0, removed_options=0)</span><br><span class="line">    at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_select.cc:184</span><br><span class="line">#16 0x000000000163939e in execute_sqlcom_select (thd=0x7f3a50000b70, all_tables=0x0) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5156</span><br><span class="line">#17 0x0000000001632405 in mysql_execute_command (thd=0x7f3a50000b70, first_level=true) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:2792</span><br><span class="line">#18 0x000000000163a31c in mysql_parse (thd=0x7f3a50000b70, parser_state=0x7f3ad4d48550) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:5582</span><br><span class="line">#19 0x000000000162f0a3 in dispatch_command (thd=0x7f3a50000b70, com_data=0x7f3ad4d48e00, command=COM_QUERY) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:1458</span><br><span class="line">#20 0x000000000162df32 in do_command (thd=0x7f3a50000b70) at /home/dinosaur/Downloads/mysql-5.7.21/sql/sql_parse.cc:999</span><br><span class="line">#21 0x0000000001770f97 in handle_connection (arg=0x5271810) at /home/dinosaur/Downloads/mysql-5.7.21/sql/conn_handler/connection_handler_per_thread.cc:300</span><br><span class="line">#22 0x0000000001de0b41 in pfs_spawn_thread (arg=0x526e200) at /home/dinosaur/Downloads/mysql-5.7.21/storage/perfschema/pfs.cc:2190</span><br><span class="line">#23 0x00007f3ade33b6ba in start_thread (arg=0x7f3ad4d49700) at pthread_create.c:333</span><br><span class="line">#24 0x00007f3add76d41d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:109</span><br></pre></td></tr></table></figure>
-
-<h2 id="隐式转换规则"><a href="#隐式转换规则" class="headerlink" title="隐式转换规则"></a>隐式转换规则</h2><blockquote>
-<p>If one or both arguments are NULL, the result of the comparison is NULL, except for the NULL-safe &lt;=&gt; equality comparison operator. For NULL &lt;=&gt; NULL, the result is true. No conversion is needed.</p>
-</blockquote>
-<blockquote>
-<p>If both arguments in a comparison operation are strings, they are compared as strings.</p>
-</blockquote>
-<blockquote>
-<p>If both arguments are integers, they are compared as integers.</p>
-</blockquote>
-<blockquote>
-<p>Hexadecimal values are treated as binary strings if not compared to a number.</p>
-</blockquote>
-<blockquote>
-<p>If one of the arguments is a TIMESTAMP or DATETIME column and the other argument is a constant, the constant is converted to a timestamp before the comparison is performed. This is done to be more ODBC-friendly. This is not done for the arguments to IN(). To be safe, always use complete datetime, date, or time strings when doing comparisons. For example, to achieve best results when using BETWEEN with date or time values, use CAST() to explicitly convert the values to the desired data type.</p>
-</blockquote>
-<blockquote>
-<p>A single-row subquery from a table or tables is not considered a constant. For example, if a subquery returns an integer to be compared to a DATETIME value, the comparison is done as two integers. The integer is not converted to a temporal value. To compare the operands as DATETIME values, use CAST() to explicitly convert the subquery value to DATETIME.</p>
-</blockquote>
-<blockquote>
-<p>If one of the arguments is a decimal value, comparison depends on the other argument. The arguments are compared as decimal values if the other argument is a decimal or integer value, or as floating-point values if the other argument is a floating-point value.</p>
-</blockquote>
-<blockquote>
-<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</p>
-</blockquote>
-<h2 id="mysql-隐式转换可能不走索引"><a href="#mysql-隐式转换可能不走索引" class="headerlink" title="mysql 隐式转换可能不走索引"></a>mysql 隐式转换可能不走索引</h2><p>文档只描述了字符串转数字的情况</p>
-<p>举例</p>
-<p>下面是表的例子先看表的样子,表里面underlying_code 是varchar类型</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">show create table `base_underlying_information`</span><br><span class="line">CREATE TABLE `base_underlying_information` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &apos;主键ID&apos;,</span><br><span class="line">  `sec_id` varchar(10) NOT NULL COMMENT &apos;标的ID&apos;,</span><br><span class="line">  `uni_code` varchar(30) NOT NULL COMMENT &apos;标识，规则code-last-type&apos;,</span><br><span class="line">  `underlying_code` varchar(50) NOT NULL COMMENT &apos;标的代码&apos;,</span><br><span class="line">  ... 省略一堆其他字段</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  </span><br><span class="line">  KEY `idx_underlying_code` (`underlying_code`),</span><br><span class="line">) ENGINE=InnoDB  CHARSET=utf8</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>隐式转换的时候<br>当sql中 条件是数字而 <code>603023</code>的时候</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = 603023</span><br></pre></td></tr></table></figure>
-
-<p>这时候的explain 是发现没有走索引<br>因为满足以下条件</p>
-<blockquote>
-<p>In all other cases, the arguments are compared as floating-point (real) numbers. For example, <strong>a comparison of string and numeric operands takes places as a comparison of floating-point numbers.</strong></p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ALL	idx_underlying_code	\N	\N	\N	506079	10.00	Using where</span><br></pre></td></tr></table></figure>
-
-<p>发生了隐式转换</p>
-<p>下面是文档的描述</p>
-<blockquote>
-<p>For comparisons of a string column with a number, MySQL cannot use an index on the column to look up the value quickly. If str_col is an indexed string column, the index cannot be used when performing the lookup in the following statement:</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM tbl_name WHERE str_col=1;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>The reason for this is that there are many different strings that may convert to the value 1, such as ‘1’, ‘ 1’, or ‘1a’.</p>
-</blockquote>
-<ul>
-<li>没有隐式转换的时候<br>因为表里面是varchar 条件里面也是varchar 所以是没有隐式转换  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = &apos;603023&apos;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra</span><br><span class="line">1	SIMPLE	base_underlying_information	\N	ref	idx_underlying_code	idx_underlying_code	152	const	1	100.00	\N</span><br></pre></td></tr></table></figure>
-
-<p>看了一下词法分析好像没有做转换的,看了一下词法分析也没有做,那应该是运行时的时候做的,那是哪个函数呢?  </p>
-<ul>
-<li><a href="http://postgres.cn/docs/9.6/extend-type-system.html" target="_blank" rel="noopener">http://postgres.cn/docs/9.6/extend-type-system.html</a></li>
-<li><a href="https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html</a></li>
-<li><a href="https://blog.csdn.net/n88Lpo/article/details/101013055" target="_blank" rel="noopener">https://blog.csdn.net/n88Lpo/article/details/101013055</a></li>
-<li><a href="https://dev.mysql.com/doc/refman/5.7/en/type-conversion.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/type-conversion.html</a></li>
-</ul>
+<p>这个本质是  <code>RXR</code> 的关系 ，那一个结构体的变量又是什么？ 是这个关系的一个元素</p>
+<p>递归是什么？<br>递归是差分方程，递归是不动点，但是递归的内容还得看</p>
+<p>什么是可扩展性？</p>
+<p>BNF 或者类似的规则系统为什么是正确的？ 靠什么保证？是依赖范畴学或者其他数学的什么定理或者和数学的什么模型一致？<br>我一直很好奇规则系统的约束怎么做到的？因为规则系统真的很神奇</p>
 
         
       
@@ -594,7 +429,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/04/stop/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/04/induction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -609,7 +444,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/12/04/stop/" class="post-title-link" itemprop="url">docker stop</a>
+            <a href="/2020/03/04/induction/" class="post-title-link" itemprop="url">induction</a>
           
         </h1>
 
@@ -624,7 +459,7 @@
                 
               
 
-              <time title="创建时间：2019-12-04 00:32:00" itemprop="dateCreated datePublished" datetime="2019-12-04T00:32:00+08:00">2019-12-04</time>
+              <time title="创建时间：2020-03-04 12:17:19" itemprop="dateCreated datePublished" datetime="2020-03-04T12:17:19+08:00">2020-03-04</time>
             </span>
           
             
@@ -635,7 +470,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
+                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
               </span>
             
           
@@ -651,8 +486,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/12/04/stop/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/04/stop/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2020/03/04/induction/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/04/induction/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -667,113 +502,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>docker的stop本质就是kill -9 ,一个特别的信号而已。具体实现得看代码<br>// todo</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/02/ik分词/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/12/02/ik分词/" class="post-title-link" itemprop="url">ik分词</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-12-02 12:25:03" itemprop="dateCreated datePublished" datetime="2019-12-02T12:25:03+08:00">2019-12-02</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-04 17:58:10" itemprop="dateModified" datetime="2019-12-04T17:58:10+08:00">2019-12-04</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/12/02/ik分词/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/02/ik分词/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>es上面安装ik分词</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.0/elasticsearch-analysis-ik-7.4.0.zip</span><br></pre></td></tr></table></figure>
-
-<p>返回</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Downloading https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.0/elasticsearch-analysis-ik-7.4.0.zip</span><br></pre></td></tr></table></figure>
-
-<p>分词核心函数</p>
-<p>相关阅读</p>
-<ul>
-<li><a href="https://github.com/medcl/elasticsearch-analysis-ik" target="_blank" rel="noopener">https://github.com/medcl/elasticsearch-analysis-ik</a></li>
-<li><a href="https://blog.csdn.net/jiandabang/article/details/83539783" target="_blank" rel="noopener">https://blog.csdn.net/jiandabang/article/details/83539783</a></li>
-<li><a href="https://blog.csdn.net/wl044090432/article/details/71723051" target="_blank" rel="noopener">https://blog.csdn.net/wl044090432/article/details/71723051</a></li>
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我非常蠢，一直觉得很多算法题我都不会写。看算法题目觉得很多东西都是像数学老师的<code>显然可得</code>，这些定义或者前提或者结论是怎么样的显然可得？<br>我一直觉得不显然，看到<code>The Formal Semantics of Programming Languages</code>这本书，突然觉得可能是我的直觉是很差的。别人觉得显然的东西其实我觉得不显然  </p>
+<p>m</p>
+<p>最近再看<br>看到这一小节<code>Well-founded induction</code>，感觉很有用的公式</p>
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="https://drive.google.com/open?id=1-6YpokyEQLXyXD_HaFbwK0qT4WI7PqUc" target="_blank" rel="noopener">https://drive.google.com/open?id=1-6YpokyEQLXyXD_HaFbwK0qT4WI7PqUc</a></li>
 </ul>
 
         
@@ -796,7 +529,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/正则模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/20/编译原理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -811,7 +544,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/11/30/正则模式/" class="post-title-link" itemprop="url">正则模式</a>
+            <a href="/2020/02/20/编译原理/" class="post-title-link" itemprop="url">编译原理</a>
           
         </h1>
 
@@ -826,7 +559,7 @@
                 
               
 
-              <time title="创建时间：2019-11-30 23:34:50" itemprop="dateCreated datePublished" datetime="2019-11-30T23:34:50+08:00">2019-11-30</time>
+              <time title="创建时间：2020-02-20 14:24:02" itemprop="dateCreated datePublished" datetime="2020-02-20T14:24:02+08:00">2020-02-20</time>
             </span>
           
             
@@ -837,7 +570,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-09 17:10:42" itemprop="dateModified" datetime="2019-12-09T17:10:42+08:00">2019-12-09</time>
+                <time title="修改时间：2020-06-17 13:23:45" itemprop="dateModified" datetime="2020-06-17T13:23:45+08:00">2020-06-17</time>
               </span>
             
           
@@ -853,8 +586,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/11/30/正则模式/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/30/正则模式/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2020/02/20/编译原理/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/20/编译原理/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -869,10 +602,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>最近在看一个php-cs-fix的时候，发现除了贪婪模式和非贪婪模式还有其他模式<br><a href="https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659" target="_blank" rel="noopener">https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659</a></p>
-<ul>
-<li>相关阅读<br><a href="https://segmentfault.com/a/1190000010544411" target="_blank" rel="noopener">https://segmentfault.com/a/1190000010544411</a></li>
-</ul>
+          <h2 id="什么是编译？"><a href="#什么是编译？" class="headerlink" title="什么是编译？"></a>什么是编译？</h2><p>一个从一种状态集转换为另外一个状态集的过程</p>
+<h2 id="什么是优化？"><a href="#什么是优化？" class="headerlink" title="什么是优化？"></a>什么是优化？</h2><h2 id="什么是类型，类型就是集合的约束"><a href="#什么是类型，类型就是集合的约束" class="headerlink" title="什么是类型，类型就是集合的约束"></a>什么是类型，类型就是集合的约束</h2><p>一个类型就是一个集合</p>
+<h2 id="什么是隐式转换"><a href="#什么是隐式转换" class="headerlink" title="什么是隐式转换"></a>什么是隐式转换</h2><p>就是一个集合被编译器材<strong>自动</strong>从一个集合映射到另外一个集合</p>
+<p>为什么需要隐式转换? 因为不同的类型(或者说是范畴上的对象)和另外一个类型的东西是无法比较的.一个类型可以看做一个群,这个群内可以有二元操作,但是两个群是没法直接比较的.</p>
+<h2 id="同构"><a href="#同构" class="headerlink" title="同构"></a>同构</h2><p>什么是同构? 这是我最想弄明白的东西,真的很奇妙</p>
 
         
       
@@ -894,7 +628,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/mysql-explain-impossible-condition/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/07/php-反射/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -909,7 +643,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/11/28/mysql-explain-impossible-condition/" class="post-title-link" itemprop="url">mysql explain  impossible condition</a>
+            <a href="/2020/01/07/php-反射/" class="post-title-link" itemprop="url">php 反射</a>
           
         </h1>
 
@@ -924,7 +658,7 @@
                 
               
 
-              <time title="创建时间：2019-11-28 21:14:00 / 修改时间：21:15:14" itemprop="dateCreated datePublished" datetime="2019-11-28T21:14:00+08:00">2019-11-28</time>
+              <time title="创建时间：2020-01-07 17:33:31 / 修改时间：17:35:36" itemprop="dateCreated datePublished" datetime="2020-01-07T17:33:31+08:00">2020-01-07</time>
             </span>
           
             
@@ -943,8 +677,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/11/28/mysql-explain-impossible-condition/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/28/mysql-explain-impossible-condition/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2020/01/07/php-反射/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/01/07/php-反射/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -959,7 +693,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>很好奇explain的时候怎么explain到很多内容的,所以遇到了explain的内容是<code>Impossible ON condition</code>的时候觉得很好奇</p>
+          <p>反射是一个很特别的api,php的反射是一个很特别的回调</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  zim_reflection_class_hasProperty (execute_data=0x7ffff3a14220, return_value=0x7ffff3a14180) at /home/ubuntu/php-src-php-7.4.1/ext/reflection/php_reflection.c:4186</span><br><span class="line">#1  0x0000555555af49b2 in ZEND_DO_FCALL_SPEC_RETVAL_USED_HANDLER () at /home/ubuntu/php-src-php-7.4.1/Zend/zend_vm_execute.h:1729</span><br><span class="line">#2  0x0000555555b58295 in execute_ex (ex=0x7ffff3a14020) at /home/ubuntu/php-src-php-7.4.1/Zend/zend_vm_execute.h:53588</span><br><span class="line">#3  0x0000555555b5c32d in zend_execute (op_array=0x7ffff3a61c00, return_value=0x0) at /home/ubuntu/php-src-php-7.4.1/Zend/zend_vm_execute.h:57664</span><br><span class="line">#4  0x0000555555a80b27 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/ubuntu/php-src-php-7.4.1/Zend/zend.c:1663</span><br><span class="line">#5  0x00005555559e2bad in php_execute_script (primary_file=0x7fffffffd0e0) at /home/ubuntu/php-src-php-7.4.1/main/main.c:2619</span><br><span class="line">#6  0x0000555555b5ee34 in do_cli (argc=2, argv=0x55555678ab30) at /home/ubuntu/php-src-php-7.4.1/sapi/cli/php_cli.c:961</span><br><span class="line">#7  0x0000555555b5ff9e in main (argc=2, argv=0x55555678ab30) at /home/ubuntu/php-src-php-7.4.1/sapi/cli/php_cli.c:1352</span><br></pre></td></tr></table></figure>
+
 
         
       
@@ -981,7 +717,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/27/php-tokenlizer/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/23/mysql-error-sqlstate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dinosaur">
@@ -996,7 +732,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/11/27/php-tokenlizer/" class="post-title-link" itemprop="url">php tokenlizer与php-cs-fixer</a>
+            <a href="/2019/12/23/mysql-error-sqlstate/" class="post-title-link" itemprop="url">mysql_error_sqlstate</a>
           
         </h1>
 
@@ -1011,210 +747,7 @@
                 
               
 
-              <time title="创建时间：2019-11-27 15:47:44" itemprop="dateCreated datePublished" datetime="2019-11-27T15:47:44+08:00">2019-11-27</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-05 17:29:21" itemprop="dateModified" datetime="2019-12-05T17:29:21+08:00">2019-12-05</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/27/php-tokenlizer/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/27/php-tokenlizer/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="tokenlizer"><a href="#tokenlizer" class="headerlink" title="tokenlizer"></a>tokenlizer</h2><p>代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$code = &apos;&lt;?php echo &quot;string1&quot;.&quot;string2&quot;; &gt;&apos;;</span><br><span class="line"></span><br><span class="line">$tokens = token_get_all($code);</span><br><span class="line"></span><br><span class="line">foreach ($tokens as $token) &#123;</span><br><span class="line"></span><br><span class="line">    if (is_array($token)) &#123;</span><br><span class="line"></span><br><span class="line">        // 行号、标识符字面量、对应内容</span><br><span class="line"></span><br><span class="line">        printf(&quot;%d - %s\t%s\n&quot;, $token[2], token_name($token[0]), $token[1]);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出内容:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1 - T_OPEN_TAG  &lt;?php</span><br><span class="line">1 - T_ECHO      echo</span><br><span class="line">1 - T_WHITESPACE</span><br><span class="line">1 - T_CONSTANT_ENCAPSED_STRING  &quot;string1&quot;</span><br><span class="line">1 - T_CONSTANT_ENCAPSED_STRING  &quot;string2&quot;</span><br><span class="line">1 - T_WHITESPACE</span><br></pre></td></tr></table></figure>
-
-<h2 id="php-cs-fixer"><a href="#php-cs-fixer" class="headerlink" title="php-cs-fixer"></a>php-cs-fixer</h2><p>php-cs-fixer的核心函数是:<code>token_get_all</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$tokens = \defined(&apos;TOKEN_PARSE&apos;)</span><br><span class="line">    ? token_get_all($code, TOKEN_PARSE)</span><br><span class="line">    : token_get_all($code);</span><br></pre></td></tr></table></figure>
-
-<p>调用的核心堆栈:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#0 E:\PHP-CS-Fixer\src\Tokenizer\Tokens.php(222): PhpCsFixer\Tokenizer\Tokens-&gt;setCode(&apos;&lt;?php\n\n/*\n * Th...&apos;)</span><br><span class="line">#1 E:\PHP-CS-Fixer\src\Runner\Runner.php(171): PhpCsFixer\Tokenizer\Tokens::fromCode(&apos;&lt;?php\n\n/*\n * Th...&apos;)</span><br><span class="line">#2 E:\PHP-CS-Fixer\src\Runner\Runner.php(132): PhpCsFixer\Runner\Runner-&gt;fixFile(Object(SplFileInfo), Object(PhpCsFixer\Linter\ProcessLintingResult))</span><br><span class="line">#3 E:\PHP-CS-Fixer\src\Console\Command\FixCommand.php(219): PhpCsFixer\Runner\Runner-&gt;fix()</span><br><span class="line">#4 E:\PHP-CS-Fixer\vendor\symfony\console\Command\Command.php(255): PhpCsFixer\Console\Command\FixCommand-&gt;execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#5 E:\PHP-CS-Fixer\vendor\symfony\console\Application.php(982): Symfony\Component\Console\Command\Command-&gt;run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#6 E:\PHP-CS-Fixer\vendor\symfony\console\Application.php(255): Symfony\Component\Console\Application-&gt;doRunCommand(Object(PhpCsFixer\Console\Command\FixCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#7 E:\PHP-CS-Fixer\src\Console\Application.php(84): Symfony\Component\Console\Application-&gt;doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#8 E:\PHP-CS-Fixer\vendor\symfony\console\Application.php(148): PhpCsFixer\Console\Application-&gt;doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#9 E:\PHP-CS-Fixer\php-cs-fixer(101): Symfony\Component\Console\Application-&gt;run()</span><br><span class="line">#10 &#123;main&#125;</span><br></pre></td></tr></table></figure>
-
-<p>举个例子下面的堆栈: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#0 E:\PHP-CS-Fixer\src\Fixer\Operator\BinaryOperatorSpacesFixer.php(339): PhpCsFixer\Fixer\Operator\BinaryOperatorSpacesFixer-&gt;fixWhiteSpaceAroundOperatorToSingleSpace(Object(PhpCsFixer\Tokenizer\Tokens), 19)</span><br><span class="line">#1 E:\PHP-CS-Fixer\src\Fixer\Operator\BinaryOperatorSpacesFixer.php(256): PhpCsFixer\Fixer\Operator\BinaryOperatorSpacesFixer-&gt;fixWhiteSpaceAroundOperator(Object(PhpCsFixer\Tokenizer\Tokens), 19)</span><br><span class="line">#2 E:\PHP-CS-Fixer\src\AbstractFixer.php(75): PhpCsFixer\Fixer\Operator\BinaryOperatorSpacesFixer-&gt;applyFix(Object(SplFileInfo), Object(PhpCsFixer\Tokenizer\Tokens))</span><br><span class="line">#3 E:\PHP-CS-Fixer\src\Runner\Runner.php(192): PhpCsFixer\AbstractFixer-&gt;fix(Object(SplFileInfo), Object(PhpCsFixer\Tokenizer\Tokens))</span><br><span class="line">#4 E:\PHP-CS-Fixer\src\Runner\Runner.php(132): PhpCsFixer\Runner\Runner-&gt;fixFile(Object(SplFileInfo), Object(PhpCsFixer\Linter\ProcessLintingResult))</span><br><span class="line">#5 E:\PHP-CS-Fixer\src\Console\Command\FixCommand.php(219): PhpCsFixer\Runner\Runner-&gt;fix()</span><br><span class="line">#6 E:\PHP-CS-Fixer\vendor\symfony\console\Command\Command.php(255): PhpCsFixer\Console\Command\FixCommand-&gt;execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#7 E:\PHP-CS-Fixer\vendor\symfony\console\Application.php(982): Symfony\Component\Console\Command\Command-&gt;run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#8 E:\PHP-CS-Fixer\vendor\symfony\console\Application.php(255): Symfony\Component\Console\Application-&gt;doRunCommand(Object(PhpCsFixer\Console\Command\FixCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#9 E:\PHP-CS-Fixer\src\Console\Application.php(84): Symfony\Component\Console\Application-&gt;doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#10 E:\PHP-CS-Fixer\vendor\symfony\console\Application.php(148): PhpCsFixer\Console\Application-&gt;doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))</span><br><span class="line">#11 E:\PHP-CS-Fixer\php-cs-fixer(101): Symfony\Component\Console\Application-&gt;run()</span><br><span class="line">#12 &#123;main&#125;</span><br></pre></td></tr></table></figure>
-
-<p>核心就是给后面加入token<br>// todo</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/27/java线程/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/11/27/java线程/" class="post-title-link" itemprop="url">java线程</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-11-27 15:21:15 / 修改时间：15:41:01" itemprop="dateCreated datePublished" datetime="2019-11-27T15:21:15+08:00">2019-11-27</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/27/java线程/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/27/java线程/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>java的线程类是Thread<br>构造类会给他初始化线程名称</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public Thread() &#123;</span><br><span class="line">    init(null, null, &quot;Thread-&quot; + nextThreadNum(), 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>数量的话会上锁</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private static synchronized int nextThreadNum() &#123;</span><br><span class="line">    return threadInitNumber++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="线程启动start与run"><a href="#线程启动start与run" class="headerlink" title="线程启动start与run"></a>线程启动start与run</h2><p><code>run</code>和其他的方法没什么区别.如果在Linux,方法<code>start</code>则会创建新的线程并回调<code>run</code>方法.<br>很明显linux下最后调用<code>pthread_create</code></p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/26/docker与iptable/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/11/26/docker与iptable/" class="post-title-link" itemprop="url">docker与iptable和网桥</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2019-11-26 23:41:07" itemprop="dateCreated datePublished" datetime="2019-11-26T23:41:07+08:00">2019-11-26</time>
+              <time title="创建时间：2019-12-23 22:10:37" itemprop="dateCreated datePublished" datetime="2019-12-23T22:10:37+08:00">2019-12-23</time>
             </span>
           
             
@@ -1225,7 +758,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-01-10 13:35:36" itemprop="dateModified" datetime="2020-01-10T13:35:36+08:00">2020-01-10</time>
+                <time title="修改时间：2019-12-25 13:25:49" itemprop="dateModified" datetime="2019-12-25T13:25:49+08:00">2019-12-25</time>
               </span>
             
           
@@ -1241,8 +774,8 @@
       
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/11/26/docker与iptable/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/26/docker与iptable/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/12/23/mysql-error-sqlstate/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/23/mysql-error-sqlstate/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1257,77 +790,448 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="如何创建网桥"><a href="#如何创建网桥" class="headerlink" title="如何创建网桥"></a>如何创建网桥</h2><p>创建网桥,可以通过<code>bridge-utils</code>包的<code>brctl</code>来创建一个网桥</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$sudo brctl addbr br0</span><br></pre></td></tr></table></figure>
+          <p>当我们使用jdbc 或者pdo或者其他mysql的驱动的时候，经常看到错误会有两个错误码<br>举个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error number: 1005; Symbol: ER_CANT_CREATE_TABLE; SQLSTATE: HY000</span><br></pre></td></tr></table></figure>
 
-<p>然后通过<code>brctl  show</code>可以看到列出的网桥</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$brctl  show</span><br><span class="line">bridge name	bridge id		STP enabled	interfaces</span><br><span class="line">br0		8000.000000000000	no</span><br></pre></td></tr></table></figure>
+<p><code>1005</code>和<code>HY000</code><br>或者是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry &apos;34&apos; for key &apos;PRIMARY&apos;,</span><br></pre></td></tr></table></figure>
 
-<p>通过<code>strace</code>查看系统调用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$sudo strace  brctl addbr br1</span><br></pre></td></tr></table></figure>
-
-<p>输出</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@VM-0-3-ubuntu:~/libnlbuild/bin$ sudo strace  brctl addbr br1</span><br><span class="line">...</span><br><span class="line">socket(AF_UNIX, SOCK_STREAM, 0)         = 3</span><br><span class="line">ioctl(3, SIOCBRADDBR, &quot;br1&quot;)            = 0</span><br><span class="line">+++ exited with 0 +++</span><br></pre></td></tr></table></figure>
-
-<p>看到调用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ioctl(3, SIOCBRADDBR, &quot;br1&quot;)</span><br></pre></td></tr></table></figure>
-
-<p><code>3</code> 指的是打开的文件描述符.<code>0,1,2</code>都是特殊的标准输入输出错误等的文件描述符,所以下一个打开的文件就是<code>3</code></p>
-<p>我写的一个创建网桥的小例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//  bradd.c</span><br><span class="line">#include &lt;linux/sockios.h&gt;</span><br><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;sys/socket.h&gt;</span><br><span class="line">#include &lt;sys/un.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;sys/ioctl.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">int main()&#123;</span><br><span class="line">        int br_socket_fd,ret;</span><br><span class="line">        if(br_socket_fd = socket(AF_LOCAL, SOCK_STREAM, 0) &lt; 0)&#123;</span><br><span class="line">            perror(&quot;Error: &quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        if(ret = ioctl(br_socket_fd, SIOCBRADDBR,&quot;hello&quot;) &lt; 0) // SIOCBRADDBR 由sockios.h 引入</span><br><span class="line">        &#123;</span><br><span class="line">            perror(&quot;ioctl error&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$gcc bradd.c -o </span><br><span class="line">## 需要使用sudo添加网桥</span><br><span class="line">$sudo ./bradd</span><br></pre></td></tr></table></figure>
-
-<p>然后用<code>brctl show</code> 输出,创建了一个叫hello的网桥:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ brctl show</span><br><span class="line">bridge name	bridge id		STP enabled	interfaces		</span><br><span class="line">docker0		8000.024273119fd1	no		vethe6cf6a0</span><br><span class="line">hello		8000.000000000000	no</span><br></pre></td></tr></table></figure>
-
-<p>然后我们发现了<code>docker0</code>和<code>hello</code>两个网桥相差一个<code>interfaces</code>,我们如何添加<code>veth</code>呢?</p>
-<ul>
-<li>在brctl 中可以使用<code>brctl addif</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int br_add_interface(const char *bridge, const char *dev)</span><br><span class="line">&#123;</span><br><span class="line">	struct ifreq ifr;</span><br><span class="line">	...</span><br><span class="line">	int ifindex = if_nametoindex(dev);</span><br><span class="line">	...</span><br><span class="line">	strncpy(ifr.ifr_name, bridge, IFNAMSIZ);</span><br><span class="line">	ifr.ifr_ifindex = ifindex;</span><br><span class="line">	err = ioctl(br_socket_fd, SIOCBRADDIF, &amp;ifr);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<p>最后调用linux 的<code>net/bridge/br_if.c</code>:</p>
-<p>// dev 是我们要添加的设备<br>// br 是我们的网桥</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">/* called with RTNL */</span><br><span class="line">int br_add_if(struct net_bridge *br, struct net_device *dev,</span><br><span class="line">	      struct netlink_ext_ack *extack)</span><br><span class="line">&#123;</span><br><span class="line">	struct net_bridge_port *p;</span><br><span class="line">	int err = 0;</span><br><span class="line">	unsigned br_hr, dev_hr;</span><br><span class="line">	bool changed_addr;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">	p = new_nbp(br, dev);</span><br><span class="line">	if (IS_ERR(p))</span><br><span class="line">		return PTR_ERR(p);</span><br><span class="line"></span><br><span class="line">	call_netdevice_notifiers(NETDEV_JOIN, dev);</span><br><span class="line"></span><br><span class="line">	err = dev_set_allmulti(dev, 1);</span><br><span class="line">	if (err) &#123;</span><br><span class="line">		kfree(p);	/* kobject not yet init&apos;d, manually free */</span><br><span class="line">		goto err1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = kobject_init_and_add(&amp;p-&gt;kobj, &amp;brport_ktype, &amp;(dev-&gt;dev.kobj),</span><br><span class="line">				   SYSFS_BRIDGE_PORT_ATTR);</span><br><span class="line">	if (err)</span><br><span class="line">		goto err2;</span><br><span class="line"></span><br><span class="line">	err = br_sysfs_addif(p);</span><br><span class="line">	if (err)</span><br><span class="line">		goto err2;</span><br><span class="line"></span><br><span class="line">	err = br_netpoll_enable(p);</span><br><span class="line">	if (err)</span><br><span class="line">		goto err3;</span><br><span class="line"></span><br><span class="line">	err = netdev_rx_handler_register(dev, br_handle_frame, p);</span><br><span class="line">	if (err)</span><br><span class="line">		goto err4;</span><br><span class="line"></span><br><span class="line">	dev-&gt;priv_flags |= IFF_BRIDGE_PORT;</span><br><span class="line"></span><br><span class="line">	err = netdev_master_upper_dev_link(dev, br-&gt;dev, NULL, NULL, extack);</span><br><span class="line">	if (err)</span><br><span class="line">		goto err5;</span><br><span class="line"></span><br><span class="line">	err = nbp_switchdev_mark_set(p);</span><br><span class="line">	if (err)</span><br><span class="line">		goto err6;</span><br><span class="line"></span><br><span class="line">	dev_disable_lro(dev);</span><br><span class="line"></span><br><span class="line">	list_add_rcu(&amp;p-&gt;list, &amp;br-&gt;port_list);</span><br><span class="line"></span><br><span class="line">	nbp_update_port_count(br);</span><br><span class="line"></span><br><span class="line">	netdev_update_features(br-&gt;dev);</span><br><span class="line"></span><br><span class="line">	br_hr = br-&gt;dev-&gt;needed_headroom;</span><br><span class="line">	dev_hr = netdev_get_fwd_headroom(dev);</span><br><span class="line">	if (br_hr &lt; dev_hr)</span><br><span class="line">		update_headroom(br, dev_hr);</span><br><span class="line">	else</span><br><span class="line">		netdev_set_rx_headroom(dev, br_hr);</span><br><span class="line"></span><br><span class="line">	if (br_fdb_insert(br, p, dev-&gt;dev_addr, 0))</span><br><span class="line">		netdev_err(dev, &quot;failed insert local address bridge forwarding table\n&quot;);</span><br><span class="line"></span><br><span class="line">	if (br-&gt;dev-&gt;addr_assign_type != NET_ADDR_SET) &#123;</span><br><span class="line">		/* Ask for permission to use this MAC address now, even if we</span><br><span class="line">		 * don&apos;t end up choosing it below.</span><br><span class="line">		 */</span><br><span class="line">		err = dev_pre_changeaddr_notify(br-&gt;dev, dev-&gt;dev_addr, extack);</span><br><span class="line">		if (err)</span><br><span class="line">			goto err7;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err = nbp_vlan_init(p, extack);</span><br><span class="line">	if (err) &#123;</span><br><span class="line">		netdev_err(dev, &quot;failed to initialize vlan filtering on this port\n&quot;);</span><br><span class="line">		goto err7;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	spin_lock_bh(&amp;br-&gt;lock);</span><br><span class="line">	changed_addr = br_stp_recalculate_bridge_id(br);</span><br><span class="line"></span><br><span class="line">	if (netif_running(dev) &amp;&amp; netif_oper_up(dev) &amp;&amp;</span><br><span class="line">	    (br-&gt;dev-&gt;flags &amp; IFF_UP))</span><br><span class="line">		br_stp_enable_port(p);</span><br><span class="line">	spin_unlock_bh(&amp;br-&gt;lock);</span><br><span class="line"></span><br><span class="line">	br_ifinfo_notify(RTM_NEWLINK, NULL, p);</span><br><span class="line"></span><br><span class="line">	if (changed_addr)</span><br><span class="line">		call_netdevice_notifiers(NETDEV_CHANGEADDR, br-&gt;dev);</span><br><span class="line"></span><br><span class="line">	br_mtu_auto_adjust(br);</span><br><span class="line">	br_set_gso_limits(br);</span><br><span class="line"></span><br><span class="line">	kobject_uevent(&amp;p-&gt;kobj, KOBJ_ADD);</span><br><span class="line"></span><br><span class="line">	return 0;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>添加虚拟设备:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># strace  ip link add vethaaa type veth peer name vethbbb</span><br><span class="line">execve(&quot;/sbin/ip&quot;, [&quot;ip&quot;, &quot;link&quot;, &quot;add&quot;, &quot;vethaaa&quot;, &quot;type&quot;, &quot;veth&quot;, &quot;peer&quot;, &quot;name&quot;, &quot;vethbbb&quot;], 0x7ffed8af30f0 /* 23 vars */) </span><br><span class="line">...</span><br><span class="line">socket(AF_NETLINK, SOCK_RAW|SOCK_CLOEXEC, NETLINK_ROUTE) = 3</span><br><span class="line">setsockopt(3, SOL_SOCKET, SO_SNDBUF, [32768], 4) = 0</span><br><span class="line">setsockopt(3, SOL_SOCKET, SO_RCVBUF, [1048576], 4) = 0</span><br><span class="line">setsockopt(3, SOL_NETLINK, NETLINK_EXT_ACK, [1], 4) = 0</span><br><span class="line">bind(3, &#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, 12) = 0</span><br><span class="line">getsockname(3, &#123;sa_family=AF_NETLINK, nl_pid=26226, nl_groups=00000000&#125;, [12]) = 0</span><br><span class="line">sendto(3, &#123;&#123;len=32, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK, seq=0, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;&#125;, 32, 0, NULL, 0) = 32</span><br><span class="line">recvmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=&#123;&#123;len=52, type=NLMSG_ERROR, flags=0, seq=0, pid=26226&#125;, &#123;error=-ENODEV, msg=&#123;&#123;len=32, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK, seq=0, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;&#125;&#125;&#125;, iov_len=16384&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=0&#125;, 0) = 52</span><br><span class="line">access(&quot;/proc/net&quot;, R_OK)               = 0</span><br><span class="line">access(&quot;/proc/net/unix&quot;, R_OK)          = 0</span><br><span class="line">socket(AF_UNIX, SOCK_DGRAM|SOCK_CLOEXEC, 0) = 4</span><br><span class="line">ioctl(4, SIOCGIFINDEX, &#123;ifr_name=&quot;vethaaa&quot;&#125;) = -1 ENODEV (No such device)</span><br><span class="line">close(4)                                = 0</span><br><span class="line">brk(NULL)                               = 0x560e12455000</span><br><span class="line">brk(0x560e12476000)                     = 0x560e12476000</span><br><span class="line">openat(AT_FDCWD, &quot;/usr/lib/ip/link_veth.so&quot;, O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)</span><br><span class="line">sendmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=&#123;&#123;len=92, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK|NLM_F_EXCL|NLM_F_CREATE, seq=1576836139, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;, [&#123;&#123;nla_len=12, nla_type=IFLA_IFNAME&#125;, &quot;vethaaa&quot;&#125;, &#123;&#123;nla_len=48, nla_type=IFLA_LINKINFO&#125;, [&#123;&#123;nla_len=8, nla_type=IFLA_INFO_KIND&#125;, &quot;veth&quot;...&#125;, &#123;&#123;nla_len=36, nla_type=IFLA_INFO_DATA&#125;, &quot;\x20\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x0c\x00\x03\x00\x76\x65\x74\x68\x62\x62\x62\x00&quot;&#125;]&#125;]&#125;, iov_len=92&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=0&#125;, 0) = 92</span><br><span class="line">recvmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=NULL, iov_len=0&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=MSG_TRUNC&#125;, MSG_PEEK|MSG_TRUNC) = 36</span><br><span class="line">recvmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=&#123;&#123;len=36, type=NLMSG_ERROR, flags=NLM_F_CAPPED, seq=1576836139, pid=26226&#125;, &#123;error=0, msg=&#123;len=92, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK|NLM_F_EXCL|NLM_F_CREATE, seq=1576836139, pid=0&#125;&#125;&#125;, iov_len=36&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=0&#125;, 0) = 36</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">socket(AF_NETLINK, SOCK_RAW|SOCK_CLOEXEC, NETLINK_ROUTE) = 3</span><br><span class="line">setsockopt(3, SOL_SOCKET, SO_SNDBUF, [32768], 4) = 0</span><br><span class="line">setsockopt(3, SOL_SOCKET, SO_RCVBUF, [1048576], 4) = 0</span><br><span class="line">setsockopt(3, SOL_NETLINK, NETLINK_EXT_ACK, [1], 4) = 0</span><br><span class="line">bind(3, &#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, 12) = 0</span><br><span class="line">getsockname(3, &#123;sa_family=AF_NETLINK, nl_pid=18263, nl_groups=00000000&#125;, [12]) = 0</span><br><span class="line">sendto(3, &#123;&#123;len=32, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK, seq=0, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;&#125;, 32, 0, NULL, 0) = 32</span><br><span class="line">recvmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=&#123;&#123;len=52, type=NLMSG_ERROR, flags=0, seq=0, pid=18263&#125;, &#123;error=-EPERM, msg=&#123;&#123;len=32, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK, seq=0, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;&#125;&#125;&#125;, iov_len=16384&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=0&#125;, 0) = 52</span><br><span class="line">access(&quot;/proc/net&quot;, R_OK)               = 0</span><br><span class="line">access(&quot;/proc/net/unix&quot;, R_OK)          = 0</span><br><span class="line">socket(AF_UNIX, SOCK_DGRAM|SOCK_CLOEXEC, 0) = 4</span><br><span class="line">ioctl(4, SIOCGIFINDEX, &#123;ifr_name=&quot;p1&quot;&#125;) = -1 ENODEV (No such device)</span><br><span class="line">close(4)                                = 0</span><br><span class="line">brk(NULL)                               = 0x5595d01bb000</span><br><span class="line">brk(0x5595d01dc000)                     = 0x5595d01dc000</span><br><span class="line">openat(AT_FDCWD, &quot;/usr/lib/ip/link_veth.so&quot;, O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)</span><br><span class="line">sendmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=&#123;&#123;len=84, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK|NLM_F_EXCL|NLM_F_CREATE, seq=1576748752, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;, [&#123;&#123;nla_len=7, nla_type=IFLA_IFNAME&#125;, &quot;p1&quot;&#125;, &#123;&#123;nla_len=44, nla_type=IFLA_LINKINFO&#125;, [&#123;&#123;nla_len=8, nla_type=IFLA_INFO_KIND&#125;, &quot;veth&quot;...&#125;, &#123;&#123;nla_len=32, nla_type=IFLA_INFO_DATA&#125;, &quot;\x1c\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x03\x00\x70\x32\x00\x00&quot;&#125;]&#125;]&#125;, iov_len=84&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=0&#125;, 0) = 84</span><br><span class="line">recvmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=NULL, iov_len=0&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=MSG_TRUNC&#125;, MSG_PEEK|MSG_TRUNC) = 104</span><br><span class="line">recvmsg(3, &#123;msg_name=&#123;sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000&#125;, msg_namelen=12, msg_iov=[&#123;iov_base=&#123;&#123;len=104, type=NLMSG_ERROR, flags=0, seq=1576748752, pid=18263&#125;, &#123;error=-EPERM, msg=&#123;&#123;len=84, type=RTM_NEWLINK, flags=NLM_F_REQUEST|NLM_F_ACK|NLM_F_EXCL|NLM_F_CREATE, seq=1576748752, pid=0&#125;, &#123;ifi_family=AF_UNSPEC, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0&#125;, [&#123;&#123;nla_len=7, nla_type=IFLA_IFNAME&#125;, &quot;p1&quot;&#125;, &#123;&#123;nla_len=44, nla_type=IFLA_LINKINFO&#125;, [&#123;&#123;nla_len=8, nla_type=IFLA_INFO_KIND&#125;, &quot;veth&quot;...&#125;, &#123;&#123;nla_len=32, nla_type=IFLA_INFO_DATA&#125;, &quot;\x1c\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x03\x00\x70\x32\x00\x00&quot;&#125;]&#125;]&#125;&#125;&#125;, iov_len=104&#125;], msg_iovlen=1, msg_controllen=0, msg_flags=0&#125;, 0) = 104</span><br><span class="line">write(2, &quot;RTNETLINK answers: Operation not&quot;..., 43RTNETLINK answers: Operation not permitted</span><br><span class="line">) = 43</span><br><span class="line">exit_group(2)                           = ?</span><br><span class="line">+++ exited with 2 +++</span><br></pre></td></tr></table></figure>
-
-<p>linux 相关的netlink veth内容:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// drivers\net\veth.c</span><br><span class="line">static struct rtnl_link_ops veth_link_ops = &#123;</span><br><span class="line">	.kind		= DRV_NAME,</span><br><span class="line">	.priv_size	= sizeof(struct veth_priv),</span><br><span class="line">	.setup		= veth_setup,</span><br><span class="line">	.validate	= veth_validate,</span><br><span class="line">	.newlink	= veth_newlink,</span><br><span class="line">	.dellink	= veth_dellink,</span><br><span class="line">	.policy		= veth_policy,</span><br><span class="line">	.maxtype	= VETH_INFO_MAX,</span><br><span class="line">	.get_link_net	= veth_get_link_net,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">E:\linux-master\net\netlink\af_netlink.c</span><br><span class="line">static const struct proto_ops netlink_ops = &#123;</span><br><span class="line">	.family =	PF_NETLINK,</span><br><span class="line">	.owner =	THIS_MODULE,</span><br><span class="line">	.release =	netlink_release,</span><br><span class="line">	.bind =		netlink_bind,</span><br><span class="line">	.connect =	netlink_connect,</span><br><span class="line">	.socketpair =	sock_no_socketpair,</span><br><span class="line">	.accept =	sock_no_accept,</span><br><span class="line">	.getname =	netlink_getname,</span><br><span class="line">	.poll =		datagram_poll,</span><br><span class="line">	.ioctl =	netlink_ioctl,</span><br><span class="line">	.listen =	sock_no_listen,</span><br><span class="line">	.shutdown =	sock_no_shutdown,</span><br><span class="line">	.setsockopt =	netlink_setsockopt,</span><br><span class="line">	.getsockopt =	netlink_getsockopt,</span><br><span class="line">	.sendmsg =	netlink_sendmsg,</span><br><span class="line">	.recvmsg =	netlink_recvmsg,</span><br><span class="line">	.mmap =		sock_no_mmap,</span><br><span class="line">	.sendpage =	sock_no_sendpage,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="添加veth-设备"><a href="#添加veth-设备" class="headerlink" title="添加veth 设备"></a>添加veth 设备</h2><p>首先是添加socket </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  socket () at ../sysdeps/unix/syscall-template.S:78</span><br><span class="line">#1  0x00005555555b60c7 in rtnl_open_byproto (rth=0x5555557d8020 &lt;rth&gt;, subscriptions=0, protocol=&lt;optimized out&gt;) at libnetlink.c:194</span><br><span class="line">#2  0x000055555555f956 in main (argc=9, argv=0x7fffffffe548) at ip.c:308</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint 6, __libc_sendmsg (fd=3, msg=msg@entry=0x7fffffffdd70, flags=flags@entry=0) at ../sysdeps/unix/sysv/linux/sendmsg.c:28</span><br><span class="line">28	../sysdeps/unix/sysv/linux/sendmsg.c: No such file or directory.</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  __libc_sendmsg (fd=3, msg=msg@entry=0x7fffffffdd70, flags=flags@entry=0) at ../sysdeps/unix/sysv/linux/sendmsg.c:28</span><br><span class="line">#1  0x00005555555b5c8f in __rtnl_talk_iov (rtnl=0x5555557d8020 &lt;rth&gt;, iov=iov@entry=0x7fffffffddf0, iovlen=iovlen@entry=1, answer=answer@entry=0x0, show_rtnl_err=show_rtnl_err@entry=true, </span><br><span class="line">    errfn=0x0) at libnetlink.c:887</span><br><span class="line">#2  0x00005555555b7225 in __rtnl_talk (errfn=0x0, show_rtnl_err=true, answer=&lt;optimized out&gt;, n=0x7fffffffde40, rtnl=&lt;optimized out&gt;) at libnetlink.c:1000</span><br><span class="line">#3  rtnl_talk (rtnl=&lt;optimized out&gt;, n=n@entry=0x7fffffffde40, answer=answer@entry=0x0) at libnetlink.c:1006</span><br><span class="line">#4  0x000055555557bc6e in iplink_modify (cmd=cmd@entry=16, flags=flags@entry=1536, argc=3, argc@entry=6, argv=&lt;optimized out&gt;, argv@entry=0x7fffffffe560) at iplink.c:1084</span><br><span class="line">#5  0x000055555557c0c6 in do_iplink (argc=7, argv=0x7fffffffe558) at iplink.c:1641</span><br><span class="line">#6  0x000055555555ff0c in do_cmd (argv0=0x7fffffffe7d8 &quot;link&quot;, argc=8, argv=0x7fffffffe550) at ip.c:113</span><br><span class="line">#7  0x000055555555f9a0 in main (argc=9, argv=0x7fffffffe548) at ip.c:317</span><br></pre></td></tr></table></figure>
-
-<p>比如命令<code>ip link add veth_0 type veth peer name veth_0_peer</code><br>初始化的时候req.n 的长度是32</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> p req.n.nlmsg_len </span><br><span class="line">$1 = 32</span><br></pre></td></tr></table></figure>
-
-<p>经过<code>ret = iplink_parse(argc, argv, &amp;req, &amp;type);</code> 后变成<code>44</code>,</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p ((char *)n)[32]@64</span><br><span class="line">$50 = &quot;\v\000\003\000veth_0\000\000\064\000\022\000\b\000\001\000veth(\000\002\000$\000\001&quot;, &apos;\000&apos; &lt;repeats 17 times&gt;, &quot;\020\000\003\000veth_0_peer&quot;</span><br></pre></td></tr></table></figure>
-
-<h2 id="iptables是什么？"><a href="#iptables是什么？" class="headerlink" title="iptables是什么？"></a>iptables是什么？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># type iptables</span><br><span class="line">iptables is hashed (/sbin/iptables)</span><br></pre></td></tr></table></figure>
-
-<p>iptables命令为什么可以处理那些问题呢？</p>
-<h2 id="iptable原理"><a href="#iptable原理" class="headerlink" title="iptable原理"></a>iptable原理</h2><p>iptable就是通过socket  netlink做特别的通信,改变netfilter子系统的相关hook</p>
-<p><a href="https://netfilter.org/projects/iptables/downloads.html" target="_blank" rel="noopener">源码</a><br><a href="https://my.oschina.net/qihh/blog/62169" target="_blank" rel="noopener">相关阅读</a></p>
+<p><code>23000</code>和<code>1062</code></p>
+<p>那么两者的关系是怎么样的呢？</p>
+<blockquote>
+<blockquote>
+<p>Error code: This value is numeric. It is MySQL-specific and is not portable to other database systems.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>SQLSTATE value: This value is a five-character string (for example, ‘42S02’). SQLSTATE values are taken from ANSI SQL and ODBC and are more standardized than the numeric error codes.</p>
+</blockquote>
+<p>不管怎么样，你会看到两个错误一个是<code>SQLSTATE</code>,一个是 <code>errorcode</code>,两者区别就是SQLSTATE更加标准或者通用一些，而errorcode则是mysql自己的   </p>
 <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://www.cnblogs.com/yhp-smarthome/p/6910787.html" target="_blank" rel="noopener">https://www.cnblogs.com/yhp-smarthome/p/6910787.html</a></li>
-<li><a href="https://goyalankit.com/blog/linux-bridge" target="_blank" rel="noopener">https://goyalankit.com/blog/linux-bridge</a></li>
-<li><a href="http://www.linuxfromscratch.org/blfs/view/svn/basicnet/bridge-utils.html" target="_blank" rel="noopener">http://www.linuxfromscratch.org/blfs/view/svn/basicnet/bridge-utils.html</a></li>
-<li><a href="https://elixir.bootlin.com/linux/v3.3.3/source/include/linux/sockios.h#L122" target="_blank" rel="noopener">https://elixir.bootlin.com/linux/v3.3.3/source/include/linux/sockios.h#L122</a></li>
-<li><a href="http://blog.chinaunix.net/uid-27017686-id-5057025.html" target="_blank" rel="noopener">http://blog.chinaunix.net/uid-27017686-id-5057025.html</a></li>
-<li><a href="https://www.cnblogs.com/wenqiang/p/6306727.html" target="_blank" rel="noopener">https://www.cnblogs.com/wenqiang/p/6306727.html</a></li>
-<li><a href="https://blog.csdn.net/sty23122555/article/details/51581979" target="_blank" rel="noopener">https://blog.csdn.net/sty23122555/article/details/51581979</a></li>
-<li><a href="https://segmentfault.com/a/1190000016080251" target="_blank" rel="noopener">https://segmentfault.com/a/1190000016080251</a></li>
-<li><a href="https://www.cnblogs.com/wenqiang/p/6634447.html" target="_blank" rel="noopener">https://www.cnblogs.com/wenqiang/p/6634447.html</a></li>
+<li><a href="https://stackoverflow.com/questions/54734922/whats-the-difference-between-error-number-and-sqlstate-code" target="_blank" rel="noopener">https://stackoverflow.com/questions/54734922/whats-the-difference-between-error-number-and-sqlstate-code</a></li>
 </ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/clickhouse-编译安装/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/19/clickhouse-编译安装/" class="post-title-link" itemprop="url">clickhouse 编译安装</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-19 10:26:59" itemprop="dateCreated datePublished" datetime="2019-12-19T10:26:59+08:00">2019-12-19</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-11 10:17:20" itemprop="dateModified" datetime="2020-06-11T10:17:20+08:00">2020-06-11</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/19/clickhouse-编译安装/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/19/clickhouse-编译安装/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="编译流程"><a href="#编译流程" class="headerlink" title="编译流程"></a>编译流程</h2><ul>
+<li><p>github 拉代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/ClickHouse/ClickHouse.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建子目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd ClickHouse/</span><br><span class="line">mkdir build</span><br><span class="line">cmake ..</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译需要升级到gcc-8 g++8:</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GCC version must be at least 8.  For example, if GCC 8 is available under</span><br><span class="line"> gcc-8, g++-8 names, do the following: export CC=gcc-8 CXX=g++-8;</span><br></pre></td></tr></table></figure>
+
+<p>我的操作系统是<code>ubuntu</code>所以</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo  apt-get install gcc-8 g++-8</span><br><span class="line">$ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8</span><br><span class="line">update-alternatives: using /usr/bin/gcc-8 to provide /usr/bin/gcc (gcc) in auto mode</span><br></pre></td></tr></table></figure>
+
+<p>然后看<code>gcc</code>版本升级到<code>8.3.0</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -v</span><br><span class="line">Using built-in specs.</span><br><span class="line">...</span><br><span class="line">gcc version 8.3.0 (Ubuntu 8.3.0-6ubuntu1~18.04.1)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删掉cmake相关缓存<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm -rf   CMakeCache.txt CMakeFiles</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>重新跑有这样的错误:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Submodules are not initialized.  Run</span><br><span class="line"></span><br><span class="line">	git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+
+<p>然后初始化<code>git submodule</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git submodule update --init --recursive</span><br></pre></td></tr></table></figure>
+
+<p>因为我用的是<code>v2ray</code> + <code>proxychains4</code>,勉强把那些包下下来了<br>然后继续跑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmake -DCMAKE_BUILD_TYPE=Debug  -DCMAKE_INSTALL_PREFIX=/home/ubuntu/click  ..</span><br></pre></td></tr></table></figure>
+
+<p>然后我发现内存要比较大，而且硬盘要ssd，不然会编译特别慢</p>
+<h2 id="使用docker-compse启动"><a href="#使用docker-compse启动" class="headerlink" title="使用docker-compse启动"></a>使用docker-compse启动</h2><p><a href="https://blog.csdn.net/yan_zuoyu/article/details/80811808" target="_blank" rel="noopener">相关参考</a></p>
+<ul>
+<li>第一步创建文件 <code>config.xml</code>和<code>users.xml</code></li>
+<li>第二步 新建docker-compose.yml</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">version: &apos;3&apos;</span><br><span class="line">services:</span><br><span class="line">  clickhouse-server:</span><br><span class="line">    image: yandex/clickhouse-server</span><br><span class="line">    container_name: clickhouse-server</span><br><span class="line">    hostname: clickhouse-server</span><br><span class="line">    ports:</span><br><span class="line">      - 8123:8123</span><br><span class="line">    expose:</span><br><span class="line">      - 9000</span><br><span class="line">      - 9009</span><br><span class="line">    volumes:</span><br><span class="line">      - ./config.xml:/etc/clickhouse-server/config.xml</span><br><span class="line">      - ./users.xml:/etc/clickhouse-server/users.xml</span><br><span class="line">      - ./data:/var/lib/clickhouse</span><br><span class="line">      - ./log/clickhouse-server.log:/var/log/clickhouse-server/clickhouse-server.log</span><br><span class="line">      - ./log/clickhouse-server.err.log:/var/log/clickhouse-server/clickhouse-server.err.log</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第二步</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+
+<p>使用clickhouse-client 连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --rm --link clickhouse-server:clickhouse-server --net clickhouse_default yandex/clickhouse-client --host clickhouse-server --user seluser --password 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://askubuntu.com/questions/1028601/install-gcc-8-only-on-ubuntu-18-04" target="_blank" rel="noopener">https://askubuntu.com/questions/1028601/install-gcc-8-only-on-ubuntu-18-04</a></li>
+<li><a href="https://www.jianshu.com/p/0bef91a67860" target="_blank" rel="noopener">https://www.jianshu.com/p/0bef91a67860</a></li>
+<li><a href="https://vsupalov.com/debug-docker-compose-service/" target="_blank" rel="noopener">https://vsupalov.com/debug-docker-compose-service/</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/12/java-Class-forName/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/12/java-Class-forName/" class="post-title-link" itemprop="url">java Class_forName</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-12 17:32:03 / 修改时间：17:37:19" itemprop="dateCreated datePublished" datetime="2019-12-12T17:32:03+08:00">2019-12-12</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/12/java-Class-forName/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/12/java-Class-forName/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在看到jdbc使用的例子里面,看到了Class.forName(“xxx”)的相关调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(&quot;com.mysql.jdbc.Driver&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>这有什么用的?<br>其实可以约等于PHP的<code>class_exist</code>,或者说是golang的空引入<br><code>import _ &quot;github.com/go-sql-driver/mysql</code><br>就是为了调用一下static 块的代码,初始化一下</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://www.cnblogs.com/xingzc/p/5760166.html" target="_blank" rel="noopener">https://www.cnblogs.com/xingzc/p/5760166.html</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/12/mysql严格模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/12/mysql严格模式/" class="post-title-link" itemprop="url">mysql严格模式</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-12 17:06:41 / 修改时间：17:14:47" itemprop="dateCreated datePublished" datetime="2019-12-12T17:06:41+08:00">2019-12-12</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/12/mysql严格模式/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/12/mysql严格模式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>获取sql_mode</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT @@sql_mode;</span><br></pre></td></tr></table></figure>
+
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/12/php-pdo-相关参数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/12/12/php-pdo-相关参数/" class="post-title-link" itemprop="url">php pdo 相关参数</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-12-12 17:04:52 / 修改时间：17:29:19" itemprop="dateCreated datePublished" datetime="2019-12-12T17:04:52+08:00">2019-12-12</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/12/12/php-pdo-相关参数/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/12/12/php-pdo-相关参数/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>thinkphp5 的默认配置会开启<code>ERRMODE_EXCEPTION</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PDO::ATTR_CASE              =&gt; PDO::CASE_NATURAL,</span><br><span class="line">PDO::ATTR_ERRMODE           =&gt; PDO::ERRMODE_EXCEPTION,</span><br><span class="line">PDO::ATTR_ORACLE_NULLS      =&gt; PDO::NULL_NATURAL,</span><br><span class="line">PDO::ATTR_STRINGIFY_FETCHES =&gt; false,</span><br><span class="line">PDO::ATTR_EMULATE_PREPARES  =&gt; false,</span><br></pre></td></tr></table></figure>
+
+<h2 id="pdo实现"><a href="#pdo实现" class="headerlink" title="pdo实现"></a>pdo实现</h2><p>pdo 的<code>raise_impl_error</code>会根据配置判断是否需要抛出异常,当设置成<code>PDO::ERRMODE_EXCEPTION</code>,则可以需要抛出异常</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">void pdo_raise_impl_error(pdo_dbh_t *dbh, pdo_stmt_t *stmt, const char *sqlstate, const char *supp) /* &#123;&#123;&#123; */</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">	if (dbh &amp;&amp; dbh-&gt;error_mode != PDO_ERRMODE_EXCEPTION) &#123;  // 没有设置 ERRMODE_EXCEPTION则抛warning</span><br><span class="line">		php_error_docref(NULL, E_WARNING, &quot;%s&quot;, message);</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		zval ex, info;</span><br><span class="line">		zend_class_entry *def_ex = php_pdo_get_exception_base(1), *pdo_ex = php_pdo_get_exception();</span><br><span class="line"></span><br><span class="line">		object_init_ex(&amp;ex, pdo_ex);</span><br><span class="line"></span><br><span class="line">		zend_update_property_string(def_ex, &amp;ex, &quot;message&quot;, sizeof(&quot;message&quot;)-1, message);</span><br><span class="line">		zend_update_property_string(def_ex, &amp;ex, &quot;code&quot;, sizeof(&quot;code&quot;)-1, *pdo_err);</span><br><span class="line"></span><br><span class="line">		array_init(&amp;info);</span><br><span class="line"></span><br><span class="line">		add_next_index_string(&amp;info, *pdo_err);</span><br><span class="line">		add_next_index_long(&amp;info, 0);</span><br><span class="line">		zend_update_property(pdo_ex, &amp;ex, &quot;errorInfo&quot;, sizeof(&quot;errorInfo&quot;)-1, &amp;info);</span><br><span class="line">		zval_ptr_dtor(&amp;info);</span><br><span class="line"></span><br><span class="line">		zend_throw_exception_object(&amp;ex);  // // 否则抛出异常</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (message) &#123;</span><br><span class="line">		efree(message);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以sql相关的错误只要try_catch还是能catch不少的</p>
 
         
       
@@ -1349,7 +1253,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1394,7 +1298,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">74</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1407,7 +1311,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -1529,7 +1433,7 @@
       
     
       
-    
+        
       
     
       
@@ -1543,6 +1447,58 @@
       
     
       
+    
+      
+    
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
     
   
 
