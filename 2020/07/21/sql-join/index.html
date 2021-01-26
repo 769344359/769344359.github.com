@@ -55,18 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="left join 和right join的区别?  我是大学学通信工程的,有些数学概念还是不太全,只能偶尔补一下啦.我一直找left join 和right join的定义或者rfc文件.就像c语言看c89 c99一样,你看sql也可以看sql 99, 这个文档有描述什么是left join 123456789101112Let XN1 and XN2 be effective distinct">
+  <meta name="description" content="什么是语言 ?inductively defined setsinductively defined sets 是由三部分组成  1 一个初始集合 2 一个生成规则 3 声明除了这个1 2两个条件之外没有其他的元素属于这个集合  例子自然数集合 1&amp;#123;0 , 1 , 2 ...&amp;#125;  这个集合首先一个元素 1&amp;#123;0&amp;#125;  然后是规则 1234567suc(i) ``">
 <meta name="keywords" content="sql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sql join">
 <meta property="og:url" content="http://yoursite.com/2020/07/21/sql-join/index.html">
 <meta property="og:site_name" content="dinosaur">
-<meta property="og:description" content="left join 和right join的区别?  我是大学学通信工程的,有些数学概念还是不太全,只能偶尔补一下啦.我一直找left join 和right join的定义或者rfc文件.就像c语言看c89 c99一样,你看sql也可以看sql 99, 这个文档有描述什么是left join 123456789101112Let XN1 and XN2 be effective distinct">
+<meta property="og:description" content="什么是语言 ?inductively defined setsinductively defined sets 是由三部分组成  1 一个初始集合 2 一个生成规则 3 声明除了这个1 2两个条件之外没有其他的元素属于这个集合  例子自然数集合 1&amp;#123;0 , 1 , 2 ...&amp;#125;  这个集合首先一个元素 1&amp;#123;0&amp;#125;  然后是规则 1234567suc(i) ``">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-07-21T02:01:04.247Z">
+<meta property="og:updated_time" content="2020-12-24T01:26:09.896Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql join">
-<meta name="twitter:description" content="left join 和right join的区别?  我是大学学通信工程的,有些数学概念还是不太全,只能偶尔补一下啦.我一直找left join 和right join的定义或者rfc文件.就像c语言看c89 c99一样,你看sql也可以看sql 99, 这个文档有描述什么是left join 123456789101112Let XN1 and XN2 be effective distinct">
+<meta name="twitter:description" content="什么是语言 ?inductively defined setsinductively defined sets 是由三部分组成  1 一个初始集合 2 一个生成规则 3 声明除了这个1 2两个条件之外没有其他的元素属于这个集合  例子自然数集合 1&amp;#123;0 , 1 , 2 ...&amp;#125;  这个集合首先一个元素 1&amp;#123;0&amp;#125;  然后是规则 1234567suc(i) ``">
   <link rel="canonical" href="http://yoursite.com/2020/07/21/sql-join/">
 
 
@@ -253,11 +253,19 @@
                 
               
 
-              <time title="创建时间：2020-07-21 09:55:07 / 修改时间：10:01:04" itemprop="dateCreated datePublished" datetime="2020-07-21T09:55:07+08:00">2020-07-21</time>
+              <time title="创建时间：2020-07-21 09:55:07" itemprop="dateCreated datePublished" datetime="2020-07-21T09:55:07+08:00">2020-07-21</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-24 09:26:09" itemprop="dateModified" datetime="2020-12-24T09:26:09+08:00">2020-12-24</time>
+              </span>
             
           
 
@@ -296,14 +304,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>left join 和right join的区别? </p>
-<p>我是大学学通信工程的,有些数学概念还是不太全,只能偶尔补一下啦.<br>我一直找<code>left join</code> 和<code>right join</code>的定义或者<code>rfc</code>文件.<br>就像c语言看<code>c89</code> <code>c99</code>一样,你看sql也可以看<code>sql 99</code>, 这个文档有描述什么是<code>left join</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Let XN1 and XN2 be effective distinct names for X1 and X2, respectively. Let TN be an effective</span><br><span class="line">name for T.</span><br><span class="line">Case:</span><br><span class="line">a) If INNER or &lt;cross join&gt; is specified, then let S be the multiset of rows of T.</span><br><span class="line">b) If LEFT is specified, then let S be the multiset of rows resulting from:</span><br><span class="line">SELECT  FROM T</span><br><span class="line">UNION ALL</span><br><span class="line">SELECT  FROM X1</span><br><span class="line">c) If RIGHT is specified, then let S be the multiset of rows resulting from:</span><br><span class="line">SELECT  FROM T</span><br><span class="line">UNION ALL</span><br><span class="line">SELECT  FROM X2</span><br></pre></td></tr></table></figure>
-
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="http://web.cecs.pdx.edu/~len/sql1999.pdf" target="_blank" rel="noopener">http://web.cecs.pdx.edu/~len/sql1999.pdf</a></li>
+        <h2 id="什么是语言"><a href="#什么是语言" class="headerlink" title="什么是语言 ?"></a>什么是语言 ?</h2><h2 id="inductively-defined-sets"><a href="#inductively-defined-sets" class="headerlink" title="inductively defined sets"></a>inductively defined sets</h2><p><code>inductively defined sets</code> 是由三部分组成</p>
+<ul>
+<li>1 一个初始集合</li>
+<li>2 一个生成规则</li>
+<li>3 声明除了这个1 2两个条件之外没有其他的元素属于这个集合</li>
 </ul>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>自然数集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;0 , 1 , 2 ...&#125;</span><br></pre></td></tr></table></figure>
 
+<p>这个集合<br>首先一个元素</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;0&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后是规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">suc(i) </span><br><span class="line">``` </span><br><span class="line">left join 和right join的区别? </span><br><span class="line"></span><br><span class="line">我是大学学通信工程的,有些数学概念还是不太全,只能偶尔补一下啦.</span><br><span class="line">我一直找`left join` 和`right join`的定义或者`rfc`文件.</span><br><span class="line">就像c语言看`c89` `c99`一样,你看sql也可以看`sql 99`, 这个文档有描述什么是`left join`</span><br></pre></td></tr></table></figure>
+
+<p>Let XN1 and XN2 be effective distinct names for X1 and X2, respectively. Let TN be an effective<br>name for T.<br>Case:<br>a) If INNER or <cross join> is specified, then let S be the multiset of rows of T.<br>b) If LEFT is specified, then let S be the multiset of rows resulting from:<br>SELECT  FROM T<br>UNION ALL<br>SELECT  FROM X1<br>c) If RIGHT is specified, then let S be the multiset of rows resulting from:<br>SELECT  FROM T<br>UNION ALL<br>SELECT  FROM X2</cross></p>
+<pre><code>
+## 相关阅读
+
+- http://web.cecs.pdx.edu/~len/sql1999.pdf
+
+- https://courses.cs.cornell.edu/cs2800/wiki/index.php/SP18:Lecture_19_Inductive_sets#:~:text=Definition%3A%20inductively%20defined%20set.%20An%20inductively%20defined%20set,for%20creating%20more%20complicated%20objects%20from%20simpler%20ones.
+
+</code></pre>
     </div>
 
     
@@ -395,7 +419,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关阅读"><span class="nav-number">1.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是语言"><span class="nav-number">1.</span> <span class="nav-text">什么是语言 ?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inductively-defined-sets"><span class="nav-number">2.</span> <span class="nav-text">inductively defined sets</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#例子"><span class="nav-number">2.1.</span> <span class="nav-text">例子</span></a></li></ol></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -411,7 +435,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-count">85</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -424,7 +448,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -450,7 +474,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

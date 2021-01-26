@@ -55,17 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="举个例子  1select  isnull(a.number , &amp;apos;---&amp;apos;) from test1  a left join  test2 b on a.id=b.id  这里有  关联  函数  那么这个sql绑定的语义动作是怎么样的呢?  很明显至少有两个 第一个是 join  第二个是 isnull 这个函数 然后还能看到是select 也是一个 join  实际是什么">
+  <meta name="description" content="前言写了很多mysql的sql,看了很多blog,兜兜转转,发现很多都是不太严谨的.很多解释也是有点盲人摸象的感觉,不能说是错但是有些片面. BNF和indeductly define set 1select  name from  table where table.file =1;  三值">
+<meta name="keywords" content="sql">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个sql的组成">
 <meta property="og:url" content="http://yoursite.com/2020/05/06/一个sql的组成/index.html">
 <meta property="og:site_name" content="dinosaur">
-<meta property="og:description" content="举个例子  1select  isnull(a.number , &amp;apos;---&amp;apos;) from test1  a left join  test2 b on a.id=b.id  这里有  关联  函数  那么这个sql绑定的语义动作是怎么样的呢?  很明显至少有两个 第一个是 join  第二个是 isnull 这个函数 然后还能看到是select 也是一个 join  实际是什么">
+<meta property="og:description" content="前言写了很多mysql的sql,看了很多blog,兜兜转转,发现很多都是不太严谨的.很多解释也是有点盲人摸象的感觉,不能说是错但是有些片面. BNF和indeductly define set 1select  name from  table where table.file =1;  三值">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-06T10:10:43.518Z">
+<meta property="og:updated_time" content="2021-01-06T05:57:04.791Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个sql的组成">
-<meta name="twitter:description" content="举个例子  1select  isnull(a.number , &amp;apos;---&amp;apos;) from test1  a left join  test2 b on a.id=b.id  这里有  关联  函数  那么这个sql绑定的语义动作是怎么样的呢?  很明显至少有两个 第一个是 join  第二个是 isnull 这个函数 然后还能看到是select 也是一个 join  实际是什么">
+<meta name="twitter:description" content="前言写了很多mysql的sql,看了很多blog,兜兜转转,发现很多都是不太严谨的.很多解释也是有点盲人摸象的感觉,不能说是错但是有些片面. BNF和indeductly define set 1select  name from  table where table.file =1;  三值">
   <link rel="canonical" href="http://yoursite.com/2020/05/06/一个sql的组成/">
 
 
@@ -252,11 +253,19 @@
                 
               
 
-              <time title="创建时间：2020-05-06 17:54:37 / 修改时间：18:10:43" itemprop="dateCreated datePublished" datetime="2020-05-06T17:54:37+08:00">2020-05-06</time>
+              <time title="创建时间：2020-05-06 17:54:37" itemprop="dateCreated datePublished" datetime="2020-05-06T17:54:37+08:00">2020-05-06</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-06 13:57:04" itemprop="dateModified" datetime="2021-01-06T13:57:04+08:00">2021-01-06</time>
+              </span>
             
           
 
@@ -295,25 +304,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>举个例子 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select  isnull(a.number , &apos;---&apos;) from test1  a left join  test2 b on a.id=b.id</span><br></pre></td></tr></table></figure>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>写了很多mysql的sql,看了很多blog,兜兜转转,发现很多都是不太严谨的.<br>很多解释也是有点盲人摸象的感觉,不能说是错但是有些片面.</p>
+<h3 id="BNF和indeductly-define-set"><a href="#BNF和indeductly-define-set" class="headerlink" title="BNF和indeductly define set"></a>BNF和indeductly define set</h3><h3 id><a href="#" class="headerlink" title=" "></a> </h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select  name from  table where table.file =1;</span><br></pre></td></tr></table></figure>
 
-<p>这里有</p>
-<ul>
-<li>关联 </li>
-<li>函数</li>
-</ul>
-<p>那么这个sql绑定的语义动作是怎么样的呢? </p>
-<p>很明显至少有两个</p>
-<p>第一个是 join </p>
-<p>第二个是 isnull 这个函数</p>
-<p>然后还能看到是select 也是一个</p>
-<h2 id="join-实际是什么呢"><a href="#join-实际是什么呢" class="headerlink" title="join  实际是什么呢?"></a>join  实际是什么呢?</h2><p>join 绑定就是一个循环连接</p>
-<h2 id="select-是什么呢"><a href="#select-是什么呢" class="headerlink" title="select 是什么呢?"></a>select 是什么呢?</h2><p>投影</p>
-<h2 id="isnull-语义动作是什么"><a href="#isnull-语义动作是什么" class="headerlink" title="isnull 语义动作是什么?"></a>isnull 语义动作是什么?</h2><p>回调内部的指针</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rapid\unittest\gunit\xplugin\mysql_function_names_t.cc</span><br></pre></td></tr></table></figure>
-
-
+<h3 id="三值"><a href="#三值" class="headerlink" title="三值"></a>三值</h3>
     </div>
 
     
@@ -323,6 +317,15 @@
       
 
       <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/sql/" rel="tag"># sql</a>
+            
+          </div>
+        
 
         
 
@@ -396,7 +399,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#join-实际是什么呢"><span class="nav-number">1.</span> <span class="nav-text">join  实际是什么呢?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select-是什么呢"><span class="nav-number">2.</span> <span class="nav-text">select 是什么呢?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isnull-语义动作是什么"><span class="nav-number">3.</span> <span class="nav-text">isnull 语义动作是什么?</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BNF和indeductly-define-set"><span class="nav-number">1.1.</span> <span class="nav-text">BNF和indeductly define set</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#null"><span class="nav-number">1.2.</span> <span class="nav-text"> </span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三值"><span class="nav-number">1.3.</span> <span class="nav-text">三值</span></a></li></ol></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -412,7 +415,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-count">85</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -425,7 +428,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">26</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -451,7 +454,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
