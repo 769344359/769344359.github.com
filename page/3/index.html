@@ -217,6 +217,636 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/18/mvcc-translate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/02/18/mvcc-translate/" class="post-title-link" itemprop="url">mvcc translate</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-02-18 14:52:07" itemprop="dateCreated datePublished" datetime="2021-02-18T14:52:07+08:00">2021-02-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-20 13:37:07" itemprop="dateModified" datetime="2021-04-20T13:37:07+08:00">2021-04-20</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/02/18/mvcc-translate/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/02/18/mvcc-translate/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>5.1 INTRODUCTION<br>对于多版本并发控制算法来说,对于每个数据实例<code>x</code>的<code>写操作</code>都会生成一个<code>X</code>的新的副本(或者叫做版本).<br>数据管理器因此会保存一个包含数据管理器赋值过给X的所有<code>版本</code>的列表.<br>对于每个读操作<code>Read(x)</code>,调度器不仅把读操作发送给数据管理器,还会告诉数据管理器他想要读x的哪一个版本.<br>In a multiversion concurrency control algorithm, each Write on a data item x<br>produces a new copy (or version) of X. The DM that manages x therefore<br>keeps a list of versions of X, which is the history of values that the DM has<br>assigned to X. For each Read(x), the scheduler not only decides when to send<br>the Read to the DM, but it also tells the DM which one of the versions of x to<br>read.<br>多版本并发控制的优点在于帮助调度器避免拒绝太晚的操作(也就是说晚一点的操作不会被拒绝).举个例子,(单版本的情况下)调度器会拒绝读他本该读但是被覆盖的数据.<br>在多版本的情况下,旧的值不会被覆盖,因此可以延迟去读.调度器可以通过读旧版本的值来避免(单版本下)对于读操作的拒绝.<br>保持多版本并对于并发控制并不会花费太多成本,因为对于故障恢复算法来说也是需要版本的信息.<br>The benefit of multiple versions for concurrency control is to help the<br>scheduler avoid rejecting operations that arrive too late. For example, the<br>scheduler normally rejects a Read because the value it was supposed to read<br>has already been overwritten. With multiversions, such old values are never<br>overwritten and are therefore always available to tardy Reads. The scheduler<br>can avoid rejecting the Read simply by having the Read read an old version.’<br>Maintaining multiple versions may not add much to the cost of concurrency<br>control, because the versions may be needed anyway by the recovery<br>algorithm.<br>As we’ll see in the next chapter, many recovery algorithms have to<br>maintain some before image information, at least of those data items that have<br>been updated by active transactions; the recovery algorithm needs those before<br>images in case any of the active transactions abort. The before images of a data<br>item are exactly its list of old versions. It is a small step for the DM to make<br>those versions explicitly available to the scheduler.<br>一个很明显的花费是保存多个版本需要很多存储空间,为了控制这些存储的现在,版本内容必须要定期周期性地清理或者归档.<br>因为某些特定的版本还会被活跃的事务(也就是没有提交或者没有回滚回滚的事务),清理版本信息需要同时兼顾活跃的事务.<br>清理动作也是mvcc的另外一个花费.<br>An obvious cost of maintaining multiple versions is storage space. To<br>control this storage requirement, versions must periodically be purged or archived. Since certain versions may be needed by active transactions, purging<br>versions must be synchronized with respect to active transactions. This purging<br>activity is another cost of multiversion concurrency control.</p>
+<p>我们假设当事务被抛弃,那些那么这个事务创建的版本也会被销毁.在我们后续的讨论中,词<code>版本</code>描述的是<code>已提交</code>事务或者<code>活跃</code>事务的数据对应的值.因此,当调度器决定分配<code>x</code>的特定版本给操作<code>Read(x)</code>,返回的值不会包含<code>被抛弃</code>的事务.<br>如果版本读产生于活跃的事务,可恢复性(也就是回滚)要求读操作对应的事务的提交必须晚于被读的活跃事务的提交.</p>
+<p>We assume that if a transaction is aborted, any versions it created are<br>destroyed. In our subsequent discussion, the term “version” will refer to the<br>value of a data item produced by a transaction that’s either active or committed.<br>Thus, when the scheduler decides to assign a particular version of x to<br>Read(x), the value returned is not one produced by an aborted transaction. If<br>the version read is one produced by an active transaction, recoverability<br>requires that the reader’s commitment be delayed until the transaction that<br>produced the version has committed.<br>如果被读的事务最后被抛弃了(这个事务对应的版本也无效了),该活跃的事务也需要因此而被抛弃.<br> If that transaction actually aborts<br>(thereby invalidating its version), the reader must also be aborted.<br>当前存在的多版本内容仅仅对调度器和数据管理器可见,对于用户使用事务是不可见的.<br>The existence of multiple versions is only visible to the scheduler and DM,<br>not to user transactions.<br>事务只会持有该数据比如x和y.除了数据库处理系统,用户本身看上去只有一个版本,即,在用户的角度看是最后一个会写入<br>Transactions still reference data items, such as x and<br>y. Users therefore expect the DBS to behave as if there were only one version of<br>each data item, namely, the last one that was written from that user’s perspective.<br>调度器会通过使用多版本来减少拒绝的操作,从而提升性能.<br>The scheduler may use multiple versions to improve performance by<br>rejecting operations less frequently.<br>不过最后的结果会和单版本的结果看上去一样.<br> But it must not change the system’s<br>functionality over a single version view of the database.<br>There are many applications of databases in which users do want to<br>explicitly access each of the multiple versions of a data item. For example, a<br>user may wish to maintain several versions of a design database: the last design<br>released for manufacturing, the last design checked for correctness, and the<br>most recent working design. The user may update each version of the design<br>independently. Since the existence of these multiple versions is not transparent<br>to the user, such applications are not appropriate for the multiversion concurrency<br>control algorithms described in this chapter.</p>
+<p>Analyzing Correctness<br>分析mvcc的正确性<br>为了分析mvcc算法的正确性,我们需要扩展可序列化理论.我们需要扩展两类历史:运行在多版本数据库的多版本历史,在用户看来是单版本的单版本历史.用户会把序列化但版本历史(因为我们把事务看成只有一个版本的,我们所有的目标就是多版本执行的内容和但版本看到的一样,相类似的例子就是编译器经过ssr优化后很多顺序都变了但是看上去都一样)<br>To analyze the correctness of multiversion concurrency control algorithms, we<br>need to extend serializability theory. This extension requires two types of<br>histories: multiversion (MV) histories that represent the DM’s execution of<br>operations on a multiversion database, and single version (IV) histories that<br>represent the interpretation of MV histories in the users’ single version view of<br>the database. Serial 1V histories are the histories that the user regards as<br>correct.<br>不过实际上系统是多版本的(只是看上去和单版本的一样).所以为了证明这个并发控制算法是正确的,我们必须证明多版本的历史的约束和单版本的是等价的.那么<code>多版本历史</code>和<code>单版本历史</code>等价是什么意思?(也就是多版本历史和单版本历史等价的动作语义是什么)<br>But the system actually produces MV histories. So, to prove that a<br>concurrency control aIgorithm is correct, we must prove that each of the MV<br>histories that it can produce is equivalent to a serial 1V history,<br>What does it mean for an MV history to be equivalent to a 1V history?<br>我们通过拓展单版本历史之间的等价来描述<code>多版本历史</code>和<code>单版本历史</code>等价.为了做这个扩展,我们需要引入一些符号.<br>Let’s try to answer this by extending the definition of equivalence of 1V histories<br>that we used in Chapters 2-4. To attempt this extension, we need a little<br>notation.<br>对于每个数据实例x,我们用xi,xj…来表示x的版本,下标是写这个版本的事务的编号(也就是xi就是表示事务i写了一个版本x),<br>因此对于多版本历史,永远都是这个下标Wi[Xi],版本的下标和和事务的下标一样.多版本历史的读操作则没有那么特殊,举个例子ri[xj].<br>For each data item X, we denote the versions of x by xi, xj, . . . , where<br>the subscript is the index of the transaction that wrote the version. Thus, each<br>Write in an MV history is always of the form Wi[Xi], where the version<br>subscript equals the transaction subscript. Reads are denoted in the usual way,<br>such as ri[xj].<br>假如我们说<code>多版本历史</code>和<code>单版本历史</code>的<code>等价</code>的(equivalence)的定义是:如果多版本的每个操作的重复和单版本的冲突都一样.<br>考虑多版本历史</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H1 = w0[x0]c0w1[x1]c1r2[x0]w2[y2]c2</span><br></pre></td></tr></table></figure>
+
+<p>在<code>H1</code>这个历史里面,只有<code>w0[x0]</code>和<code>r2[x0]</code>是冲突的,写操作<code>w1[x1]</code>与<code>w0[x0]</code>以及<code>r2[x0]</code>不冲突,因为他们操作的是不同版本的数据,即x1.现在我们来考虑单版本历史:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H2 = w0[x]c0w1[x]c1r2[x]w2[y]c2</span><br></pre></td></tr></table></figure>
+
+<p>我们通过去掉操作的版本的下标(也就是去掉版本号)来构造历史H2,比如<code>x1</code>映射成<code>x</code>,<code>x0</code>也映射成<code>x</code>,<code>y2</code>映射成<code>y</code>.这种情况下(H2的单版本历史),<code>w0[x]</code>和<code>r2[x0]</code>是冲突的.按照定义(如果他们冲突一样)则他们等价,但是这其实是不合理的(虽然他们都冲突).在历史<code>H2</code>,<code>T2</code>读<code>T1</code>的<code>x</code>.但是在历史<code>H2</code>,<code>T1</code>读的是<code>T0</code>(也就是说冲突是一样但是读的数据来源是不一样的).因为这两个历史(H1和H2)读的来源不一致,所以他们最后写的操作也不一致<br>Suppose we adopt a definition of equivalence that says an MV history<br>HM” is equivalent to a 1V history HIV if every pair of conflicting operations in<br>Hbp, is in the same order in HIV. Consider the MV history<br>H, = wobol co WEA cl rz[xol w,[yzl cz.<br>The only two operations in H, that conflict are w,[x,] and r,[x,]. The operation<br>w,[x,] does not conflict with either w,[x,] or r,[x,], because it operates on a<br>different<br>We constructed H, by mapping each operation on versions x0, x,, and yz in H,<br>into the same operation on the corresponding data items x and y. Notice that<br>the two operations in H, that conflict, w,[x,] and r,[x,], are in the same order<br>in H, as in H,. So, according to the definition of equivalence just given, H, is<br>equivalent to H,. But this is not reasonable. In H,, T, reads x from T,, whereas<br>in H,, T, reads x from T,,.’ Since T2 reads a different value of x in H, and H,, it<br>may write a different value in y.<br>我们的对于(单版本和多版本之间)的冲突之所以有一点问题,是因为<code>多版本历史</code>和<code>单版本历史</code>操作的是不同的对象:<br>一个是对版本的操作,一个是对数据的操作(可以类比一个是”打11岁的你”和”打你”是不同语义的).他们的操作是有不同的冲突属性.<br>举个例子,多版本情况下<code>w1[x1]</code>与<code>r2[x0]</code>不冲突,(相对应的版本历史.怎么对应?当然是把下标去掉)单版本情况下<code>w1[x]</code>和<code>r2[x]</code>是冲突的.<br>因此,如果仅仅通过冲突来定义他们是等价的,这是不精确的.<br>This definition of equivalence based on conflicts runs into trouble because<br>MVand 1V histories have slightly different operations - version operations<br>versus data item operations. These operations have different conflict properties.<br>For example, w,[x,] does not conflict with yz[xo], but their corresponding<br>1V operations w,[x] and TJX] do conflict. Therefore, a definition of equivalence<br>based on conflicts is inappropriate.<br>因此,为了解决这个问题(读的来源不一样的问题),我们需要回到2.6节的视图等价.<br>回想一下,如果两个历史的读的源都一样而且最后写也一样则他们视图等价.<br>比较历史<code>H1</code>和<code>H2</code>.在<code>H1</code>(多版本历史)中,T2从T1读x,但是对于<code>H2</code>(单版本历史),T2从T0读x,因此H1和H2视图不等价<br>To solve this problem, we need to return to first principles by adopting the<br>more fundamental definition of view equivalence developed in Section 2.6.<br>Recall that two histories are view equivalent if they have the same reads-from<br>relationships and the same final writes. Comparing histories H, and H,, we see<br>that T, reads x from T, in H,, but T, reads x from T, in H,. Thus, H, is not<br>view equivalent to H2.<br>然后我们获得满足条件等价(单版本和多版本之间的等价,定义是视图等价,那么两者是等价的)的定义.<br>我们需要通过一个对单版本历史与多版本历史之间等价的方式.<br>其中一个方式是SG(H)是无环的,所以历史H是等价于序列化多版本历史,但是仅仅是这样是没有太大帮助.因为(无环)序列化历史不是等价于序列化单版本历史.<br>举个例子:<br>H3 = w0[x0]w0[y0]c0R// todo<br>如果我们把版本的内容作为单独的数据实例,就会构造一下的序列化图,虽然这个序列化图是无环的,H3还是和单版本的不等价,因为他们映射的读来源不一样</p>
+<p>Now that we have a satisfactory definition of equivalence, we need a way<br>of showing that every MV history H produced by a given multiversion concurrency<br>control algorithm is equivalent to a serial 1V history. One way would be<br>to show that SG( H) is acyclic, so H is equivalent to a serial MV history, Unfortunately,<br>this doesn’t help much, because not every serial MV history is equivalent<br>to a serial 1V history. For example, consider the serial MV history<br>仅仅是多版本历史的子集,也就是<code>l-serial MV histories</code>才会等价于序列化单版本历史,如果所有的<code>read-from</code>关系,要么读自己的事务,要么读最新的事务,这样就说<code>l-serial MV histories</code>,<br>这样的<code>serial MV histories</code>是可以于单版本的历史等价<br>Only a subset of serial MV histories, called l-serial MV histories, are<br>equivalent to serial 1V histories. Intuitively, a serial MV history is I-serial if<br>for each reads-from relationship, say T, reads x from T,, T, is the last trdnsaction<br>preceding T, that writes any version of x. Notice that Ii, is not l-serial<br>because TL reads x from T,), not T,, which is the last transaction preceding T2<br>that writes x.</p>
+<p>mv2pl &gt; 1sr &gt;  5.3 Let H be an MV history over ?: C(H) is equivalent to a<br>serial, 1V history over T iff H is 1SR.</p>
+<blockquote>
+</blockquote>
+<h2 id="我整理的mvcc原理"><a href="#我整理的mvcc原理" class="headerlink" title="我整理的mvcc原理"></a>我整理的mvcc原理</h2><h2 id="1SR-定义"><a href="#1SR-定义" class="headerlink" title="1SR 定义"></a>1SR 定义</h2><p>An MV history is one-copy serializable (or 1SR) if its committed projection is equivalent to a l-serial MV history.</p>
+<h2 id="1-series-MV-history"><a href="#1-series-MV-history" class="headerlink" title="1-series MV history:"></a>1-series MV history:</h2><p>每个事务读先于他的事务里面写版本最大的<br>1 多版本事务Hi 和事务Hj,如果Hi从事务Hj读x,那么满足约束: Hj的x的版本是<strong>先于</strong>Hi的所有事务里面写x的版本最新的一个</p>
+<ul>
+<li>一个小问题:一个事务先于另外一个事务,这是个偏序关系,这里有个疑问,怎么定义这个<strong>先于</strong></li>
+</ul>
+<h2 id="MV-History-Equivalence"><a href="#MV-History-Equivalence" class="headerlink" title="MV History Equivalence:"></a>MV History Equivalence:</h2><p>两个历史的事务中,读的来源都一样则两个多版本事务视图等价</p>
+<p>mv2pl imply mvsg<br>mvsg imply 1sr<br>1sr imply 1-serial</p>
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="http://www.vldb.org/conf/1992/P497.PDF" target="_blank" rel="noopener">http://www.vldb.org/conf/1992/P497.PDF</a></li>
+<li><a href="https://www.csd.uoc.gr/~hy460/pdf/000.pdf" target="_blank" rel="noopener">https://www.csd.uoc.gr/~hy460/pdf/000.pdf</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/28/mysql的select/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/01/28/mysql的select/" class="post-title-link" itemprop="url">mysql的select</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-01-28 13:42:30" itemprop="dateCreated datePublished" datetime="2021-01-28T13:42:30+08:00">2021-01-28</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-03 15:42:53" itemprop="dateModified" datetime="2021-02-03T15:42:53+08:00">2021-02-03</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/01/28/mysql的select/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/01/28/mysql的select/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="为什么想看select的代码"><a href="#为什么想看select的代码" class="headerlink" title="为什么想看select的代码"></a>为什么想看select的代码</h3><p>有一个场景,遇到一个表只有十多万,但是表大小有几十g,为什么呢?因为有个字段是longtext.<br>放了很多很长的文本.发现<code>select * from table limit  1000</code>就已经读不出来了</p>
+<h3 id="一个简单的select语句"><a href="#一个简单的select语句" class="headerlink" title="一个简单的select语句"></a>一个简单的select语句</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from test wher  id &lt; 100 ;</span><br></pre></td></tr></table></figure>
+
+<p>这个流程究竟发生了什么? </p>
+<p>第一步其实和php差不多,先是编译原理的前端几步lex和parse<br>第二步就是逻辑优化和物理优化, 其实可以想成是常用的编程语言的常量折叠或者数据流图的分析,就是编译时的优化<br>第三步也就是语义动作了,也就是真正的执行过程也可以想做是运行时:<br>但是条件对于读来说是不可见的,条件是作用于索引上 , 然后返回所有行 , 再根据列筛选出来,然后再join和排序,对于这个sql来说,他唯一作用就是通过索引读出内容,内存和硬盘对于他来说是不存在的</p>
+<p>首先是读表,这个表是从ibd文件来的.所以终究是需要调用系统调用读文件,那么linux用系统调用是<code>pread</code></p>
+<p>索引在哪保存?<br>保存在表空间里面<br>内容保存到哪里?<br>保存到表空间里面<br>关联是在哪里发生?<br>发生在从索引从表空间读出来<br>关联是整整一行关联吗?<br>是的.<br>二级索引怎么读的?<br>通过二级索引读一级索引,一级索引读内容.</p>
+<p>所以实际上是有一个语义上的层是:<br>sql -&gt; 语义动作 作用于索引 -&gt; 索引访问表空间(有点像交换空间或者物理内存和虚拟内存的关系一样一样, 需要的时候才从硬盘硬盘加载)</p>
+<h3 id="下面是相关代码"><a href="#下面是相关代码" class="headerlink" title="下面是相关代码"></a>下面是相关代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  srv_start (create_new_db=create_new_db@entry=false) at /home/ubuntu/mysql-8.0.23/storage/innobase/srv/srv0start.cc:1857</span><br><span class="line">#1  0x00005555577275b6 in innobase_init_files (tablespaces=0x7fffea1f1380, dict_init_mode=DICT_INIT_CHECK_FILES) at /home/ubuntu/mysql-8.0.23/storage/innobase/handler/ha_innodb.cc:5042</span><br><span class="line">#2  innobase_ddse_dict_init (dict_init_mode=DICT_INIT_CHECK_FILES, version=&lt;optimized out&gt;, tables=0x7fffea1f1360, tablespaces=0x7fffea1f1380)</span><br><span class="line">    at /home/ubuntu/mysql-8.0.23/storage/innobase/handler/ha_innodb.cc:12323</span><br><span class="line">#3  0x00005555573d2aef in dd::bootstrap::DDSE_dict_init (thd=thd@entry=0x55555b899410, dict_init_mode=dict_init_mode@entry=DICT_INIT_CHECK_FILES, version=80023)</span><br><span class="line">    at /home/ubuntu/mysql-8.0.23/sql/dd/impl/bootstrap/bootstrapper.cc:737</span><br><span class="line">#4  0x00005555575f92e4 in dd::upgrade_57::do_pre_checks_and_initialize_dd (thd=0x55555b899410) at /home/ubuntu/mysql-8.0.23/sql/dd/upgrade_57/upgrade.cc:911</span><br><span class="line">#5  0x0000555556697ec5 in bootstrap::handle_bootstrap (arg=arg@entry=0x7fffffffda10) at /home/ubuntu/mysql-8.0.23/sql/bootstrap.cc:323</span><br><span class="line">#6  0x0000555557b934a1 in pfs_spawn_thread (arg=0x55555b834c80) at /home/ubuntu/mysql-8.0.23/storage/perfschema/pfs.cc:2900</span><br><span class="line">#7  0x00007ffff7bbb6db in start_thread (arg=0x7fffea1f2700) at pthread_create.c:463</span><br><span class="line">#8  0x00007ffff61b571f in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info threads </span><br><span class="line">  Id   Target Id         Frame </span><br><span class="line">  1    Thread 0x7ffff7fe7880 (LWP 17988) &quot;mysqld&quot; 0x00007ffff7bbcd2d in __GI___pthread_timedjoin_ex (threadid=140737121298176, thread_return=thread_return@entry=0x0, abstime=abstime@entry=0x0, </span><br><span class="line">    block=block@entry=true) at pthread_join_common.c:89</span><br><span class="line">* 2    Thread 0x7fffea1f2700 (LWP 18000) &quot;mysqld&quot; __libc_pread64 (fd=4, buf=0x7fffe81d0000, count=65536, offset=0) at ../sysdeps/unix/sysv/linux/pread64.c:29</span><br><span class="line">  4    Thread 0x7fffe8f49700 (LWP 18269) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42eda10)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  5    Thread 0x7fffe3b32700 (LWP 18270) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edab0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  6    Thread 0x7fffe3331700 (LWP 18271) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edb50)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  7    Thread 0x7fffe2b30700 (LWP 18272) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edbf0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  8    Thread 0x7fffe232f700 (LWP 18273) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edc90)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  9    Thread 0x7fffe1b2e700 (LWP 18274) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edd30)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  10   Thread 0x7fffe132d700 (LWP 18275) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42eddd0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  11   Thread 0x7fffe0b2c700 (LWP 18276) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42ede70)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  12   Thread 0x7fffd3d5f700 (LWP 18277) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edf10)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  13   Thread 0x7fffd355e700 (LWP 18278) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edfb0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  14   Thread 0x7fffd2d5d700 (LWP 18279) &quot;mysqld&quot; 0x00007ffff6ace280 in operator new(unsigned long) () from /usr/lib/x86_64-linux-gnu/libstdc++.so.6</span><br></pre></td></tr></table></figure>
+
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="https://www.cnblogs.com/dba-john/p/12096666.html" target="_blank" rel="noopener">https://www.cnblogs.com/dba-john/p/12096666.html</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/13/RSA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/01/13/RSA/" class="post-title-link" itemprop="url">RSA</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-01-13 13:32:27" itemprop="dateCreated datePublished" datetime="2021-01-13T13:32:27+08:00">2021-01-13</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-15 15:26:47" itemprop="dateModified" datetime="2021-01-15T15:26:47+08:00">2021-01-15</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/01/13/RSA/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/01/13/RSA/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="前提相关定义"><a href="#前提相关定义" class="headerlink" title="前提相关定义"></a>前提相关定义</h3><p><code>质数的集合</code>为$Pri$</p>
+<h3 id="rsa-的证明"><a href="#rsa-的证明" class="headerlink" title="rsa 的证明"></a>rsa 的证明</h3><p>M是需要任意整数 , $e,d$需要满足<br>$$<br>e·d\equiv  1 \pmod{\phi(n)}     \qquad(1)<br>$$<br>我们要证明<br>$$<br>M^{e·d} ≡ M^{k·\phi(n)+1} \equiv M \pmod{n} \qquad(2)<br>$$<br>其中</p>
+<h4 id="欧拉函数-phi-x"><a href="#欧拉函数-phi-x" class="headerlink" title="欧拉函数$\phi(x)$"></a>欧拉函数$\phi(x)$</h4><p>$\phi(x)$定义是小于或等于n的正整数中与n互质的数的数目.<br>其中,如果<code>x</code>是质数,则欧拉函数的求值结果为<code>x-1</code><br>$$\phi(x)=x-1 , x\in Pri $$</p>
+<p>下面我们来证明公式$(2)$的右边部分 , 也就是:<br>$$<br>M^{k·\phi(n)+1} \equiv M \pmod{n} \qquad(3)<br>$$</p>
+<ul>
+<li>当M可以被n整除的时候,也就是满足<br>$$<br>M ≡ 0 (mod p)<br>$$<br>成立</li>
+</ul>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li>rsa论文原文   <a href="http://people.csail.mit.edu/rivest/Rsapaper.pdf" target="_blank" rel="noopener">http://people.csail.mit.edu/rivest/Rsapaper.pdf</a></li>
+<li>部分证明来源   </li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/06/pdf-format/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/01/06/pdf-format/" class="post-title-link" itemprop="url">pdf format</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-01-06 13:44:47 / 修改时间：13:45:43" itemprop="dateCreated datePublished" datetime="2021-01-06T13:44:47+08:00">2021-01-06</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/01/06/pdf-format/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/01/06/pdf-format/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>相关阅读<br><a href="https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDF32000_2008.pdf" target="_blank" rel="noopener">https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDF32000_2008.pdf</a><br><a href="https://pdfbox.apache.org/" target="_blank" rel="noopener">https://pdfbox.apache.org/</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/06/three-value-prediate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/01/06/three-value-prediate/" class="post-title-link" itemprop="url">three value prediate and sql</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-01-06 10:11:24" itemprop="dateCreated datePublished" datetime="2021-01-06T10:11:24+08:00">2021-01-06</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-20 18:47:49" itemprop="dateModified" datetime="2021-01-20T18:47:49+08:00">2021-01-20</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/01/06/three-value-prediate/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/01/06/three-value-prediate/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="三值逻辑"><a href="#三值逻辑" class="headerlink" title="三值逻辑"></a>三值逻辑</h3><p>三值的谓词:<br>谓词求值后有三个元素<code>{T,F,U}</code> ,也就是<code>true</code> , <code>false</code> , 和<code>unknow</code></p>
+<h3 id="求值和谓词"><a href="#求值和谓词" class="headerlink" title="求值和谓词"></a>求值和谓词</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT 1=NULL</span><br></pre></td></tr></table></figure>
+
+<p>在mysql , 这个会返回一行,这行是值是null</p>
+<p>① 然后根据规范 <code>where</code> <code>case</code> 和<code>having</code> 子句都只取三值逻辑真值中的<code>true</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT 1 NOT IN (1,  NULL)    ## false 所以不会被条件筛选出来</span><br><span class="line">SELECT 1 NOT IN ( NULL)   ##  null , 因为上面的规则①所以也不会被筛选出来</span><br></pre></td></tr></table></figure>
+
+<p>所以在<code>where</code>子句中使用<code>not in</code> 而<code>not int</code> 中包含<code>null</code>的时候会筛选不出来</p>
+<p><code>exist</code> 规范规定exist是个二值函数,所以要映射成<code>true</code>或者<code>false</code> , mysql中则是只要返回一行真值就是<code>true</code></p>
+<ul>
+<li>相关阅读<br><a href="http://www.vldb.org/conf/1987/P235.PDF" target="_blank" rel="noopener">http://www.vldb.org/conf/1987/P235.PDF</a><br><a href="https://dl.acm.org/doi/10.1145/111197.111212" target="_blank" rel="noopener">https://dl.acm.org/doi/10.1145/111197.111212</a><br><a href="https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_not-in" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/comparison-operators.html#operator_not-in</a><br><a href="https://modern-sql.com/concept/three-valued-logic#footnote-0" target="_blank" rel="noopener">https://modern-sql.com/concept/three-valued-logic#footnote-0</a><br>论文 SQL’s Three-Valued Logic and Certain Answers</li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/25/形式化语义/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/12/25/形式化语义/" class="post-title-link" itemprop="url">形式化语义和类型系统</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-12-25 08:59:33" itemprop="dateCreated datePublished" datetime="2020-12-25T08:59:33+08:00">2020-12-25</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-28 18:39:00" itemprop="dateModified" datetime="2020-12-28T18:39:00+08:00">2020-12-28</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/12/25/形式化语义/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/12/25/形式化语义/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="rule"><a href="#rule" class="headerlink" title="rule"></a>rule</h2><h2 id="judugment"><a href="#judugment" class="headerlink" title="judugment"></a>judugment</h2><h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>语法是一堆token组成的结构</p>
+<h2 id="语义"><a href="#语义" class="headerlink" title="语义"></a>语义</h2><p>语义是某个语法结构映射的内容</p>
+<p>比如操作语义: 某个语法映射相关操作</p>
+<p>指称语义: 语法映射某个映射关系</p>
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="https://core.ac.uk/download/pdf/82281718.pdf" target="_blank" rel="noopener">https://core.ac.uk/download/pdf/82281718.pdf</a></li>
+<li><a href="http://pages.di.unipi.it/corradini/Didattica/PLP-15/DOCS/Tennent-DenotationalSemantics.pdf" target="_blank" rel="noopener">http://pages.di.unipi.it/corradini/Didattica/PLP-15/DOCS/Tennent-DenotationalSemantics.pdf</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/21/pushdown/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -593,573 +1223,6 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/18/btree/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/11/18/btree/" class="post-title-link" itemprop="url">btree</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-11-18 13:48:44" itemprop="dateCreated datePublished" datetime="2020-11-18T13:48:44+08:00">2020-11-18</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-24 13:33:43" itemprop="dateModified" datetime="2020-11-24T13:33:43+08:00">2020-11-24</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/11/18/btree/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/18/btree/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>btree 论文地址:<br><a href="https://infolab.usc.edu/csci585/Spring2010/den_ar/indexing.pdf" target="_blank" rel="noopener">https://infolab.usc.edu/csci585/Spring2010/den_ar/indexing.pdf</a></li>
-</ul>
-<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>一共有两个参数: <code>k</code> 和<code>h</code>  </p>
-<h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><p>1 每个<code>叶子节点</code>的高度都一样<br>2.1 除了<code>叶子节点</code>和<code>根节点</code>,其他节点至少有k+1个子节点<br>2.2 <code>根节点</code>是叶节点或者<code>根节点</code>至少有两个子节点.<br>3 每个节点最多有<code>2k+1</code>个子节点</p>
-<h4 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h4><h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><h4 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h4>
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/12/mvcc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/11/12/mvcc/" class="post-title-link" itemprop="url">mvcc</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-11-12 10:45:21" itemprop="dateCreated datePublished" datetime="2020-11-12T10:45:21+08:00">2020-11-12</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-10 12:07:48" itemprop="dateModified" datetime="2021-03-10T12:07:48+08:00">2021-03-10</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/11/12/mvcc/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/12/mvcc/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>mvcc论文<br><a href="http://www.cs.cmu.edu/~pavlo/papers/p781-wu.pdf" target="_blank" rel="noopener">http://www.cs.cmu.edu/~pavlo/papers/p781-wu.pdf</a></p>
-<p>zhihu相关内容:<br><a href="https://zhuanlan.zhihu.com/p/45734268" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/45734268</a></p>
-<h3 id="mvcc是什么"><a href="#mvcc是什么" class="headerlink" title="mvcc是什么?"></a>mvcc是什么?</h3><p>mvcc是多版本并发控制</p>
-<h3 id="什么是单版本"><a href="#什么是单版本" class="headerlink" title="什么是单版本?"></a>什么是单版本?</h3><p>单版本就是一行记录只有一个记录</p>
-<h3 id="mvcc和锁是什么关系"><a href="#mvcc和锁是什么关系" class="headerlink" title="mvcc和锁是什么关系?"></a>mvcc和锁是什么关系?</h3><p>没有关系</p>
-<h3 id="mvcc和隔离级别有什么关系"><a href="#mvcc和隔离级别有什么关系" class="headerlink" title="mvcc和隔离级别有什么关系?"></a>mvcc和隔离级别有什么关系?</h3><p>没有关系</p>
-<h3 id="mvcc正确性"><a href="#mvcc正确性" class="headerlink" title="mvcc正确性"></a>mvcc正确性</h3><p>1sr的多版本历史和单版本的冲突等价,mv2pl的锁兼容推出mv2pl是1sr</p>
-<h3 id="mv2pl约束"><a href="#mv2pl约束" class="headerlink" title="mv2pl约束"></a>mv2pl约束</h3><p>满足mv2pl的锁兼容就行</p>
-<h3 id="mv2pl的优势"><a href="#mv2pl的优势" class="headerlink" title="mv2pl的优势"></a>mv2pl的优势</h3><p>读不阻塞写(写事务提交commit需要等待读item的释放锁)</p>
-<h3 id="mv2pl的需要满足的条件"><a href="#mv2pl的需要满足的条件" class="headerlink" title="mv2pl的需要满足的条件"></a>mv2pl的需要满足的条件</h3><p>1 满足mv2pl 的锁兼容<br>2 写锁需要转换为提交commit的时候需要转换成确认锁(确认锁会和其他所有锁阻塞,所以需要等待这个对象的读锁的释放,也就是说这时候需要需要等待读锁释放才能释放)</p>
-<h3 id="mv2pl-正确性"><a href="#mv2pl-正确性" class="headerlink" title="mv2pl 正确性"></a>mv2pl 正确性</h3><h4 id="1sr定义"><a href="#1sr定义" class="headerlink" title="1sr定义"></a>1sr定义</h4><p>事务读的是最新提交的版本或者自己当前事务写的版本</p>
-<p>1 mv2pl满足mvsg<br>2 mvsg 满足1sr<br>3 1sr满足多版本映射单版本等价(读来源一致,读的版本的冲突和单版本一致)</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/12/数理逻辑/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/11/12/数理逻辑/" class="post-title-link" itemprop="url">数理逻辑</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-11-12 10:43:13 / 修改时间：10:43:47" itemprop="dateCreated datePublished" datetime="2020-11-12T10:43:13+08:00">2020-11-12</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/11/12/数理逻辑/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/12/数理逻辑/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>数理逻辑我是没有学过的,但是感觉很像编译原理的前端</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/28/todolist/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/10/28/todolist/" class="post-title-link" itemprop="url">todolist</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-10-28 11:28:12" itemprop="dateCreated datePublished" datetime="2020-10-28T11:28:12+08:00">2020-10-28</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-17 13:43:37" itemprop="dateModified" datetime="2020-11-17T13:43:37+08:00">2020-11-17</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/10/28/todolist/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/10/28/todolist/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1 编译原理ssa<br>2 tensorflow<br>3 vue原理<br>4 nlp parser<br>5 es的search</p>
-<hr>
-<p>2020-11-17<br>我感觉好像什么东西都离不开编译原理,数理逻辑,是我的错觉吗?</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/21/parser/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/10/21/parser/" class="post-title-link" itemprop="url">parser</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-10-21 13:56:37 / 修改时间：17:56:35" itemprop="dateCreated datePublished" datetime="2020-10-21T13:56:37+08:00">2020-10-21</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/10/21/parser/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/10/21/parser/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="最大生成树"><a href="#最大生成树" class="headerlink" title="最大生成树"></a>最大生成树</h3><p>初始化:<br>放入一个node</p>
-<p>循环不变量:<br>是整颗最大生成树的子集</p>
-<p>将最大权的放入节点,更新最大权</p>
-<h4 id="为什么work"><a href="#为什么work" class="headerlink" title="为什么work"></a>为什么work</h4><p>如果放入的该节点不是最大的生成树的子节点,那么加起来权是最小的</p>
-<h3 id="mlp"><a href="#mlp" class="headerlink" title="mlp"></a>mlp</h3><h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3>
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/19/感知机/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/10/19/感知机/" class="post-title-link" itemprop="url">感知机</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-10-19 14:28:52 / 修改时间：14:57:52" itemprop="dateCreated datePublished" datetime="2020-10-19T14:28:52+08:00">2020-10-19</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/10/19/感知机/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/10/19/感知机/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>感知机是一个输出是+1 和-1两个值的分类器</p>
-<p>多层感知机<br>输入: 上一层的输出<br>处理: 感知函数<br>输出: 经过感知函数处理的值</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
@@ -1209,7 +1272,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-count">107</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1222,7 +1285,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -1344,7 +1407,7 @@
       
     
       
-    
+        
       
     
       
@@ -1358,6 +1421,58 @@
       
     
       
+    
+      
+    
+  
+    
+      
+<script type="text/x-mathjax-config">
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') {
+          next = next.nextSibling;
+        }
+        if (next && next.nodeName.toLowerCase() === 'br') {
+          next.parentNode.removeChild(next);
+        }
+      }
+    });
+  });
+
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
+      if (element.nodeName.toLowerCase() == 'li') {
+        element = element.parentNode;
+      }
+      element.classList.add('has-jax');
+    }
+  });
+</script>
+<script>
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
+    MathJax.Hub.Typeset();
+  }, window.MathJax);
+</script>
+
     
   
 

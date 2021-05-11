@@ -217,6 +217,549 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/11/mysql-binlog获取/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/05/11/mysql-binlog获取/" class="post-title-link" itemprop="url">mysql binlog获取</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-05-11 12:44:08 / 修改时间：13:36:53" itemprop="dateCreated datePublished" datetime="2021-05-11T12:44:08+08:00">2021-05-11</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/11/mysql-binlog获取/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/11/mysql-binlog获取/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="mysql-报文"><a href="#mysql-报文" class="headerlink" title="mysql 报文:"></a>mysql 报文:</h2><p>mysql报文分为两部分:<code>header</code>和<code>payload</code></p>
+<h3 id="header"><a href="#header" class="headerlink" title="header"></a>header</h3><p>有四个字节,其中前三个字节是标识这个包的长度描述<code>payload</code>的长度,也就是<code>payload</code>最长的长度为2^24-1字节,最后一个字节则是类似于tcp的序列号,每次从0开始递增,描述的是第几个包</p>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload则是具体负载</p>
+<h2 id="mysql握手"><a href="#mysql握手" class="headerlink" title="mysql握手"></a>mysql握手</h2><p>tcp三次握手之后,整个传输层的连接已经建立了,那么怎么登陆呢?<br><a href="https://dev.mysql.com/doc/internals/en/plain-handshake.html" target="_blank" rel="noopener">握手文档</a><br><a href="https://dev.mysql.com/doc/dev/mysql-server/8.0.16/page_protocol_connection_phase_authentication_methods_native_password_authentication.html" target="_blank" rel="noopener">加密的方式</a><br>举个例子:加密套件是<code>mysql_native_password</code>,那么第一个包会是由 server发出,附带20字节的随机码, 然后在客户端的用户提交的密码做多次<code>sha1</code>哈希然后回传给mysql</p>
+<h2 id="binlog获取分为两步"><a href="#binlog获取分为两步" class="headerlink" title="binlog获取分为两步:"></a>binlog获取分为两步:</h2><p>1: COM_REGISTER_SLAVE 把slave注册到master里面<br>2: <a href="https://dev.mysql.com/doc/internals/en/com-binlog-dump.html" target="_blank" rel="noopener">COM_BINLOG_DUMP</a> 这个包主要是告诉master锁需要的binlog的名字和位点,然后就会返回一堆binlog事件给客户端 </p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/11/c字节对齐/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/05/11/c字节对齐/" class="post-title-link" itemprop="url">c字节对齐</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-05-11 10:34:32 / 修改时间：10:36:52" itemprop="dateCreated datePublished" datetime="2021-05-11T10:34:32+08:00">2021-05-11</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/11/c字节对齐/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/11/c字节对齐/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_attribute_((packed))</span><br></pre></td></tr></table></figure>
+
+<p>你会在redis的<code>sds.h</code>看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/28/mysql握手/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/04/28/mysql握手/" class="post-title-link" itemprop="url">mysql握手</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-04-28 17:02:44" itemprop="dateCreated datePublished" datetime="2021-04-28T17:02:44+08:00">2021-04-28</time>
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/28/mysql握手/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/28/mysql握手/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/14/mysql主从/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/04/14/mysql主从/" class="post-title-link" itemprop="url">mysql主从</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-04-14 13:47:50 / 修改时间：13:51:56" itemprop="dateCreated datePublished" datetime="2021-04-14T13:47:50+08:00">2021-04-14</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/14/mysql主从/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/14/mysql主从/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DBUG_PRINT(&quot;info&quot;, (&quot;Creating new slave thread&quot;));</span><br><span class="line">if (mysql_thread_create(thread_key, &amp;th, &amp;connection_attrib, h_func,</span><br><span class="line">                        (void *)mi)) &#123;</span><br><span class="line">  LogErr(ERROR_LEVEL, ER_RPL_CANT_CREATE_SLAVE_THREAD,</span><br><span class="line">         mi-&gt;get_for_channel_str());</span><br><span class="line">  my_error(ER_SLAVE_THREAD, MYF(0));</span><br><span class="line">  goto err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>slave 线程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">  Slave SQL thread entry point.</span><br><span class="line"></span><br><span class="line">  @param arg Pointer to Relay_log_info object that holds information</span><br><span class="line">  for the SQL thread.</span><br><span class="line"></span><br><span class="line">  @return Always 0.</span><br><span class="line">*/</span><br><span class="line">extern &quot;C&quot; void *handle_slave_sql(void *arg) &#123;</span><br><span class="line">  THD *thd; /* needs to be first for thread_stack */</span><br><span class="line">  bool thd_added = false;</span><br><span class="line">  bool main_loop_error = false;</span><br><span class="line">  char llbuff[22], llbuff1[22];</span><br></pre></td></tr></table></figure>
+
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/14/c99柔性数组/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/04/14/c99柔性数组/" class="post-title-link" itemprop="url">c99柔性数组</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-04-14 09:39:00 / 修改时间：09:39:23" itemprop="dateCreated datePublished" datetime="2021-04-14T09:39:00+08:00">2021-04-14</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/14/c99柔性数组/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/14/c99柔性数组/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> As a special case, the last element of a structure with more than one named member may<br>have an incomplete array type; this is called a flexible array member. With two<br>exceptions, the flexible array member is ignored. First, the size of the structure shall be<br>equal to the offset of the last element of an otherwise identical structure that replaces the<br>flexible array member with an array of unspecified length.106) Second, when a . (or -&gt;)<br>operator has a left operand that is (a pointer to) a structure with a flexible array member<br>and the right operand names that member, it behaves as if that member were replaced<br>with the longest array (with the same element type) that would not make the structure<br>larger than the object being accessed; the offset of the array shall remain that of the<br>flexible array member, even if this would differ from that of the replacement array. If this<br>array would have no elements, it behaves as if it had one element but the behavior is<br>undefined if any attempt is made to access that element or to generate a pointer one past<br>it.</p>
+<ul>
+<li><a href="http://www.dii.uchile.cl/~daespino/files/Iso_C_1999_definition.pdf" target="_blank" rel="noopener">http://www.dii.uchile.cl/~daespino/files/Iso_C_1999_definition.pdf</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/13/20210413反思过去/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/04/13/20210413反思过去/" class="post-title-link" itemprop="url">20210413反思过去</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-04-13 16:46:29 / 修改时间：17:01:28" itemprop="dateCreated datePublished" datetime="2021-04-13T16:46:29+08:00">2021-04-13</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/13/20210413反思过去/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/13/20210413反思过去/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>突然间不想写这些业务代码了,就是那么突然.我已经快工作四年了,毫无进展,什么都不会</p>
+<p>这几年我究竟做了什么?</p>
+<p>给PHP修了两个内存泄漏,相对于写业务,我更喜欢修bug</p>
+<p>引入了canal,对binlog更加了解了,而且效果真的很好但是canal其实很多坑.</p>
+<p>这些其实很好,但是其他对于我来说都是垃圾时间,我其实真的不喜欢写前端,为什么PHP一定要写前端?</p>
+<p>我一点都不会写算法题,真的一点都不会,最近才弄懂循环不变式和霍尔逻辑还有一点点数理逻辑</p>
+<p>对于db,我最近才分清隔离级别/事务/mvcc的关系,花了三年半太久了,我也是一年的时候才弄懂PHP关闭连接是什么时候</p>
+<p>对于redis其实我根本不懂,我只会简单的<code>set aaa bbb</code> 这样用</p>
+<p>对于es,我对分词有所了解因为做过nlp相关需求,但是还是没有用过es</p>
+<p>对于我来说,PHP会用,还天天写bug,mysql很多不会用,对于网络,我基本没有用过长连接挺失败的这三年半</p>
+<p>对于我这三年半还是挺失败的</p>
+<h2 id="开心的地方"><a href="#开心的地方" class="headerlink" title="开心的地方"></a>开心的地方</h2><p>最开心的地方在于会找相关的论文来看了,虽然对工作一点用都没有</p>
+<p>对于我来说很多东西不是黑盒了,虽然对于面试一点用都没有</p>
+<h2 id="我唯一知道的东西"><a href="#我唯一知道的东西" class="headerlink" title="我唯一知道的东西"></a>我唯一知道的东西</h2><p>只有数学才是有且仅有的可以提供正确性的工具,实践并不是什么真正有用的东西.</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/02/canal需要注意的点/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -247,11 +790,19 @@
                 
               
 
-              <time title="创建时间：2021-04-02 11:48:43 / 修改时间：11:50:49" itemprop="dateCreated datePublished" datetime="2021-04-02T11:48:43+08:00">2021-04-02</time>
+              <time title="创建时间：2021-04-02 11:48:43" itemprop="dateCreated datePublished" datetime="2021-04-02T11:48:43+08:00">2021-04-02</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-13 10:07:01" itemprop="dateModified" datetime="2021-04-13T10:07:01+08:00">2021-04-13</time>
+              </span>
             
           
 
@@ -282,9 +833,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="mate刷新的逻辑"><a href="#mate刷新的逻辑" class="headerlink" title="mate刷新的逻辑"></a>mate刷新的逻辑</h2><p>根据配置每秒刷新到mate信息<br>也就是文件或者zk上,所以重启会有重复消费</p>
-<h2 id="找到位点"><a href="#找到位点" class="headerlink" title="找到位点"></a>找到位点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">protected EntryPosition findStartPositionInternal(ErosaConnection connection) &#123;</span><br><span class="line">    MysqlConnection mysqlConnection = (MysqlConnection) connection;</span><br><span class="line">    LogPosition logPosition = logPositionManager.getLatestIndexBy(destination);</span><br><span class="line">    if (logPosition == null) &#123;// 找不到历史成功记录</span><br><span class="line">        EntryPosition entryPosition = null;</span><br><span class="line">        if (masterInfo != null &amp;&amp; mysqlConnection.getConnector().getAddress().equals(masterInfo.getAddress())) &#123;</span><br><span class="line">            entryPosition = masterPosition;</span><br><span class="line">        &#125; else if (standbyInfo != null</span><br><span class="line">                   &amp;&amp; mysqlConnection.getConnector().getAddress().equals(standbyInfo.getAddress())) &#123;</span><br><span class="line">            entryPosition = standbyPosition;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (entryPosition == null) &#123;</span><br><span class="line">            entryPosition = findEndPositionWithMasterIdAndTimestamp(mysqlConnection); // 默认从当前最后一个位置进行消费</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 判断一下是否需要按时间订阅</span><br><span class="line">        if (StringUtils.isEmpty(entryPosition.getJournalName())) &#123;</span><br><span class="line">            // 如果没有指定binlogName，尝试按照timestamp进行查找</span><br><span class="line">            if (entryPosition.getTimestamp() != null &amp;&amp; entryPosition.getTimestamp() &gt; 0L) &#123;</span><br><span class="line">                logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                    new Object[] &#123; &quot;&quot;, &quot;&quot;, entryPosition.getTimestamp() &#125;);</span><br><span class="line">                return findByStartTimeStamp(mysqlConnection, entryPosition.getTimestamp());</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                logger.warn(&quot;prepare to find start position just show master status&quot;);</span><br><span class="line">                return findEndPositionWithMasterIdAndTimestamp(mysqlConnection); // 默认从当前最后一个位置进行消费</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            if (entryPosition.getPosition() != null &amp;&amp; entryPosition.getPosition() &gt; 0L) &#123;</span><br><span class="line">                // 如果指定binlogName + offest，直接返回</span><br><span class="line">                entryPosition = findPositionWithMasterIdAndTimestamp(mysqlConnection, entryPosition);</span><br><span class="line">                logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                    new Object[] &#123; entryPosition.getJournalName(), entryPosition.getPosition(),</span><br><span class="line">                            entryPosition.getTimestamp() &#125;);</span><br><span class="line">                return entryPosition;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                EntryPosition specificLogFilePosition = null;</span><br><span class="line">                if (entryPosition.getTimestamp() != null &amp;&amp; entryPosition.getTimestamp() &gt; 0L) &#123;</span><br><span class="line">                    // 如果指定binlogName +</span><br><span class="line">                    // timestamp，但没有指定对应的offest，尝试根据时间找一下offest</span><br><span class="line">                    EntryPosition endPosition = findEndPosition(mysqlConnection);</span><br><span class="line">                    if (endPosition != null) &#123;</span><br><span class="line">                        logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                            new Object[] &#123; entryPosition.getJournalName(), &quot;&quot;, entryPosition.getTimestamp() &#125;);</span><br><span class="line">                        specificLogFilePosition = findAsPerTimestampInSpecificLogFile(mysqlConnection,</span><br><span class="line">                            entryPosition.getTimestamp(),</span><br><span class="line">                            endPosition,</span><br><span class="line">                            entryPosition.getJournalName(),</span><br><span class="line">                            true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                if (specificLogFilePosition == null) &#123;</span><br><span class="line">                    // position不存在，从文件头开始</span><br><span class="line">                    entryPosition.setPosition(BINLOG_START_OFFEST);</span><br><span class="line">                    return entryPosition;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    return specificLogFilePosition;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (logPosition.getIdentity().getSourceAddress().equals(mysqlConnection.getConnector().getAddress())) &#123;</span><br><span class="line">            if (dumpErrorCountThreshold &gt;= 0 &amp;&amp; dumpErrorCount &gt; dumpErrorCountThreshold) &#123;</span><br><span class="line">                // binlog定位位点失败,可能有两个原因:</span><br><span class="line">                // 1. binlog位点被删除</span><br><span class="line">                // 2.vip模式的mysql,发生了主备切换,判断一下serverId是否变化,针对这种模式可以发起一次基于时间戳查找合适的binlog位点</span><br><span class="line">                boolean case2 = (standbyInfo == null || standbyInfo.getAddress() == null)</span><br><span class="line">                                &amp;&amp; logPosition.getPostion().getServerId() != null</span><br><span class="line">                                &amp;&amp; !logPosition.getPostion().getServerId().equals(findServerId(mysqlConnection));</span><br><span class="line">                if (case2) &#123;</span><br><span class="line">                    EntryPosition findPosition = fallbackFindByStartTimestamp(logPosition, mysqlConnection);</span><br><span class="line">                    dumpErrorCount = 0;</span><br><span class="line">                    return findPosition;</span><br><span class="line">                &#125;</span><br><span class="line">                // 处理 binlog 位点被删除的情况，提供自动重置到当前位点的功能</span><br><span class="line">                // 应用场景: 测试环境不稳定，位点经常被删。强烈不建议在正式环境中开启此控制参数，因为binlog 丢失调到最新位点也即意味着数据丢失</span><br><span class="line">                if (isAutoResetLatestPosMode()) &#123;</span><br><span class="line">                    dumpErrorCount = 0;</span><br><span class="line">                    return findEndPosition(mysqlConnection);</span><br><span class="line">                &#125;</span><br><span class="line">                Long timestamp = logPosition.getPostion().getTimestamp();</span><br><span class="line">                if (isRdsOssMode() &amp;&amp; (timestamp != null &amp;&amp; timestamp &gt; 0)) &#123;</span><br><span class="line">                    // 如果binlog位点不存在，并且属于timestamp不为空,可以返回null走到oss binlog处理</span><br><span class="line">                    return null;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else if (StringUtils.isBlank(logPosition.getPostion().getJournalName())</span><br><span class="line">                    &amp;&amp; logPosition.getPostion().getPosition() &lt;= 0</span><br><span class="line">                    &amp;&amp; logPosition.getPostion().getTimestamp() &gt; 0) &#123;</span><br><span class="line">                return fallbackFindByStartTimestamp(logPosition,mysqlConnection);</span><br><span class="line">            &#125;</span><br><span class="line">            // 其余情况</span><br><span class="line">            logger.warn(&quot;prepare to find start position just last position\n &#123;&#125;&quot;,</span><br><span class="line">                JsonUtils.marshalToString(logPosition));</span><br><span class="line">            return logPosition.getPostion();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 针对切换的情况，考虑回退时间</span><br><span class="line">            long newStartTimestamp = logPosition.getPostion().getTimestamp() - fallbackIntervalInSeconds * 1000;</span><br><span class="line">            logger.warn(&quot;prepare to find start position by switch &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;, new Object[] &#123; &quot;&quot;, &quot;&quot;,</span><br><span class="line">                    logPosition.getPostion().getTimestamp() &#125;);</span><br><span class="line">            return findByStartTimeStamp(mysqlConnection, newStartTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+          <h2 id="比较坑的点"><a href="#比较坑的点" class="headerlink" title="比较坑的点:"></a>比较坑的点:</h2><p>1 每次同步的内容会每秒持久化到file或者zk ,binlog一般只保留的几天,如果你持久化到文件/zk的配置的binlog文件在mysql已经不存在了会报错,<br>报错信息大概如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.io.IOException: Received error packet: errno = 1236, sqlstate = HY000 errmsg = Could not find first log file name in binary log index file</span><br></pre></td></tr></table></figure>
 
+<p>这个时候只能调整配置或者删除mate.dat 文件,然后重启canal , 这个时候他会使用mysql的语句<code>show status</code>去取最新位点</p>
+<p>2 重启canal有个非常非常坑的点在于会读<code>information_schema</code> 这个库的内容去读表名和表id等信息 ,而这个往往会很久,不知道是不是测试环境原因,读了挺久的</p>
+<h2 id="mate刷新的逻辑"><a href="#mate刷新的逻辑" class="headerlink" title="mate刷新的逻辑"></a>mate刷新的逻辑</h2><p>根据配置每秒刷新到mate信息<br>也就是文件或者zk上,所以重启会有重复消费</p>
+<h2 id="找到位点"><a href="#找到位点" class="headerlink" title="找到位点"></a>找到位点</h2><p>加载顺序:<br>1 从mate中获取位点: getLatestIndexBy 也就是从 memeory/zk或者file的mate信息中读取位点<br>2 根据配置读取:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">protected EntryPosition findStartPositionInternal(ErosaConnection connection) &#123;</span><br><span class="line">    MysqlConnection mysqlConnection = (MysqlConnection) connection;</span><br><span class="line">    LogPosition logPosition = logPositionManager.getLatestIndexBy(destination);</span><br><span class="line">    if (logPosition == null) &#123;// 找不到历史成功记录</span><br><span class="line">        EntryPosition entryPosition = null;</span><br><span class="line">        if (masterInfo != null &amp;&amp; mysqlConnection.getConnector().getAddress().equals(masterInfo.getAddress())) &#123;</span><br><span class="line">            entryPosition = masterPosition;</span><br><span class="line">        &#125; else if (standbyInfo != null</span><br><span class="line">                   &amp;&amp; mysqlConnection.getConnector().getAddress().equals(standbyInfo.getAddress())) &#123;</span><br><span class="line">            entryPosition = standbyPosition;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (entryPosition == null) &#123;</span><br><span class="line">            entryPosition = findEndPositionWithMasterIdAndTimestamp(mysqlConnection); // 默认从当前最后一个位置进行消费</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 判断一下是否需要按时间订阅</span><br><span class="line">        if (StringUtils.isEmpty(entryPosition.getJournalName())) &#123;</span><br><span class="line">            // 如果没有指定binlogName，尝试按照timestamp进行查找</span><br><span class="line">            if (entryPosition.getTimestamp() != null &amp;&amp; entryPosition.getTimestamp() &gt; 0L) &#123;</span><br><span class="line">                logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                    new Object[] &#123; &quot;&quot;, &quot;&quot;, entryPosition.getTimestamp() &#125;);</span><br><span class="line">                return findByStartTimeStamp(mysqlConnection, entryPosition.getTimestamp());</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                logger.warn(&quot;prepare to find start position just show master status&quot;);</span><br><span class="line">                return findEndPositionWithMasterIdAndTimestamp(mysqlConnection); // 默认从当前最后一个位置进行消费</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            if (entryPosition.getPosition() != null &amp;&amp; entryPosition.getPosition() &gt; 0L) &#123;</span><br><span class="line">                // 如果指定binlogName + offest，直接返回</span><br><span class="line">                entryPosition = findPositionWithMasterIdAndTimestamp(mysqlConnection, entryPosition);</span><br><span class="line">                logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                    new Object[] &#123; entryPosition.getJournalName(), entryPosition.getPosition(),</span><br><span class="line">                            entryPosition.getTimestamp() &#125;);</span><br><span class="line">                return entryPosition;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                EntryPosition specificLogFilePosition = null;</span><br><span class="line">                if (entryPosition.getTimestamp() != null &amp;&amp; entryPosition.getTimestamp() &gt; 0L) &#123;</span><br><span class="line">                    // 如果指定binlogName +</span><br><span class="line">                    // timestamp，但没有指定对应的offest，尝试根据时间找一下offest</span><br><span class="line">                    EntryPosition endPosition = findEndPosition(mysqlConnection);</span><br><span class="line">                    if (endPosition != null) &#123;</span><br><span class="line">                        logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                            new Object[] &#123; entryPosition.getJournalName(), &quot;&quot;, entryPosition.getTimestamp() &#125;);</span><br><span class="line">                        specificLogFilePosition = findAsPerTimestampInSpecificLogFile(mysqlConnection,</span><br><span class="line">                            entryPosition.getTimestamp(),</span><br><span class="line">                            endPosition,</span><br><span class="line">                            entryPosition.getJournalName(),</span><br><span class="line">                            true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                if (specificLogFilePosition == null) &#123;</span><br><span class="line">                    // position不存在，从文件头开始</span><br><span class="line">                    entryPosition.setPosition(BINLOG_START_OFFEST);</span><br><span class="line">                    return entryPosition;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    return specificLogFilePosition;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (logPosition.getIdentity().getSourceAddress().equals(mysqlConnection.getConnector().getAddress())) &#123;</span><br><span class="line">            if (dumpErrorCountThreshold &gt;= 0 &amp;&amp; dumpErrorCount &gt; dumpErrorCountThreshold) &#123;</span><br><span class="line">                // binlog定位位点失败,可能有两个原因:</span><br><span class="line">                // 1. binlog位点被删除</span><br><span class="line">                // 2.vip模式的mysql,发生了主备切换,判断一下serverId是否变化,针对这种模式可以发起一次基于时间戳查找合适的binlog位点</span><br><span class="line">                boolean case2 = (standbyInfo == null || standbyInfo.getAddress() == null)</span><br><span class="line">                                &amp;&amp; logPosition.getPostion().getServerId() != null</span><br><span class="line">                                &amp;&amp; !logPosition.getPostion().getServerId().equals(findServerId(mysqlConnection));</span><br><span class="line">                if (case2) &#123;</span><br><span class="line">                    EntryPosition findPosition = fallbackFindByStartTimestamp(logPosition, mysqlConnection);</span><br><span class="line">                    dumpErrorCount = 0;</span><br><span class="line">                    return findPosition;</span><br><span class="line">                &#125;</span><br><span class="line">                // 处理 binlog 位点被删除的情况，提供自动重置到当前位点的功能</span><br><span class="line">                // 应用场景: 测试环境不稳定，位点经常被删。强烈不建议在正式环境中开启此控制参数，因为binlog 丢失调到最新位点也即意味着数据丢失</span><br><span class="line">                if (isAutoResetLatestPosMode()) &#123;</span><br><span class="line">                    dumpErrorCount = 0;</span><br><span class="line">                    return findEndPosition(mysqlConnection);</span><br><span class="line">                &#125;</span><br><span class="line">                Long timestamp = logPosition.getPostion().getTimestamp();</span><br><span class="line">                if (isRdsOssMode() &amp;&amp; (timestamp != null &amp;&amp; timestamp &gt; 0)) &#123;</span><br><span class="line">                    // 如果binlog位点不存在，并且属于timestamp不为空,可以返回null走到oss binlog处理</span><br><span class="line">                    return null;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else if (StringUtils.isBlank(logPosition.getPostion().getJournalName())</span><br><span class="line">                    &amp;&amp; logPosition.getPostion().getPosition() &lt;= 0</span><br><span class="line">                    &amp;&amp; logPosition.getPostion().getTimestamp() &gt; 0) &#123;</span><br><span class="line">                return fallbackFindByStartTimestamp(logPosition,mysqlConnection);</span><br><span class="line">            &#125;</span><br><span class="line">            // 其余情况</span><br><span class="line">            logger.warn(&quot;prepare to find start position just last position\n &#123;&#125;&quot;,</span><br><span class="line">                JsonUtils.marshalToString(logPosition));</span><br><span class="line">            return logPosition.getPostion();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 针对切换的情况，考虑回退时间</span><br><span class="line">            long newStartTimestamp = logPosition.getPostion().getTimestamp() - fallbackIntervalInSeconds * 1000;</span><br><span class="line">            logger.warn(&quot;prepare to find start position by switch &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;, new Object[] &#123; &quot;&quot;, &quot;&quot;,</span><br><span class="line">                    logPosition.getPostion().getTimestamp() &#125;);</span><br><span class="line">            return findByStartTimeStamp(mysqlConnection, newStartTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="事件类型"><a href="#事件类型" class="headerlink" title="事件类型"></a>事件类型</h2><p>事件有很多类型,我现在只对update和insert 感兴趣</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">public enum EventType</span><br><span class="line">      implements com.google.protobuf.ProtocolMessageEnum &#123;</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;INSERT = 1;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    INSERT(0, 1),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;UPDATE = 2;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    UPDATE(1, 2),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;DELETE = 3;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    DELETE(2, 3),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;CREATE = 4;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    CREATE(3, 4),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;ALTER = 5;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    ALTER(4, 5),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;ERASE = 6;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    ERASE(5, 6),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;QUERY = 7;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    QUERY(6, 7),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;TRUNCATE = 8;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    TRUNCATE(7, 8),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;RENAME = 9;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    RENAME(8, 9),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;CINDEX = 10;&lt;/code&gt;</span><br><span class="line">     *</span><br><span class="line">     * &lt;pre&gt;</span><br><span class="line">     **CREATE INDEX*</span><br><span class="line">     * &lt;/pre&gt;</span><br><span class="line">     */</span><br><span class="line">    CINDEX(9, 10),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;DINDEX = 11;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    DINDEX(10, 11),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;GTID = 12;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    GTID(11, 12),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;XACOMMIT = 13;&lt;/code&gt;</span><br><span class="line">     *</span><br><span class="line">     * &lt;pre&gt;</span><br><span class="line">     ** XA *</span><br><span class="line">     * &lt;/pre&gt;</span><br><span class="line">     */</span><br><span class="line">    XACOMMIT(12, 13),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;XAROLLBACK = 14;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    XAROLLBACK(13, 14),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;MHEARTBEAT = 15;&lt;/code&gt;</span><br><span class="line">     *</span><br><span class="line">     * &lt;pre&gt;</span><br><span class="line">     ** MASTER HEARTBEAT *</span><br><span class="line">     * &lt;/pre&gt;</span><br><span class="line">     */</span><br><span class="line">    MHEARTBEAT(14, 15),</span><br><span class="line">    ;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>相关阅读</li>
+</ul>
+<p><a href="http://www.tianshouzhi.com/api/tutorials/canal" target="_blank" rel="noopener">http://www.tianshouzhi.com/api/tutorials/canal</a></p>
 
         
       
@@ -529,6 +1093,18 @@
               <time title="创建时间：2021-03-30 13:19:40" itemprop="dateCreated datePublished" datetime="2021-03-30T13:19:40+08:00">2021-03-30</time>
             </span>
           
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-09 11:31:33" itemprop="dateModified" datetime="2021-04-09T11:31:33+08:00">2021-04-09</time>
+              </span>
+            
+          
 
           
   
@@ -557,540 +1133,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/27/docker持久化/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/27/docker持久化/" class="post-title-link" itemprop="url">docker持久化</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-27 14:54:03 / 修改时间：14:54:23" itemprop="dateCreated datePublished" datetime="2021-03-27T14:54:03+08:00">2021-03-27</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/27/docker持久化/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/27/docker持久化/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://blog.csdn.net/weixin_39805802/article/details/110496244" target="_blank" rel="noopener">https://blog.csdn.net/weixin_39805802/article/details/110496244</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/27/mysql-主从复制/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/27/mysql-主从复制/" class="post-title-link" itemprop="url">mysql 主从复制</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-27 13:55:30 / 修改时间：13:55:49" itemprop="dateCreated datePublished" datetime="2021-03-27T13:55:30+08:00">2021-03-27</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/27/mysql-主从复制/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/27/mysql-主从复制/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://dev.mysql.com/doc/internals/en/replication-protocol.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/internals/en/replication-protocol.html</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/27/build-grpc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/27/build-grpc/" class="post-title-link" itemprop="url">build grpc</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-27 13:36:53 / 修改时间：14:57:22" itemprop="dateCreated datePublished" datetime="2021-03-27T13:36:53+08:00">2021-03-27</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/27/build-grpc/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/27/build-grpc/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://github.com/grpc/grpc/blob/master/BUILDING.md" target="_blank" rel="noopener">https://github.com/grpc/grpc/blob/master/BUILDING.md</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/22/一次tcp错误排查/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/22/一次tcp错误排查/" class="post-title-link" itemprop="url">一次tcp错误排查</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-22 13:13:09 / 修改时间：13:42:45" itemprop="dateCreated datePublished" datetime="2021-03-22T13:13:09+08:00">2021-03-22</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/22/一次tcp错误排查/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/22/一次tcp错误排查/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一个使用php的workman的代码抛出了这样的异常</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fwrite(): send of 157 bytes failed with errno=11 Resource temporarily unavailable</span><br></pre></td></tr></table></figure>
-
-<p>socket是使用了noblocking的,结果有一个这个错误,结果发现是已经修复了不抛异常了,但是在我的php5.6的版本还是旧的代码,所以还是会抛这个异常,所以排查了一天,不是bug<br>最新的修改</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/php/php-src/pull/5026/files</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">	didwrite = send(sock-&gt;socket, buf, XP_SOCK_BUF_SIZE(count), (sock-&gt;is_blocked &amp;&amp; ptimeout) ? MSG_DONTWAIT : 0);</span><br><span class="line"></span><br><span class="line">	if (didwrite &lt;= 0) &#123;</span><br><span class="line">		char *estr;</span><br><span class="line">		int err = php_socket_errno();</span><br><span class="line">		if (err == EWOULDBLOCK || err == EAGAIN) &#123;</span><br><span class="line">			if (sock-&gt;is_blocked) &#123;</span><br><span class="line">				int retval;</span><br><span class="line"></span><br><span class="line">				sock-&gt;timeout_event = 0;</span><br><span class="line"></span><br><span class="line">				do &#123;</span><br><span class="line">					retval = php_pollfd_for(sock-&gt;socket, POLLOUT, ptimeout);</span><br><span class="line"></span><br><span class="line">					if (retval == 0) &#123;</span><br><span class="line">						sock-&gt;timeout_event = 1;</span><br><span class="line">						break;</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					if (retval &gt; 0) &#123;</span><br><span class="line">						/* writable now; retry */</span><br><span class="line">						goto retry;</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					err = php_socket_errno();</span><br><span class="line">				&#125; while (err == EINTR);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				/* EWOULDBLOCK/EAGAIN is not an error for a non-blocking stream.</span><br><span class="line">				 * Report zero byte write instead. */</span><br><span class="line">				return 0;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		estr = php_socket_strerror(err, NULL, 0);</span><br><span class="line">		php_error_docref(NULL, E_NOTICE, &quot;Send of &quot; ZEND_LONG_FMT &quot; bytes failed with errno=%d %s&quot;,</span><br><span class="line">				(zend_long)count, err, estr);</span><br><span class="line">		efree(estr);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (didwrite &gt; 0) &#123;</span><br><span class="line">		php_stream_notify_progress_increment(PHP_STREAM_CONTEXT(stream), didwrite, 0);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return didwrite;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/17/论文的有趣性/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/17/论文的有趣性/" class="post-title-link" itemprop="url">论文的有趣性</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-17 10:11:43" itemprop="dateCreated datePublished" datetime="2021-03-17T10:11:43+08:00">2021-03-17</time>
-            </span>
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/17/论文的有趣性/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/17/论文的有趣性/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/15/心跳和tcp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/15/心跳和tcp/" class="post-title-link" itemprop="url">心跳和tcp</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-15 13:14:43 / 修改时间：13:17:01" itemprop="dateCreated datePublished" datetime="2021-03-15T13:14:43+08:00">2021-03-15</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/15/心跳和tcp/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/15/心跳和tcp/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>tcp 本质是靠序号保证可靠性,这里的前提是我们的约定是id是递增的</p>
-<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
-<li><a href="https://rabbitmq.com/heartbeats.html" target="_blank" rel="noopener">https://rabbitmq.com/heartbeats.html</a></li>
-</ul>
-
+          <h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2>
         
       
     </div>
@@ -1156,7 +1199,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-count">107</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1169,7 +1212,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>

@@ -217,6 +217,597 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/01/依赖和冲突/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/06/01/依赖和冲突/" class="post-title-link" itemprop="url">依赖和冲突</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-01 14:21:45 / 修改时间：14:45:53" itemprop="dateCreated datePublished" datetime="2020-06-01T14:21:45+08:00">2020-06-01</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/06/01/依赖和冲突/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/01/依赖和冲突/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="纸带"><a href="#纸带" class="headerlink" title="纸带"></a>纸带</h2><h2 id="state-状态"><a href="#state-状态" class="headerlink" title="state(状态)"></a>state(状态)</h2><p>我看到有关状态的书籍是在可计算理论相关的书籍,或者类型系统相关的书籍.</p>
+<h2 id="展开"><a href="#展开" class="headerlink" title="展开"></a>展开</h2><p>f(f(A,B),f(D,E))<br>f(A,B,D,E);<br>循环依赖<br>f(f) </p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/01/functor-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/06/01/functor-1/" class="post-title-link" itemprop="url">functor</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-01 08:50:21" itemprop="dateCreated datePublished" datetime="2020-06-01T08:50:21+08:00">2020-06-01</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-09 16:04:08" itemprop="dateModified" datetime="2020-06-09T16:04:08+08:00">2020-06-09</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/06/01/functor-1/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/01/functor-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>什么是范畴(category)?</p>
+<p>范畴就是两个对象+一个映射关系组成的东西</p>
+<p>什么是函子(functor)? </p>
+<p>函子就是两个范畴加上这两个范畴的映射关系而组成</p>
+<p>也就是说函子就是范畴+两个范畴的映射</p>
+<p>hom函子是什么(hom functor)?<br>// todo </p>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Set is the category with</span><br><span class="line">objects: all sets.</span><br><span class="line">arrows: given sets X, Y , every (total) set-function f : X -&gt; Y is an</span><br><span class="line">arrow.</span><br></pre></td></tr></table></figure>
+
+<h2 id="type-and-function"><a href="#type-and-function" class="headerlink" title="type and function"></a>type and function</h2><p>类型是范畴里面的对象<br>函数是其中的箭头, 这样是对的吗?<br>好像不太对,那就应该是错的,但是他们隐隐中有关系,但是不像是是范畴.</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://www.johndcook.com/blog/2018/08/06/hom-functors/" target="_blank" rel="noopener">https://www.johndcook.com/blog/2018/08/06/hom-functors/</a></li>
+<li><a href="https://math.stackexchange.com/questions/94007/proof-of-yoneda-lemma" target="_blank" rel="noopener">https://math.stackexchange.com/questions/94007/proof-of-yoneda-lemma</a></li>
+<li><a href="https://www.emathzone.com/tutorials/group-theory/properties-of-isomorphism.html" target="_blank" rel="noopener">https://www.emathzone.com/tutorials/group-theory/properties-of-isomorphism.html</a></li>
+<li><a href="https://www.math3ma.com/blog/the-yoneda-lemma" target="_blank" rel="noopener">https://www.math3ma.com/blog/the-yoneda-lemma</a></li>
+<li><a href="https://www.cnblogs.com/catch/p/3973104.html" target="_blank" rel="noopener">https://www.cnblogs.com/catch/p/3973104.html</a></li>
+<li><a href="https://www.haskell.org/tutorial/haskell-98-tutorial.pdf" target="_blank" rel="noopener">https://www.haskell.org/tutorial/haskell-98-tutorial.pdf</a></li>
+<li><a href="https://bartoszmilewski.com/2013/05/15/understanding-yoneda/" target="_blank" rel="noopener">https://bartoszmilewski.com/2013/05/15/understanding-yoneda/</a></li>
+<li><a href="https://bartoszmilewski.com/2014/11/24/types-and-functions/" target="_blank" rel="noopener">https://bartoszmilewski.com/2014/11/24/types-and-functions/</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/28/functor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/05/28/functor/" class="post-title-link" itemprop="url">functor</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-28 08:52:07" itemprop="dateCreated datePublished" datetime="2020-05-28T08:52:07+08:00">2020-05-28</time>
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/05/28/functor/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/28/functor/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/27/tired/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/05/27/tired/" class="post-title-link" itemprop="url">tired</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-27 16:26:34 / 修改时间：16:51:28" itemprop="dateCreated datePublished" datetime="2020-05-27T16:26:34+08:00">2020-05-27</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/05/27/tired/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/27/tired/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>我是理解能力有问题吗? </p>
+<p>我真的不懂那些需求文档写的是什么,文档写的是什么.</p>
+<p>文档应该是傻逼都能通过文档get到的才叫文档,<br>难道我比傻逼还傻? </p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/18/范畴和米田引理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/05/18/范畴和米田引理/" class="post-title-link" itemprop="url">范畴和米田引理</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-18 09:16:24" itemprop="dateCreated datePublished" datetime="2020-05-18T09:16:24+08:00">2020-05-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-19 11:16:08" itemprop="dateModified" datetime="2020-06-19T11:16:08+08:00">2020-06-19</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/05/18/范畴和米田引理/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/18/范畴和米田引理/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="https://segmentfault.com/a/1190000018331788" target="_blank" rel="noopener">https://segmentfault.com/a/1190000018331788</a></p>
+<p>对于计算机来说,没有类型,没有函数,也没有oom,什么都没有</p>
+<p>那么我们的程序是怎么来的呢? </p>
+<p>映射和等价</p>
+<p><a href="https://bartoszmilewski.com/2015/10/28/yoneda-embedding/" target="_blank" rel="noopener">https://bartoszmilewski.com/2015/10/28/yoneda-embedding/</a></p>
+<p>我一直觉得sql的各种下推优化可以用米田引理或者范畴学来描述</p>
+<p>最近在看一些范畴学的内容,我一直觉得我的逻辑很差,经常写bug,是不是我的逻辑太差呢? </p>
+<p>我考虑的边界有问题? </p>
+<p>是什么边界问题呢? 是我问题没有描述清楚还是什么呢?</p>
+<p>还是需求提供者提的需求有问题呢? </p>
+<p>范畴学真的很神奇</p>
+<p>或者说,映射真的很神奇</p>
+<p>如果我们要比较两个东西,那么我们先把他们映射成一个可比较的集合里面,然后他们就能比较了.</p>
+<p>泛型是什么? </p>
+<p>我一直想知道</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/11/raft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2020/05/11/raft/" class="post-title-link" itemprop="url">raft</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 13:28:47" itemprop="dateCreated datePublished" datetime="2020-05-11T13:28:47+08:00">2020-05-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-27 15:01:37" itemprop="dateModified" datetime="2021-03-27T15:01:37+08:00">2021-03-27</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/05/11/raft/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/11/raft/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><h3 id="推导"><a href="#推导" class="headerlink" title="推导"></a>推导</h3><h3 id="状态机-state-machine"><a href="#状态机-state-machine" class="headerlink" title="状态机(state machine)"></a>状态机(state machine)</h3><p>状态机是如何定义呢? </p>
+<p><a href="https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA" target="_blank" rel="noopener">https://zh.wikipedia.org/zh-hans/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA</a></p>
+<h3 id="确认-ACK"><a href="#确认-ACK" class="headerlink" title="确认(ACK)"></a>确认(ACK)</h3><p>假设A要向B发送消息,我们假设<br>下面这个表达式: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(number: int , message : string)   =&gt; ( acknumber: int )</span><br></pre></td></tr></table></figure>
+
+<p>含义是这样的:</p>
+<ul>
+<li>输入: 一个number + 这个number 对应的消息 ,</li>
+<li>返回:  如果B收到就把A的number原样发送回来</li>
+</ul>
+<h2 id="raft-选举"><a href="#raft-选举" class="headerlink" title="raft 选举"></a>raft 选举</h2><p>raft的选举貌似和basic paxos过程差不多,那么<code>basic paxos</code>的<code>value</code>是raft的选举的<code>master</code>节点的<code>id</code></p>
+<h3 id="任期term如何生成"><a href="#任期term如何生成" class="headerlink" title="任期term如何生成"></a>任期term如何生成</h3><h3 id="选举的正确性-如何保证一个任期-term-内只有一个一个值-或者一个都没有"><a href="#选举的正确性-如何保证一个任期-term-内只有一个一个值-或者一个都没有" class="headerlink" title="选举的正确性(如何保证一个任期(term)内只有一个一个值,或者一个都没有)"></a>选举的正确性(如何保证一个任期(<em>term</em>)内只有一个一个值,或者一个都没有)</h3><p>前提:<br>1一个accept一个任期只能投票一次<br>2 一个选举者能获取多数票<br>需要证明:<br>当且仅当获取多数票最多只有一个:</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://pdos.csail.mit.edu/6.824/papers/zookeeper.pdf" target="_blank" rel="noopener">https://pdos.csail.mit.edu/6.824/papers/zookeeper.pdf</a></li>
+<li><a href="https://www.datadoghq.com/pdf/zab.totally-ordered-broadcast-protocol.2008.pdf" target="_blank" rel="noopener">https://www.datadoghq.com/pdf/zab.totally-ordered-broadcast-protocol.2008.pdf</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/08/php-opcode-to-handler/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -622,622 +1213,6 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/10/golang-stack/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/04/10/golang-stack/" class="post-title-link" itemprop="url">golang  compile</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-04-10 07:43:52 / 修改时间：15:26:40" itemprop="dateCreated datePublished" datetime="2020-04-10T07:43:52+08:00">2020-04-10</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/04/10/golang-stack/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/10/golang-stack/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>golang 的 lex和parse 在<code>src\cmd\compile\internal\gc\main.go</code>开始</p>
-<p>核心步骤</p>
-<ul>
-<li>parseFiles     lex and parse</li>
-<li>typecheck      语法树的遍历做类型检查</li>
-<li>ssa </li>
-</ul>
-<p>之后会经过link 连接和加载器ld</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">func Main(archInit func(*Arch)) &#123;</span><br><span class="line">    	lines := parseFiles(flag.Args())  // lex and parse</span><br><span class="line">        ...</span><br><span class="line">        	typecheckok = true</span><br><span class="line"></span><br><span class="line">	// Process top-level declarations in phases.</span><br><span class="line"></span><br><span class="line">	// Phase 1: const, type, and names and types of funcs.</span><br><span class="line">	//   This will gather all the information about types</span><br><span class="line">	//   and methods but doesn&apos;t depend on any of it.</span><br><span class="line">	//</span><br><span class="line">	//   We also defer type alias declarations until phase 2</span><br><span class="line">	//   to avoid cycles like #18640.</span><br><span class="line">	//   TODO(gri) Remove this again once we have a fix for #25838.</span><br><span class="line"></span><br><span class="line">	// Don&apos;t use range--typecheck can add closures to xtop.</span><br><span class="line">	timings.Start(&quot;fe&quot;, &quot;typecheck&quot;, &quot;top1&quot;)</span><br><span class="line">	for i := 0; i &lt; len(xtop); i++ &#123;</span><br><span class="line">		n := xtop[i]</span><br><span class="line">		if op := n.Op; op != ODCL &amp;&amp; op != OAS &amp;&amp; op != OAS2 &amp;&amp; (op != ODCLTYPE || !n.Left.Name.Param.Alias) &#123;</span><br><span class="line">			xtop[i] = typecheck(n, ctxStmt)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// Phase 2: Variable assignments.</span><br><span class="line">	//   To check interface assignments, depends on phase 1.</span><br><span class="line"></span><br><span class="line">	// Don&apos;t use range--typecheck can add closures to xtop.</span><br><span class="line">	timings.Start(&quot;fe&quot;, &quot;typecheck&quot;, &quot;top2&quot;)</span><br><span class="line">	for i := 0; i &lt; len(xtop); i++ &#123;</span><br><span class="line">		n := xtop[i]</span><br><span class="line">		if op := n.Op; op == ODCL || op == OAS || op == OAS2 || op == ODCLTYPE &amp;&amp; n.Left.Name.Param.Alias &#123;</span><br><span class="line">			xtop[i] = typecheck(n, ctxStmt)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// Phase 3: Type check function bodies.</span><br><span class="line">	// Don&apos;t use range--typecheck can add closures to xtop.</span><br><span class="line">	timings.Start(&quot;fe&quot;, &quot;typecheck&quot;, &quot;func&quot;)</span><br><span class="line">	var fcount int64</span><br><span class="line">	for i := 0; i &lt; len(xtop); i++ &#123;</span><br><span class="line">		n := xtop[i]</span><br><span class="line">		if op := n.Op; op == ODCLFUNC || op == OCLOSURE &#123;</span><br><span class="line">			Curfn = n</span><br><span class="line">			decldepth = 1</span><br><span class="line">			saveerrors()</span><br><span class="line">			typecheckslice(Curfn.Nbody.Slice(), ctxStmt)</span><br><span class="line">			checkreturn(Curfn)</span><br><span class="line">			if nerrors != 0 &#123;</span><br><span class="line">				Curfn.Nbody.Set(nil) // type errors; do not compile</span><br><span class="line">			&#125;</span><br><span class="line">			// Now that we&apos;ve checked whether n terminates,</span><br><span class="line">			// we can eliminate some obviously dead code.</span><br><span class="line">			deadcode(Curfn)</span><br><span class="line">			fcount++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	// With all types checked, it&apos;s now safe to verify map keys. One single</span><br><span class="line">	// check past phase 9 isn&apos;t sufficient, as we may exit with other errors</span><br><span class="line">	// before then, thus skipping map key errors.</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  cmd/go/internal/load.LoadImport (path=..., srcDir=..., parent=0xc000147200, stk=0xc0001db698, importPos=..., mode=1, ~r6=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:530</span><br><span class="line">#1  0x000000000079fa1b in cmd/go/internal/load.(*Package).load (p=0xc000147200, stk=0xc0001db698, bp=0xc0001b8a80, err=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:1707</span><br><span class="line">#2  0x0000000000799827 in cmd/go/internal/load.loadImport (pre=0x0, path=..., srcDir=..., parent=0xc000146d80, stk=0xc0001db698, importPos=..., mode=1, ~r7=&lt;optimized out&gt;)</span><br><span class="line">    at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:578</span><br><span class="line">#3  0x000000000079890a in cmd/go/internal/load.LoadImport (path=..., srcDir=..., parent=0xc000146d80, stk=0xc0001db698, importPos=..., mode=1, ~r6=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:531</span><br><span class="line">#4  0x000000000079fa1b in cmd/go/internal/load.(*Package).load (p=0xc000146d80, stk=0xc0001db698, bp=0xc0001b8700, err=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:1707</span><br><span class="line">#5  0x0000000000799827 in cmd/go/internal/load.loadImport (pre=0x0, path=..., srcDir=..., parent=0xc000146900, stk=0xc0001db698, importPos=..., mode=1, ~r7=&lt;optimized out&gt;)</span><br><span class="line">    at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:578</span><br><span class="line">#6  0x000000000079890a in cmd/go/internal/load.LoadImport (path=..., srcDir=..., parent=0xc000146900, stk=0xc0001cf698, importPos=..., mode=1, ~r6=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:531</span><br><span class="line">#7  0x000000000079fa1b in cmd/go/internal/load.(*Package).load (p=0xc000146900, stk=0xc0001db698, bp=0xc0001b8380, err=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:1707</span><br><span class="line">#8  0x00000000007a4c66 in cmd/go/internal/load.GoFilesPackage (gofiles=..., ~r1=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:2230</span><br><span class="line">#9  0x00000000007a3c54 in cmd/go/internal/load.PackagesAndErrors (patterns=..., ~r1=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:2056</span><br><span class="line">#10 0x00000000007a417d in cmd/go/internal/load.PackagesForBuild (args=..., ~r1=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:2123</span><br><span class="line">#11 0x0000000000842528 in cmd/go/internal/work.runBuild (cmd=&lt;optimized out&gt;, args=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/work/build.go:348</span><br><span class="line">#12 0x0000000000932219 in main.main () at /home/dinosaur/newgo/go/src/cmd/go/main.go:189</span><br></pre></td></tr></table></figure>
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/08/a-language-to-machine-code/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/04/08/a-language-to-machine-code/" class="post-title-link" itemprop="url">a language to machine code</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-04-08 09:09:25 / 修改时间：09:15:42" itemprop="dateCreated datePublished" datetime="2020-04-08T09:09:25+08:00">2020-04-08</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/04/08/a-language-to-machine-code/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/08/a-language-to-machine-code/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>计算机语言是什么? </p>
-<p>我感觉是一个数学系统</p>
-<p>编译成机器码是什么? </p>
-<p>是绑定了动作</p>
-<p>// lex parse  类型系统  ssa  asm elf abi</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keyword   :</span><br><span class="line">int bool  </span><br><span class="line">for   while if</span><br></pre></td></tr></table></figure>
-
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/16/ssa-optimistic/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/03/16/ssa-optimistic/" class="post-title-link" itemprop="url">ssa optimistic</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-03-16 16:45:32" itemprop="dateCreated datePublished" datetime="2020-03-16T16:45:32+08:00">2020-03-16</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-18 13:12:56" itemprop="dateModified" datetime="2020-03-18T13:12:56+08:00">2020-03-18</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/03/16/ssa-optimistic/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/16/ssa-optimistic/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="优化的本质是什么呢"><a href="#优化的本质是什么呢" class="headerlink" title="优化的本质是什么呢?"></a>优化的本质是什么呢?</h2><p>比如ssa,是减少死代码,通过常量传播和常量折叠减少运行时的计算</p>
-<p>比如sql的逻辑优化: 就是一个逻辑下推 通过变换减少读io</p>
-<h2 id="编译的一般步骤"><a href="#编译的一般步骤" class="headerlink" title="编译的一般步骤:"></a>编译的一般步骤:</h2><p>lex : 词法分析<br>parse: 语法分析构造语法树<br>cfg优化<br>codegen </p>
-<p>在golang 和php都有ssa 优化,ssa 优化是通过控制流图来做常量传递  常量折叠  和 死代码去除</p>
-<p>php的ssa 优化在opcache中,而golang的也在类似的包里面</p>
-<h2 id="structure-induction"><a href="#structure-induction" class="headerlink" title="structure induction"></a>structure induction</h2><ul>
-<li><a href="https://www.cs.toronto.edu/~amir/teaching/csc236f15/materials/lec03.pdf" target="_blank" rel="noopener">https://www.cs.toronto.edu/~amir/teaching/csc236f15/materials/lec03.pdf</a></li>
-</ul>
-<h2 id="CFG"><a href="#CFG" class="headerlink" title="CFG"></a>CFG</h2><h3 id="construct-cfg"><a href="#construct-cfg" class="headerlink" title="construct cfg"></a>construct cfg</h3><h2 id="ssa"><a href="#ssa" class="headerlink" title="ssa"></a>ssa</h2><h3 id="what-is-ssa"><a href="#what-is-ssa" class="headerlink" title="what is ssa"></a>what is ssa</h3><blockquote>
-<p>A program is defined to be in SSA form if each variable is a target of exactly one assignment<br>statement in the program text.</p>
-</blockquote>
-<p>如果程序里面每个变量只被赋值一次那么这个程序就具有ssa 形式</p>
-<h3 id="def-use-chain-and-use-def-chain"><a href="#def-use-chain-and-use-def-chain" class="headerlink" title="def-use chain  and use-def chain"></a>def-use chain  and use-def chain</h3><blockquote>
-<p>Under SSA form, each variable is defined once. Def-use chains?are data structures<br>that provide, for the single definition of a variable, the set of all its uses.<br>In turn, a use-def chain?, which under SSA consists of a single name, uniquely<br>specifies the definition that reaches the use.</p>
-</blockquote>
-<p>def-use chain 就是输入是 定义(赋值) , 输出是使用被使用的变量的集合 </p>
-<p>use-def chain 刚好相反   输入是使用的变量 而 输出是他的定义(赋值)的集合, 对于ssa 的程序来说, 每个变量只被赋值(定义)一次,所以这个use-def这个数据结构在ssa形式下这个集合只有一个元素<br>ssa 形式下</p>
-<h3 id="ssa-properties"><a href="#ssa-properties" class="headerlink" title="ssa properties"></a>ssa properties</h3><p>ssa 有什么性质 ? </p>
-<h3 id="DG"><a href="#DG" class="headerlink" title="DG"></a>DG</h3><h3 id="JG"><a href="#JG" class="headerlink" title="JG"></a>JG</h3><h3 id="insert-φ-function"><a href="#insert-φ-function" class="headerlink" title="insert φ-function"></a>insert φ-function</h3><h3 id="construct-ssa"><a href="#construct-ssa" class="headerlink" title="construct ssa"></a>construct ssa</h3><h3 id="destruct-ssa"><a href="#destruct-ssa" class="headerlink" title="destruct ssa"></a>destruct ssa</h3><h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a href="https://www.cs.umd.edu/class/spring2014/cmsc430/lectures/lec19.pdf" target="_blank" rel="noopener">https://www.cs.umd.edu/class/spring2014/cmsc430/lectures/lec19.pdf</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/规则系统/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/03/15/规则系统/" class="post-title-link" itemprop="url">规则系统</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-03-15 19:31:44" itemprop="dateCreated datePublished" datetime="2020-03-15T19:31:44+08:00">2020-03-15</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/03/15/规则系统/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/15/规则系统/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我一直对所谓的可扩展性什么的很有疑惑，或者说我们要怎么设计一个规则系统，怎么知道这个规则的集合的边界在哪里</p>
-<p>第一个例子： 流水线 </p>
-<p>流水线上每个节点都是一个回调，我们可以随意添加或者删除</p>
-<p>有向无环图<br>等价于原始递归函数</p>
-<p>这个规则系统的路径则需要输入来确定，所以和语言是等价的</p>
-<p>所以一个规则系统等价于一个语言，所以我们可以使用一些内容来等价和变换</p>
-<ul>
-<li><a href="https://zh.wikipedia.org/zh-hans/%E5%8E%9F%E5%A7%8B%E9%80%92%E5%BD%92%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">https://zh.wikipedia.org/zh-hans/%E5%8E%9F%E5%A7%8B%E9%80%92%E5%BD%92%E5%87%BD%E6%95%B0</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/10/math/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/03/10/math/" class="post-title-link" itemprop="url">math</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-03-10 12:38:22" itemprop="dateCreated datePublished" datetime="2020-03-10T12:38:22+08:00">2020-03-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/03/10/math/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/10/math/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>其中一种是基于锁<br>我之前一直对acid理解有问题，锁和事务的关系，其实是这样的：</p>
-<p>1 read(x) 和write(x)是不可以交换顺序的<br>2 write(x) write(x) 是不可以交换顺序的<br>3 write(x) 和read(x) 也是不可以交换顺序的</p>
-<p>我们的事务  t1和t2 如果完全按照先执行t1再执行t2 就一点问题都没有，就是有点慢，并发低。</p>
-<p>那么我们就用一些等价的方法，尽量减少阻塞。我们不锁住整个事务，只对冲突的部分进行锁定，其他就因为等价所以顺序没有关系，因为其他部分没有顺序关系，所以不用上锁，所以并发会上去</p>
-<hr>
-<p>类型是什么？<br>类型描述了一个特别的集合</p>
-<p>结构体是什么？ </p>
-<p>结构图本质是类型的组合，也就是关系</p>
-<p>举个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct&#123;</span><br><span class="line">    int a,</span><br><span class="line">    int b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个本质是  <code>RXR</code> 的关系 ，那一个结构体的变量又是什么？ 是这个关系的一个元素</p>
-<p>递归是什么？<br>递归是差分方程，递归是不动点，但是递归的内容还得看</p>
-<p>什么是可扩展性？</p>
-<p>BNF 或者类似的规则系统为什么是正确的？ 靠什么保证？是依赖范畴学或者其他数学的什么定理或者和数学的什么模型一致？<br>我一直很好奇规则系统的约束怎么做到的？因为规则系统真的很神奇</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/04/induction/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/03/04/induction/" class="post-title-link" itemprop="url">induction</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-03-04 12:17:19" itemprop="dateCreated datePublished" datetime="2020-03-04T12:17:19+08:00">2020-03-04</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-16 16:36:52" itemprop="dateModified" datetime="2020-03-16T16:36:52+08:00">2020-03-16</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/03/04/induction/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/04/induction/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我非常蠢，一直觉得很多算法题我都不会写。看算法题目觉得很多东西都是像数学老师的<code>显然可得</code>，这些定义或者前提或者结论是怎么样的显然可得？<br>我一直觉得不显然，看到<code>The Formal Semantics of Programming Languages</code>这本书，突然觉得可能是我的直觉是很差的。别人觉得显然的东西其实我觉得不显然  </p>
-<p>m</p>
-<p>最近再看<br>看到这一小节<code>Well-founded induction</code>，感觉很有用的公式</p>
-<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
-<li><a href="https://drive.google.com/open?id=1-6YpokyEQLXyXD_HaFbwK0qT4WI7PqUc" target="_blank" rel="noopener">https://drive.google.com/open?id=1-6YpokyEQLXyXD_HaFbwK0qT4WI7PqUc</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
@@ -1287,7 +1262,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-count">107</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1300,7 +1275,7 @@
             <a href="/tags/">
           
         
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -1436,58 +1411,6 @@
       
     
       
-        
-      
-    
-  
-    
-      
-<script type="text/x-mathjax-config">
-
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
-      processEscapes: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-      equationNumbers: {
-        autoNumber: 'AMS'
-      }
-    }
-  });
-
-  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
-    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
-      if (data.display) {
-        var next = data.script.nextSibling;
-        while (next && next.nodeName.toLowerCase() === '#text') {
-          next = next.nextSibling;
-        }
-        if (next && next.nodeName.toLowerCase() === 'br') {
-          next.parentNode.removeChild(next);
-        }
-      }
-    });
-  });
-
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for (i = 0; i < all.length; i += 1) {
-      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
-      if (element.nodeName.toLowerCase() == 'li') {
-        element = element.parentNode;
-      }
-      element.classList.add('has-jax');
-    }
-  });
-</script>
-<script>
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
-    MathJax.Hub.Typeset();
-  }, window.MathJax);
-</script>
-
     
   
 
