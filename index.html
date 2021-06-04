@@ -217,6 +217,382 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/06/04/mongoinsert/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/06/04/mongoinsert/" class="post-title-link" itemprop="url">mongoinsert</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-06-04 12:59:46 / 修改时间：17:44:48" itemprop="dateCreated datePublished" datetime="2021-06-04T12:59:46+08:00">2021-06-04</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/06/04/mongoinsert/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/06/04/mongoinsert/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>mongo 的wiredtiger 是怎么组织kv结构的呢?<br>我现在还是没有弄懂</p>
+<p>堆栈:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br></pre></td><td class="code"><pre><span class="line">Thread 41 &quot;conn1&quot; hit Breakpoint 5, __wt_btcur_insert (cbt=cbt@entry=0x555560bd2000) at src/third_party/wiredtiger/src/btree/bt_cursor.c:763</span><br><span class="line">763	&#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  __wt_btcur_insert (cbt=cbt@entry=0x555560bd2000) at src/third_party/wiredtiger/src/btree/bt_cursor.c:763</span><br><span class="line">#1  0x0000555556d6149a in __curfile_insert (cursor=0x555560bd2000) at src/third_party/wiredtiger/src/cursor/cur_file.c:266</span><br><span class="line">#2  0x0000555556cd3ef4 in mongo::wiredTigerCursorInsert (opCtx=opCtx@entry=0x555560af8180, cursor=cursor@entry=0x555560bd2000)</span><br><span class="line">    at src/mongo/db/storage/wiredtiger/wiredtiger_cursor_helpers.cpp:39</span><br><span class="line">#3  0x0000555556d131bd in mongo::WiredTigerRecordStore::_insertRecords (this=0x55555bfddc00, opCtx=0x555560af8180, records=&lt;optimized out&gt;, timestamps=0x55555c01a478, nRecords=1)</span><br><span class="line">    at src/mongo/db/storage/wiredtiger/wiredtiger_record_store.cpp:1319</span><br><span class="line">#4  0x0000555556d13ae7 in mongo::WiredTigerRecordStore::insertRecords (this=&lt;optimized out&gt;, opCtx=&lt;optimized out&gt;, records=&lt;optimized out&gt;, timestamps=...)</span><br><span class="line">    at /usr/include/c++/9/bits/stl_vector.h:915</span><br><span class="line">#5  0x0000555557bf9972 in mongo::CollectionImpl::_insertDocuments (this=0x55555bfe1410, opCtx=0x555560af8180, begin=..., end=..., opDebug=0x555560b40a50, fromMigrate=false)</span><br><span class="line">    at /usr/include/c++/9/bits/unique_ptr.h:360</span><br><span class="line">#6  0x0000555557bfa333 in mongo::CollectionImpl::insertDocuments (this=this@entry=0x55555bfe1410, opCtx=opCtx@entry=0x555560af8180, begin=begin@entry=</span><br><span class="line">        &#123;stmtIds = std::vector of length 1, capacity 1 = &#123;-1&#125;, oplogSlot = &#123;static kTermFieldName = &#123;_data = 0x555559e64ab2 &quot;t&quot;, _size = 1&#125;, static kTimestampFieldName = &#123;_data = 0x555559e5c074 &quot;ts&quot;, _size = 2&#125;, static kUninitializedTerm = -1, static kInitialTerm = 0, _timestamp = &#123;static kAllowUnstableCheckpointsSentinel = &#123;static kAllowUnstableCheckpointsSentinel = &lt;same as static member of an already seen type&gt;, i = 1, secs = 0&#125;, i = 0, secs = 0&#125;, _term = -1&#125;, doc = &#123;static kMinBSONLength = 5 &apos;\005&apos;, static kEmptyObjectPrototype = &quot;\005\000\000\000&quot;, _objdata = 0x55556036f92b &quot;-&quot;, _ownedBuffer = &#123;_buffer = &#123;_holder = &#123;px = 0x55556036f900&#125;, static kHolderSize = 8&#125;&#125;&#125;&#125;, end=end@entry=</span><br><span class="line">    &#123;stmtIds = std::vector of length -28, capacity 23456275625363 = &#123;&lt;error reading variable&gt;, opDebug=0x555560b40a50, fromMigrate=false)</span><br><span class="line">    at src/mongo/db/catalog/collection_impl.cpp:663</span><br><span class="line">#7  0x0000555557a0a1ae in mongo::write_ops_exec::(anonymous namespace)::insertDocuments (opCtx=0x555560af8180, collection=..., begin=..., end=</span><br><span class="line">    &#123;stmtIds = std::vector of length -28, capacity 23456275625363 = &#123;&lt;error reading variable&gt;, fromMigrate=&lt;optimized out&gt;) at /usr/include/c++/9/bits/stl_iterator.h:871</span><br><span class="line">#8  0x0000555557a0a631 in mongo::write_ops_exec::(anonymous namespace)::&lt;lambda()&gt;::operator()(void) const (__closure=0x7fffe5962a30) at src/mongo/db/catalog_raii.h:151</span><br><span class="line">#9  0x0000555557a0ac1b in mongo::writeConflictRetry&lt;mongo::write_ops_exec::(anonymous namespace)::insertBatchAndHandleErrors(mongo::OperationContext*, const mongo::write_ops::InsertCommandRequest&amp;, std::vector&lt;mongo::InsertStatement&gt;&amp;, mongo::write_ops_exec::(anonymous namespace)::LastOpFixer*, mongo::write_ops_exec::WriteResult*, mongo::OperationSource)::&lt;lambda()&gt; &gt; (f=..., ns=..., opStr=..., opCtx=0x555560af8180) at /usr/include/c++/9/bits/stl_iterator.h:806</span><br><span class="line">#10 mongo::write_ops_exec::(anonymous namespace)::insertBatchAndHandleErrors (source=&lt;optimized out&gt;, out=&lt;optimized out&gt;, lastOpFixer=&lt;optimized out&gt;, </span><br><span class="line">    batch=std::vector of length 1, capacity 1 = &#123;...&#125;, wholeOp=..., opCtx=&lt;optimized out&gt;) at src/mongo/db/ops/write_ops_exec.cpp:502</span><br><span class="line">#11 mongo::write_ops_exec::performInserts (opCtx=&lt;optimized out&gt;, opCtx@entry=0x555560af8180, wholeOp=..., source=@0x7fffe5962e00: mongo::kStandard)</span><br><span class="line">    at src/mongo/db/ops/write_ops_exec.cpp:655</span><br><span class="line">#12 0x000055555791d28e in mongo::(anonymous namespace)::CmdInsert::Invocation::typedRun (this=0x555560ba0000, opCtx=0x555560af8180) at src/mongo/db/commands.h:1173</span><br><span class="line">#13 0x000055555791e8a0 in mongo::TypedCommand&lt;mongo::(anonymous namespace)::CmdInsert&gt;::InvocationBase::_callTypedRun (opCtx=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/db/commands.h:1255</span><br><span class="line">#14 mongo::TypedCommand&lt;mongo::(anonymous namespace)::CmdInsert&gt;::InvocationBase::_runImpl (reply=0x555561392000, opCtx=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/db/commands.h:1256</span><br><span class="line">#15 mongo::TypedCommand&lt;mongo::(anonymous namespace)::CmdInsert&gt;::InvocationBase::run (this=&lt;optimized out&gt;, opCtx=&lt;optimized out&gt;, reply=0x555561392000)</span><br><span class="line">    at src/mongo/db/commands.h:1261</span><br><span class="line">#16 0x0000555558791662 in mongo::CommandHelpers::runCommandInvocation (opCtx=0x555560af8180, request=..., invocation=0x555560ba0000, response=0x555561392000)</span><br><span class="line">    at src/mongo/db/commands.cpp:200</span><br><span class="line">#17 0x0000555558797d73 in mongo::CommandHelpers::&lt;lambda()&gt;::operator() (__closure=0x7fffe5963180) at src/mongo/db/commands.cpp:184</span><br><span class="line">#18 mongo::makeReadyFutureWith&lt;mongo::CommandHelpers::runCommandInvocation(std::shared_ptr&lt;mongo::RequestExecutionContext&gt;, std::shared_ptr&lt;mongo::CommandInvocation&gt;, mongo::transport::ServiceExecutor::ThreadingModel)::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1208</span><br><span class="line">#19 mongo::CommandHelpers::runCommandInvocation (rec=std::shared_ptr&lt;class mongo::RequestExecutionContext&gt; (use count 11, weak count 0) = &#123;...&#125;, </span><br><span class="line">    invocation=std::shared_ptr&lt;class mongo::CommandInvocation&gt; (use count 3, weak count 0) = &#123;...&#125;, threadingModel=&lt;optimized out&gt;) at src/mongo/db/commands.cpp:185</span><br><span class="line">#20 0x0000555556c48367 in mongo::(anonymous namespace)::runCommandInvocation (rec=std::shared_ptr&lt;class mongo::RequestExecutionContext&gt; (empty) = &#123;...&#125;, </span><br><span class="line">    invocation=std::shared_ptr&lt;class mongo::CommandInvocation&gt; (empty) = &#123;...&#125;) at /usr/include/c++/9/bits/shared_ptr_base.h:756</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">#21 0x0000555556c5c389 in mongo::(anonymous namespace)::InvokeCommand::&lt;lambda()&gt;::operator() (__closure=&lt;optimized out&gt;) at /usr/include/c++/9/bits/shared_ptr_base.h:756</span><br><span class="line">#22 mongo::makeReadyFutureWith&lt;mongo::(anonymous namespace)::InvokeCommand::run()::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1211</span><br><span class="line">#23 mongo::(anonymous namespace)::InvokeCommand::run (this=0x55555c01a4a0) at src/mongo/db/service_entry_point_common.cpp:842</span><br><span class="line">#24 mongo::(anonymous namespace)::RunCommandImpl::&lt;lambda(auto:78*)&gt;::operator()&lt;mongo::(anonymous namespace)::InvokeCommand&gt; (__closure=&lt;optimized out&gt;, path=0x55555c01a4a0)</span><br><span class="line">    at src/mongo/db/service_entry_point_common.cpp:1188</span><br><span class="line">#25 mongo::future_util::AsyncState&lt;mongo::(anonymous namespace)::InvokeCommand&gt;::&lt;lambda()&gt;::operator() (this=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/util/future_util.h:742</span><br><span class="line">#26 mongo::makeReadyFutureWith&lt;mongo::future_util::AsyncState&lt;State&gt;::thenWithState(Launcher&amp;&amp;) &amp;&amp; [with Launcher = mongo::(anonymous namespace)::RunCommandImpl::_runCommand()::&lt;lambda(auto:78*)&gt;; State = mongo::(anonymous namespace)::InvokeCommand]::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1211</span><br><span class="line">#27 mongo::future_util::AsyncState&lt;mongo::(anonymous namespace)::InvokeCommand&gt;::thenWithState&lt;mongo::(anonymous namespace)::RunCommandImpl::_runCommand()::&lt;lambda(auto:78*)&gt; &gt; (</span><br><span class="line">    launcher=..., this=&lt;optimized out&gt;) at src/mongo/util/future_util.h:747</span><br><span class="line">#28 mongo::(anonymous namespace)::RunCommandImpl::_runCommand (this=&lt;optimized out&gt;) at src/mongo/db/service_entry_point_common.cpp:1188</span><br><span class="line">#29 0x0000555556c5cc32 in mongo::(anonymous namespace)::RunCommandAndWaitForWriteConcern::_runCommandWithFailPoint (this=0x555560ba00e0)</span><br><span class="line">    at src/mongo/db/service_entry_point_common.cpp:1299</span><br><span class="line">#30 0x0000555556c5d1c3 in mongo::(anonymous namespace)::RunCommandAndWaitForWriteConcern::_runImpl (this=0x555560ba00e0) at src/mongo/db/service_entry_point_common.cpp:1219</span><br><span class="line">#31 0x0000555556c4b9ad in mongo::(anonymous namespace)::RunCommandImpl::&lt;lambda()&gt;::operator() (__closure=&lt;optimized out&gt;) at src/mongo/db/service_entry_point_common.cpp:730</span><br><span class="line">#32 mongo::makeReadyFutureWith&lt;mongo::(anonymous namespace)::RunCommandImpl::run()::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1211</span><br><span class="line">#33 mongo::(anonymous namespace)::RunCommandImpl::run (this=0x555560ba00e0) at src/mongo/db/service_entry_point_common.cpp:728</span><br><span class="line">#34 0x0000555556c4f5b2 in mongo::(anonymous namespace)::ExecCommandDatabase::&lt;lambda()&gt;::&lt;lambda(auto:79*)&gt;::operator()&lt;mongo::(anonymous namespace)::RunCommandAndWaitForWriteConcern&gt; (__closure=&lt;optimized out&gt;, runner=0x555560ba00e0) at src/mongo/db/service_entry_point_common.cpp:1651</span><br><span class="line">#35 mongo::future_util::AsyncState&lt;mongo::(anonymous namespace)::RunCommandAndWaitForWriteConcern&gt;::&lt;lambda()&gt;::operator() (this=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/util/future_util.h:742</span><br><span class="line">#36 mongo::makeReadyFutureWith&lt;mongo::future_util::AsyncState&lt;State&gt;::thenWithState(Launcher&amp;&amp;) &amp;&amp; [with Launcher = mongo::(anonymous namespace)::ExecCommandDatabase::_commandExec()::&lt;lambda()&gt;::&lt;lambda(auto:79*)&gt;; State = mongo::(anonymous namespace)::RunCommandAndWaitForWriteConcern]::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1211</span><br><span class="line">#37 mongo::future_util::AsyncState&lt;mongo::(anonymous namespace)::RunCommandAndWaitForWriteConcern&gt;::thenWithState&lt;mongo::(anonymous namespace)::ExecCommandDatabase::_commandExec()::&lt;lambda()&gt;::&lt;lambda(auto:79*)&gt; &gt; (launcher=..., this=&lt;optimized out&gt;) at src/mongo/util/future_util.h:747</span><br><span class="line">#38 mongo::(anonymous namespace)::ExecCommandDatabase::&lt;lambda()&gt;::operator() (__closure=&lt;synthetic pointer&gt;) at src/mongo/db/service_entry_point_common.cpp:1651</span><br><span class="line">#39 mongo::(anonymous namespace)::ExecCommandDatabase::_commandExec (this=0x555560b57800) at src/mongo/db/service_entry_point_common.cpp:1658</span><br><span class="line">#40 0x0000555556c58516 in mongo::(anonymous namespace)::ExecCommandDatabase::&lt;lambda()&gt;::operator() (__closure=&lt;optimized out&gt;) at src/mongo/db/service_entry_point_common.cpp:625</span><br><span class="line">#41 mongo::makeReadyFutureWith&lt;mongo::(anonymous namespace)::ExecCommandDatabase::run()::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1211</span><br><span class="line">#42 mongo::(anonymous namespace)::ExecCommandDatabase::run (this=0x555560b57800) at src/mongo/db/service_entry_point_common.cpp:623</span><br><span class="line">#43 mongo::(anonymous namespace)::&lt;lambda()&gt;::&lt;lambda(auto:81*)&gt;::operator()&lt;mongo::(anonymous namespace)::ExecCommandDatabase&gt; (__closure=&lt;optimized out&gt;, runner=0x555560b57800)</span><br><span class="line">    at src/mongo/db/service_entry_point_common.cpp:1880</span><br><span class="line">#44 mongo::future_util::AsyncState&lt;mongo::(anonymous namespace)::ExecCommandDatabase&gt;::&lt;lambda()&gt;::operator()(void) const (this=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/util/future_util.h:742</span><br><span class="line">#45 0x0000555556c58be2 in mongo::makeReadyFutureWith&lt;mongo::future_util::AsyncState&lt;State&gt;::thenWithState(Launcher&amp;&amp;) &amp;&amp; [with Launcher = mongo::(anonymous namespace)::executeCommand(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt; mutable::&lt;lambda(auto:81*)&gt;; State = mongo::(anonymous namespace)::ExecCommandDatabase]::&lt;lambda()&gt; &gt; (func=...) at src/mongo/util/future.h:1206</span><br><span class="line">#46 mongo::future_util::AsyncState&lt;mongo::(anonymous namespace)::ExecCommandDatabase&gt;::thenWithState&lt;mongo::(anonymous namespace)::executeCommand(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt; mutable::&lt;lambda(auto:81*)&gt; &gt; (launcher=..., this=0x7fffe59639c0) at src/mongo/util/future_util.h:747</span><br><span class="line">#47 mongo::(anonymous namespace)::&lt;lambda()&gt;::operator() (__closure=&lt;optimized out&gt;) at src/mongo/db/service_entry_point_common.cpp:1880</span><br><span class="line">#48 mongo::future_details::call&lt;mongo::(anonymous namespace)::executeCommand(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;&amp;&gt; (func=...)</span><br><span class="line">    at src/mongo/util/future_impl.h:255</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">#49 mongo::future_details::throwingCall&lt;mongo::(anonymous namespace)::executeCommand(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;&amp;, mongo::future_details::FakeVoid&gt; (func=...) at src/mongo/util/future_impl.h:308</span><br><span class="line">#50 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::&lt;lambda()&gt;::&lt;lambda(mongo::future_details::SharedState&lt;mongo::future_details::FakeVoid&gt;*, mongo::future_details::SharedState&lt;void&gt;*)&gt;::operator() (output=0x555560b43200, input=&lt;optimized out&gt;, this=&lt;optimized out&gt;) at src/mongo/util/future_impl.h:935</span><br><span class="line">#51 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::&lt;lambda(mongo::future_details::SharedStateBase*)&gt;::operator() (ssb=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/util/future_impl.h:1257</span><br><span class="line">#52 mongo::unique_function&lt;void(mongo::future_details::SharedStateBase*)&gt;::callRegularVoid&lt;mongo::future_details::FutureImpl&lt;T&gt;::makeContinuation(OnReady&amp;&amp;) [with Result = void; OnReady = mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::(anonymous namespace)::executeCommand(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda()&gt;::&lt;lambda(mongo::future_details::SharedState&lt;mongo::future_details::FakeVoid&gt;*, mongo::future_details::SharedState&lt;void&gt;*)&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda(mongo::future_details::SharedStateBase*)&gt; &gt; (args#0=&lt;optimized out&gt;, f=..., isVoid=...)</span><br><span class="line">    at src/mongo/util/functional.h:145</span><br><span class="line">#53 mongo::unique_function&lt;void(mongo::future_details::SharedStateBase*)&gt;::SpecificImpl::call(mongo::future_details::SharedStateBase *&amp;&amp;) (this=&lt;optimized out&gt;, </span><br><span class="line">    args#0=&lt;optimized out&gt;) at src/mongo/util/functional.h:159</span><br><span class="line">#54 0x0000555556c14b27 in mongo::unique_function&lt;void (mongo::future_details::SharedStateBase*)&gt;::operator()(mongo::future_details::SharedStateBase*) const (args#0=&lt;optimized out&gt;, </span><br><span class="line">    this=0x555560b43818) at src/mongo/util/invariant.h:66</span><br><span class="line">#55 mongo::future_details::SharedStateBase::transitionToFinished (this=0x555560b43800) at src/mongo/util/future_impl.h:441</span><br><span class="line">#56 0x0000555556c5fcd2 in mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;::emplaceValue&lt;mongo::future_details::FakeVoid&gt; (this=&lt;optimized out&gt;)</span><br><span class="line">    at /usr/include/c++/9/new:174</span><br><span class="line">#57 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::future_details::FakeVoid&amp;&amp;)#1&#125;::operator()(mongo::future_details::FakeVoid&amp;&amp;) const (this=&lt;optimized out&gt;, val=...) at src/mongo/util/future_impl.h:1146</span><br><span class="line">#58 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::generalImpl&lt;mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::future_details::FakeVoid&amp;&amp;)#1&#125;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::Status&amp;&amp;)#2&#125;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda()#3&#125;&gt;(mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::future_details::FakeVoid&amp;&amp;)#1&#125;&amp;&amp;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::Status&amp;&amp;)#2&#125;&amp;&amp;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda()#3&#125;&amp;&amp;) (notReady=..., </span><br><span class="line">    fail=..., success=..., this=&lt;optimized out&gt;) at src/mongo/util/future_impl.h:1191</span><br><span class="line">#59 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::generalImpl&lt;mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::future_details::FakeVoid&amp;&amp;)#1&#125;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::Status&amp;&amp;)#2&#125;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda()#3&#125;&gt;(mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::future_details::FakeVoid&amp;&amp;)#1&#125;&amp;&amp;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda(mongo::Status&amp;&amp;)#2&#125;&amp;&amp;, mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp;::&#123;lambda()#3&#125;&amp;&amp;) (</span><br><span class="line">    this=&lt;optimized out&gt;, success=..., fail=..., notReady=...) at src/mongo/util/future_impl.h:1182</span><br><span class="line">#60 0x0000555556c520ac in mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::propagateResultTo(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*) &amp;&amp; (output=&lt;optimized out&gt;, this=0x7fffe5963b40) at src/mongo/util/future_impl.h:1143</span><br><span class="line">#61 mongo::SemiFuture&lt;void&gt;::propagateResultTo&lt;mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*&amp;&gt;(mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;*&amp;) &amp;&amp; (arg=&lt;synthetic pointer&gt;: &lt;optimized out&gt;, this=0x7fffe5963b40) at src/mongo/util/future.h:285</span><br><span class="line">#62 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::&lt;lambda()&gt;::&lt;lambda(mongo::future_details::SharedState&lt;mongo::future_details::FakeVoid&gt;*, mongo::future_details::SharedState&lt;void&gt;*)&gt;::operator() (output=0x555560b43800, input=&lt;optimized out&gt;, this=&lt;optimized out&gt;) at src/mongo/util/future_impl.h:935</span><br><span class="line">#63 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::&lt;lambda(mongo::future_details::SharedStateBase*)&gt;::operator() (ssb=&lt;optimized out&gt;, this=&lt;optimized out&gt;)</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">    at src/mongo/util/future_impl.h:1257</span><br><span class="line">#64 mongo::unique_function&lt;void(mongo::future_details::SharedStateBase*)&gt;::callRegularVoid&lt;mongo::future_details::FutureImpl&lt;T&gt;::makeContinuation(OnReady&amp;&amp;) [with Result = void; OnReady = mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::(anonymous namespace)::executeCommand(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda()&gt;::&lt;lambda(mongo::future_details::SharedState&lt;mongo::future_details::FakeVoid&gt;*, mongo::future_details::SharedState&lt;void&gt;*)&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda(mongo::future_details::SharedStateBase*)&gt; &gt; (args#0=&lt;optimized out&gt;, f=..., isVoid=...)</span><br><span class="line">    at src/mongo/util/functional.h:145</span><br><span class="line">#65 mongo::unique_function&lt;void(mongo::future_details::SharedStateBase*)&gt;::SpecificImpl::call(mongo::future_details::SharedStateBase *&amp;&amp;) (this=&lt;optimized out&gt;, </span><br><span class="line">    args#0=&lt;optimized out&gt;) at src/mongo/util/functional.h:159</span><br><span class="line">#66 0x0000555556c14b27 in mongo::unique_function&lt;void (mongo::future_details::SharedStateBase*)&gt;::operator()(mongo::future_details::SharedStateBase*) const (args#0=&lt;optimized out&gt;, </span><br><span class="line">    this=0x555560b42d18) at src/mongo/util/invariant.h:66</span><br><span class="line">#67 mongo::future_details::SharedStateBase::transitionToFinished (this=0x555560b42d00) at src/mongo/util/future_impl.h:441</span><br><span class="line">#68 0x0000555556c59141 in mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt;::emplaceValue&lt;&gt;() (this=0x555560b42d00) at /usr/include/c++/9/new:174</span><br><span class="line">#69 mongo::Promise&lt;void&gt;::emplaceValue&lt;, 0&gt;()::&#123;lambda(boost::intrusive_ptr&lt;mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt; &gt;&amp;&amp;)#1&#125;::operator()(boost::intrusive_ptr&lt;mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt; &gt;&amp;&amp;) const (this=&lt;optimized out&gt;, sharedState=&lt;synthetic pointer&gt;) at src/mongo/util/future.h:854</span><br><span class="line">#70 mongo::Promise&lt;void&gt;::setImpl&lt;mongo::Promise&lt;void&gt;::emplaceValue&lt;, 0&gt;()::&#123;lambda(boost::intrusive_ptr&lt;mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt; &gt;&amp;&amp;)#1&#125;&gt;(mongo::Promise&lt;void&gt;::emplaceValue&lt;, 0&gt;()::&#123;lambda(boost::intrusive_ptr&lt;mongo::future_details::SharedStateImpl&lt;mongo::future_details::FakeVoid&gt; &gt;&amp;&amp;)#1&#125;&amp;&amp;) (doSet=..., </span><br><span class="line">    this=0x7fffe5963ce0) at src/mongo/util/future.h:895</span><br><span class="line">#71 mongo::Promise&lt;void&gt;::emplaceValue&lt;, 0&gt;() (this=0x7fffe5963ce0) at src/mongo/util/future.h:853</span><br><span class="line">#72 mongo::(anonymous namespace)::executeCommand (execContext=...) at src/mongo/db/service_entry_point_common.cpp:1892</span><br><span class="line">#73 0x0000555556c59cbf in mongo::(anonymous namespace)::&lt;lambda()&gt;::operator() (__closure=&lt;optimized out&gt;) at /usr/include/c++/9/bits/shared_ptr_base.h:756</span><br><span class="line">#74 mongo::future_details::call&lt;mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;&amp;&gt; (</span><br><span class="line">    func=...) at src/mongo/util/future_impl.h:255</span><br><span class="line">#75 mongo::future_details::throwingCall&lt;mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;&amp;, mongo::future_details::FakeVoid&gt; (func=...) at src/mongo/util/future_impl.h:308</span><br><span class="line">#76 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::&lt;lambda(mongo::future_details::FakeVoid&amp;&amp;)&gt;::operator()(mongo::future_details::FakeVoid &amp;&amp;) (val=..., </span><br><span class="line">    this=&lt;optimized out&gt;) at src/mongo/util/future_impl.h:917</span><br><span class="line">#77 0x0000555556c59e8a in mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::generalImpl&lt;mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda(mongo::future_details::FakeVoid&amp;&amp;)&gt;, mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda(mongo::Status&amp;&amp;)&gt;, mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda()&gt; &gt; (fail=..., notReady=..., success=..., this=0x7fffe5964110) at src/third_party/boost/boost/optional/detail/optional_aligned_storage.hpp:64</span><br><span class="line">#78 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::then&lt;mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt; &gt; (func=..., this=0x7fffe5964110) at src/mongo/util/future_impl.h:940</span><br><span class="line">#79 mongo::Future&lt;void&gt;::then&lt;mongo::(anonymous namespace)::receivedCommands(std::shared_ptr&lt;mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt;)::&lt;lambda()&gt; &gt; (</span><br><span class="line">    func=..., this=0x7fffe5964110) at src/mongo/util/future.h:405</span><br><span class="line">#80 mongo::(anonymous namespace)::receivedCommands (</span><br><span class="line">    execContext=std::shared_ptr&lt;class mongo::(anonymous namespace)::HandleRequest::ExecutionContext&gt; (use count 11, weak count 0) = &#123;...&#125;)</span><br><span class="line">    at src/mongo/db/service_entry_point_common.cpp:1939</span><br><span class="line">#81 0x0000555556c5b130 in mongo::(anonymous namespace)::CommandOpRunner::run (this=&lt;optimized out&gt;) at /usr/include/c++/9/ext/atomicity.h:96</span><br><span class="line">#82 0x0000555556c54f9f in mongo::ServiceEntryPointCommon::handleRequest (opCtx=opCtx@entry=0x555560af8180, m=..., </span><br><span class="line">    behaviors=std::unique_ptr&lt;const class mongo::ServiceEntryPointCommon::Hooks&gt; = &#123;...&#125;) at src/mongo/db/service_entry_point_common.cpp:2441</span><br><span class="line">#83 0x0000555556c41514 in mongo::ServiceEntryPointMongod::handleRequest (this=&lt;optimized out&gt;, opCtx=0x555560af8180, m=...) at /usr/include/c++/9/bits/move.h:74</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">#84 0x0000555556cabe0a in mongo::transport::ServiceStateMachine::Impl::processMessage (this=0x555560b81090) at src/mongo/transport/service_state_machine.cpp:466</span><br><span class="line">#85 0x0000555556caf176 in mongo::transport::ServiceStateMachine::Impl::&lt;lambda()&gt;::operator() (__closure=&lt;optimized out&gt;) at src/mongo/transport/service_state_machine.cpp:559</span><br><span class="line">#86 mongo::future_details::call&lt;mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt;&amp;&gt; (func=...) at src/mongo/util/future_impl.h:255</span><br><span class="line">#87 mongo::future_details::throwingCall&lt;mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt;&amp;, mongo::future_details::FakeVoid&gt; (func=...)</span><br><span class="line">    at src/mongo/util/future_impl.h:308</span><br><span class="line">#88 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::&lt;lambda(mongo::future_details::FakeVoid&amp;&amp;)&gt;::operator() (this=&lt;optimized out&gt;, val=...)</span><br><span class="line">    at src/mongo/util/future_impl.h:917</span><br><span class="line">#89 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::generalImpl&lt;mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda(mongo::future_details::FakeVoid&amp;&amp;)&gt;, mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda(mongo::Status&amp;&amp;)&gt;, mongo::future_details::FutureImpl&lt;T&gt;::then(Func&amp;&amp;) &amp;&amp; [with Func = mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt;; T = mongo::future_details::FakeVoid]::&lt;lambda()&gt; &gt; (fail=..., notReady=..., success=..., this=0x7fffe5964780) at src/mongo/util/future_impl.h:1184</span><br><span class="line">#90 mongo::future_details::FutureImpl&lt;mongo::future_details::FakeVoid&gt;::then&lt;mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt; &gt; (</span><br><span class="line">    func=..., this=0x7fffe5964780) at src/mongo/util/future_impl.h:940</span><br><span class="line">#91 mongo::Future&lt;void&gt;::then&lt;mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda()&gt; &gt; (func=..., this=0x7fffe5964780)</span><br><span class="line">    at src/mongo/util/future.h:405</span><br><span class="line">#92 mongo::transport::ServiceStateMachine::Impl::startNewLoop (execStatus=..., this=0x555560b81090) at src/mongo/transport/service_state_machine.cpp:559</span><br><span class="line">#93 mongo::transport::ServiceStateMachine::Impl::startNewLoop (this=0x555560b81090, execStatus=...) at src/mongo/transport/service_state_machine.cpp:546</span><br><span class="line">#94 0x0000555556caf8e4 in mongo::transport::ServiceStateMachine::Impl::&lt;lambda(mongo::Status)&gt;::&lt;lambda(mongo::Status)&gt;::&lt;lambda()&gt;::operator() (__closure=&lt;synthetic pointer&gt;, </span><br><span class="line">    __closure=&lt;synthetic pointer&gt;) at src/mongo/transport/service_state_machine.cpp:588</span><br><span class="line">#95 mongo::ClientStrand::run&lt;mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda(mongo::Status)&gt;::&lt;lambda(mongo::Status)&gt;::&lt;lambda()&gt; &gt; (</span><br><span class="line">    task=..., this=&lt;optimized out&gt;) at src/mongo/db/client_strand.h:165</span><br><span class="line">#96 mongo::transport::ServiceStateMachine::Impl::&lt;lambda(mongo::Status)&gt;::&lt;lambda(mongo::Status)&gt;::operator() (__closure=&lt;optimized out&gt;, execStatus=...)</span><br><span class="line">    at src/mongo/transport/service_state_machine.cpp:588</span><br><span class="line">#97 mongo::unique_function&lt;void(mongo::Status)&gt;::callRegularVoid&lt;mongo::transport::ServiceStateMachine::Impl::startNewLoop(const mongo::Status&amp;)::&lt;lambda(mongo::Status)&gt;::&lt;lambda(mongo::Status)&gt; &gt; (args#0=..., f=..., isVoid=...) at src/mongo/util/functional.h:145</span><br><span class="line">#98 mongo::unique_function&lt;void(mongo::Status)&gt;::SpecificImpl::call(mongo::Status &amp;&amp;) (this=&lt;optimized out&gt;, args#0=...) at src/mongo/util/functional.h:159</span><br><span class="line">#99 0x00005555592c9065 in mongo::unique_function&lt;void (mongo::Status)&gt;::operator()(mongo::Status) const (args#0=..., this=&lt;optimized out&gt;) at src/mongo/util/invariant.h:66</span><br><span class="line">#100 mongo::transport::ServiceExecutorSynchronous::&lt;lambda(mongo::Status)&gt;::operator() (status=..., __closure=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/transport/service_executor_synchronous.cpp:163</span><br><span class="line">#101 mongo::unique_function&lt;void(mongo::Status)&gt;::callRegularVoid&lt;mongo::transport::ServiceExecutorSynchronous::runOnDataAvailable(const SessionHandle&amp;, mongo::OutOfLineExecutor::Task)::&lt;lambda(mongo::Status)&gt; &gt; (args#0=..., f=..., isVoid=...) at src/mongo/util/functional.h:145</span><br><span class="line">#102 mongo::unique_function&lt;void(mongo::Status)&gt;::SpecificImpl::call(mongo::Status &amp;&amp;) (this=&lt;optimized out&gt;, args#0=...) at src/mongo/util/functional.h:159</span><br><span class="line">#103 0x000055555741b9d8 in mongo::unique_function&lt;void (mongo::Status)&gt;::operator()(mongo::Status) const (args#0=..., this=&lt;optimized out&gt;) at src/mongo/util/invariant.h:66</span><br><span class="line">#104 mongo::transport::ServiceExecutor::schedule(mongo::unique_function&lt;void (mongo::Status)&gt;)::&#123;lambda()#1&#125;::operator()() (__closure=&lt;optimized out&gt;)</span><br><span class="line">    at src/mongo/transport/service_executor.h:111</span><br><span class="line">#105 mongo::unique_function&lt;void ()&gt;::callRegularVoid&lt;mongo::transport::ServiceExecutor::schedule(mongo::unique_function&lt;void (mongo::Status)&gt;)::&#123;lambda()#1&#125;&gt;(std::integral_constant&lt;bool, true&gt;, mongo::transport::ServiceExecutor::schedule(mongo::unique_function&lt;void (mongo::Status)&gt;)::&#123;lambda()#1&#125;&amp;) (f=..., isVoid=...) at src/mongo/util/functional.h:145</span><br><span class="line">#106 mongo::unique_function&lt;void ()&gt;::makeImpl&lt;mongo::transport::ServiceExecutor::schedule(mongo::unique_function&lt;void (mongo::Status)&gt;)::&#123;lambda()#1&#125;&gt;(mongo::transport::ServiceExecutor::schedule(mongo::unique_function&lt;void (mongo::Status)&gt;)::&#123;lambda()#1&#125;&amp;&amp;)::SpecificImpl::call() (this=&lt;optimized out&gt;) at src/mongo/util/functional.h:159</span><br><span class="line">#107 0x00005555592c923f in mongo::unique_function&lt;void ()&gt;::operator()() const (this=&lt;optimized out&gt;) at src/mongo/util/invariant.h:66</span><br><span class="line">#108 mongo::transport::ServiceExecutorSynchronous::&lt;lambda()&gt;::operator() (__closure=0x55556037a1a8) at src/mongo/transport/service_executor_synchronous.cpp:131</span><br><span class="line">#109 mongo::unique_function&lt;void()&gt;::callRegularVoid&lt;mongo::transport::ServiceExecutorSynchronous::scheduleTask(mongo::transport::ServiceExecutor::Task, mongo::transport::ServiceExec--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">utor::ScheduleFlags)::&lt;lambda()&gt; &gt; (f=..., isVoid=...) at src/mongo/util/functional.h:145</span><br><span class="line">#110 mongo::unique_function&lt;void()&gt;::SpecificImpl::call(void) (this=0x55556037a1a0) at src/mongo/util/functional.h:159</span><br><span class="line">#111 0x00005555592cdc28 in mongo::unique_function&lt;void ()&gt;::operator()() const (this=0x555560b58f58) at src/mongo/util/invariant.h:66</span><br><span class="line">#112 mongo::&lt;lambda()&gt;::operator() (__closure=0x555560b58f48) at src/mongo/transport/service_executor_utils.cpp:111</span><br><span class="line">#113 mongo::unique_function&lt;void()&gt;::callRegularVoid&lt;mongo::launchServiceWorkerThread(mongo::unique_function&lt;void()&gt;)::&lt;lambda()&gt; &gt; (f=..., isVoid=...)</span><br><span class="line">    at src/mongo/util/functional.h:145</span><br><span class="line">#114 mongo::unique_function&lt;void()&gt;::SpecificImpl::call(void) (this=0x555560b58f40) at src/mongo/util/functional.h:159</span><br><span class="line">#115 0x00005555592cdca1 in mongo::unique_function&lt;void ()&gt;::operator()() const (this=0x55555c01a4b8) at src/mongo/util/invariant.h:66</span><br><span class="line">#116 mongo::(anonymous namespace)::runFunc (ctx=0x55555c01a4b8) at src/mongo/transport/service_executor_utils.cpp:64</span><br><span class="line">#117 0x00007ffff7b8a609 in start_thread (arg=&lt;optimized out&gt;) at pthread_create.c:477</span><br><span class="line">#118 0x00007ffff777f293 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95</span><br></pre></td></tr></table></figure>
+
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/24/霍尔逻辑-从快排开始/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/05/24/霍尔逻辑-从快排开始/" class="post-title-link" itemprop="url">霍尔逻辑_从快排开始</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-05-24 13:38:41 / 修改时间：13:44:32" itemprop="dateCreated datePublished" datetime="2021-05-24T13:38:41+08:00">2021-05-24</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/24/霍尔逻辑-从快排开始/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/24/霍尔逻辑-从快排开始/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li><a href="https://blog.csdn.net/Campsisgrandiflora/article/details/111410348" target="_blank" rel="noopener">什么是霍尔逻辑</a>:<br>霍尔逻辑由三个部分组成:   </li>
+<li>ϕ被称为前置条件，</li>
+<li>P是程序片段，</li>
+<li>ψ称为后置条件</li>
+</ul>
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="https://arxiv.org/pdf/1211.4470.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1211.4470.pdf</a></li>
+<li>C. A. R. Hoare. Proof of correctness of data representations. Acta Inf.,<br>1:271–281, 1972</li>
+<li>Bertrand Meyer. Object-oriented software construction. Prentice Hall, 2nd<br>edition, 1997. First Ed.: 1988.</li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/24/堆栈/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/05/24/堆栈/" class="post-title-link" itemprop="url">堆栈</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-05-24 12:20:07 / 修改时间：12:31:08" itemprop="dateCreated datePublished" datetime="2021-05-24T12:20:07+08:00">2021-05-24</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/24/堆栈/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/24/堆栈/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在x86_64中,调用栈是从高地址到低地址增长的, <code>%rbp</code>寄存器有两个核心的内容: </p>
+<ul>
+<li><code>0(%rbp)</code>也就是<code>%rbp</code>寄存器指向的寄存器内容,这个指针指向的地址也存着上一个堆栈的<code>%rbp</code>堆栈的地址 </li>
+<li><code>8(%rbp)</code>也就是<code>%rbp</code>寄存器存着另外一个存的是返回地址,什么是返回地址?就是指令段的地址</li>
+</ul>
+<p>也就是rbp通过寄存器我们可以得到</p>
+<ul>
+<li><code>8(%rbp)</code>:上一个堆栈的<code>代码段</code>开始</li>
+<li><code>(%rbp)</code>: 上一个堆栈的开始</li>
+</ul>
+<h4 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h4><ul>
+<li>3.2.2节 <a href="https://uclibc.org/docs/psABI-x86_64.pdf" target="_blank" rel="noopener">https://uclibc.org/docs/psABI-x86_64.pdf</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/21/vxlan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/05/21/vxlan/" class="post-title-link" itemprop="url">vxlan</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-05-21 08:48:26 / 修改时间：08:49:36" itemprop="dateCreated datePublished" datetime="2021-05-21T08:48:26+08:00">2021-05-21</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/05/21/vxlan/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/21/vxlan/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>vxlan 是一个3层协议上加上2层协议的协议<br>由vetp解析出上面2层协议的报文</p>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/pdfrfc/rfc7348.txt.pdf" target="_blank" rel="noopener">https://www.rfc-editor.org/rfc/pdfrfc/rfc7348.txt.pdf</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/11/mysql-binlog获取/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -247,11 +623,19 @@
                 
               
 
-              <time title="创建时间：2021-05-11 12:44:08 / 修改时间：13:36:53" itemprop="dateCreated datePublished" datetime="2021-05-11T12:44:08+08:00">2021-05-11</time>
+              <time title="创建时间：2021-05-11 12:44:08" itemprop="dateCreated datePublished" datetime="2021-05-11T12:44:08+08:00">2021-05-11</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-21 08:49:36" itemprop="dateModified" datetime="2021-05-21T08:49:36+08:00">2021-05-21</time>
+              </span>
             
           
 
@@ -287,7 +671,38 @@
 <h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload则是具体负载</p>
 <h2 id="mysql握手"><a href="#mysql握手" class="headerlink" title="mysql握手"></a>mysql握手</h2><p>tcp三次握手之后,整个传输层的连接已经建立了,那么怎么登陆呢?<br><a href="https://dev.mysql.com/doc/internals/en/plain-handshake.html" target="_blank" rel="noopener">握手文档</a><br><a href="https://dev.mysql.com/doc/dev/mysql-server/8.0.16/page_protocol_connection_phase_authentication_methods_native_password_authentication.html" target="_blank" rel="noopener">加密的方式</a><br>举个例子:加密套件是<code>mysql_native_password</code>,那么第一个包会是由 server发出,附带20字节的随机码, 然后在客户端的用户提交的密码做多次<code>sha1</code>哈希然后回传给mysql</p>
 <h2 id="binlog获取分为两步"><a href="#binlog获取分为两步" class="headerlink" title="binlog获取分为两步:"></a>binlog获取分为两步:</h2><p>1: COM_REGISTER_SLAVE 把slave注册到master里面<br>2: <a href="https://dev.mysql.com/doc/internals/en/com-binlog-dump.html" target="_blank" rel="noopener">COM_BINLOG_DUMP</a> 这个包主要是告诉master锁需要的binlog的名字和位点,然后就会返回一堆binlog事件给客户端 </p>
+<h2 id="mysql-发送binlog流程"><a href="#mysql-发送binlog流程" class="headerlink" title="mysql 发送binlog流程"></a>mysql 发送binlog流程</h2><pre><code>int Binlog_sender::get_binlog_end_pos(File_reader *reader, my_off_t *end_pos) {
+  DBUG_TRACE;
+  my_off_t read_pos = reader-&gt;position();
 
+  do {
+    /*
+      MYSQL_BIN_LOG::binlog_end_pos is atomic. We should only acquire the
+      LOCK_binlog_end_pos if we reached the end of the hot log and are going
+      to wait for updates on the binary log (Binlog_sender::wait_new_event()).
+    */
+    *end_pos = mysql_bin_log.get_binlog_end_pos();
+
+    /* If this is a cold binlog file, we are done getting the end pos */
+    if (unlikely(!mysql_bin_log.is_active(m_linfo.log_file_name))) {
+      *end_pos = 0;
+      return 0;
+    }
+
+    DBUG_PRINT(&quot;info&quot;, (&quot;Reading file %s, seek pos %llu, end_pos is %llu&quot;,
+                        m_linfo.log_file_name, read_pos, *end_pos));
+    DBUG_PRINT(&quot;info&quot;, (&quot;Active file is %s&quot;, mysql_bin_log.get_log_fname()));
+
+    if (read_pos &lt; *end_pos) return 0;
+
+    /* Some data may be in net buffer, it should be flushed before waiting */
+    if (!m_wait_new_events || flush_net()) return 1;
+
+    if (unlikely(wait_new_events(read_pos))) return 1;
+  } while (unlikely(!m_thd-&gt;killed));
+
+  return 1;
+}</code></pre>
         
       
     </div>
@@ -338,7 +753,7 @@
                 
               
 
-              <time title="创建时间：2021-05-11 10:34:32 / 修改时间：10:36:52" itemprop="dateCreated datePublished" datetime="2021-05-11T10:34:32+08:00">2021-05-11</time>
+              <time title="创建时间：2021-05-11 10:34:32 / 修改时间：13:51:19" itemprop="dateCreated datePublished" datetime="2021-05-11T10:34:32+08:00">2021-05-11</time>
             </span>
           
             
@@ -376,6 +791,11 @@
           <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_attribute_((packed))</span><br></pre></td></tr></table></figure>
 
 <p>你会在redis的<code>sds.h</code>看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This attribute, attached to an enum, struct, or union type definition, specified that the minimum required memory be used to represent the type.</span><br><span class="line">Specifying this attribute for struct and union types is equivalent to specifying the packed attribute on each of the structure or union members. Specifying the -fshort-enums flag on the line is equivalent to specifying the packed attribute on all enum definitions.</span><br><span class="line"></span><br><span class="line">You may only specify this attribute after a closing curly brace on an enum definition, not in a typedef declaration, unless that declaration also contains the definition of the enum.</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc-3.3/gcc/Type-Attributes.html" target="_blank" rel="noopener">https://gcc.gnu.org/onlinedocs/gcc-3.3/gcc/Type-Attributes.html</a></li>
+</ul>
 
         
       
@@ -756,405 +1176,11 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/02/canal需要注意的点/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/04/02/canal需要注意的点/" class="post-title-link" itemprop="url">canal需要注意的点</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-04-02 11:48:43" itemprop="dateCreated datePublished" datetime="2021-04-02T11:48:43+08:00">2021-04-02</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-13 10:07:01" itemprop="dateModified" datetime="2021-04-13T10:07:01+08:00">2021-04-13</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/04/02/canal需要注意的点/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/02/canal需要注意的点/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="比较坑的点"><a href="#比较坑的点" class="headerlink" title="比较坑的点:"></a>比较坑的点:</h2><p>1 每次同步的内容会每秒持久化到file或者zk ,binlog一般只保留的几天,如果你持久化到文件/zk的配置的binlog文件在mysql已经不存在了会报错,<br>报错信息大概如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.io.IOException: Received error packet: errno = 1236, sqlstate = HY000 errmsg = Could not find first log file name in binary log index file</span><br></pre></td></tr></table></figure>
-
-<p>这个时候只能调整配置或者删除mate.dat 文件,然后重启canal , 这个时候他会使用mysql的语句<code>show status</code>去取最新位点</p>
-<p>2 重启canal有个非常非常坑的点在于会读<code>information_schema</code> 这个库的内容去读表名和表id等信息 ,而这个往往会很久,不知道是不是测试环境原因,读了挺久的</p>
-<h2 id="mate刷新的逻辑"><a href="#mate刷新的逻辑" class="headerlink" title="mate刷新的逻辑"></a>mate刷新的逻辑</h2><p>根据配置每秒刷新到mate信息<br>也就是文件或者zk上,所以重启会有重复消费</p>
-<h2 id="找到位点"><a href="#找到位点" class="headerlink" title="找到位点"></a>找到位点</h2><p>加载顺序:<br>1 从mate中获取位点: getLatestIndexBy 也就是从 memeory/zk或者file的mate信息中读取位点<br>2 根据配置读取:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line">protected EntryPosition findStartPositionInternal(ErosaConnection connection) &#123;</span><br><span class="line">    MysqlConnection mysqlConnection = (MysqlConnection) connection;</span><br><span class="line">    LogPosition logPosition = logPositionManager.getLatestIndexBy(destination);</span><br><span class="line">    if (logPosition == null) &#123;// 找不到历史成功记录</span><br><span class="line">        EntryPosition entryPosition = null;</span><br><span class="line">        if (masterInfo != null &amp;&amp; mysqlConnection.getConnector().getAddress().equals(masterInfo.getAddress())) &#123;</span><br><span class="line">            entryPosition = masterPosition;</span><br><span class="line">        &#125; else if (standbyInfo != null</span><br><span class="line">                   &amp;&amp; mysqlConnection.getConnector().getAddress().equals(standbyInfo.getAddress())) &#123;</span><br><span class="line">            entryPosition = standbyPosition;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (entryPosition == null) &#123;</span><br><span class="line">            entryPosition = findEndPositionWithMasterIdAndTimestamp(mysqlConnection); // 默认从当前最后一个位置进行消费</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 判断一下是否需要按时间订阅</span><br><span class="line">        if (StringUtils.isEmpty(entryPosition.getJournalName())) &#123;</span><br><span class="line">            // 如果没有指定binlogName，尝试按照timestamp进行查找</span><br><span class="line">            if (entryPosition.getTimestamp() != null &amp;&amp; entryPosition.getTimestamp() &gt; 0L) &#123;</span><br><span class="line">                logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                    new Object[] &#123; &quot;&quot;, &quot;&quot;, entryPosition.getTimestamp() &#125;);</span><br><span class="line">                return findByStartTimeStamp(mysqlConnection, entryPosition.getTimestamp());</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                logger.warn(&quot;prepare to find start position just show master status&quot;);</span><br><span class="line">                return findEndPositionWithMasterIdAndTimestamp(mysqlConnection); // 默认从当前最后一个位置进行消费</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            if (entryPosition.getPosition() != null &amp;&amp; entryPosition.getPosition() &gt; 0L) &#123;</span><br><span class="line">                // 如果指定binlogName + offest，直接返回</span><br><span class="line">                entryPosition = findPositionWithMasterIdAndTimestamp(mysqlConnection, entryPosition);</span><br><span class="line">                logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                    new Object[] &#123; entryPosition.getJournalName(), entryPosition.getPosition(),</span><br><span class="line">                            entryPosition.getTimestamp() &#125;);</span><br><span class="line">                return entryPosition;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                EntryPosition specificLogFilePosition = null;</span><br><span class="line">                if (entryPosition.getTimestamp() != null &amp;&amp; entryPosition.getTimestamp() &gt; 0L) &#123;</span><br><span class="line">                    // 如果指定binlogName +</span><br><span class="line">                    // timestamp，但没有指定对应的offest，尝试根据时间找一下offest</span><br><span class="line">                    EntryPosition endPosition = findEndPosition(mysqlConnection);</span><br><span class="line">                    if (endPosition != null) &#123;</span><br><span class="line">                        logger.warn(&quot;prepare to find start position &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;,</span><br><span class="line">                            new Object[] &#123; entryPosition.getJournalName(), &quot;&quot;, entryPosition.getTimestamp() &#125;);</span><br><span class="line">                        specificLogFilePosition = findAsPerTimestampInSpecificLogFile(mysqlConnection,</span><br><span class="line">                            entryPosition.getTimestamp(),</span><br><span class="line">                            endPosition,</span><br><span class="line">                            entryPosition.getJournalName(),</span><br><span class="line">                            true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                if (specificLogFilePosition == null) &#123;</span><br><span class="line">                    // position不存在，从文件头开始</span><br><span class="line">                    entryPosition.setPosition(BINLOG_START_OFFEST);</span><br><span class="line">                    return entryPosition;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    return specificLogFilePosition;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        if (logPosition.getIdentity().getSourceAddress().equals(mysqlConnection.getConnector().getAddress())) &#123;</span><br><span class="line">            if (dumpErrorCountThreshold &gt;= 0 &amp;&amp; dumpErrorCount &gt; dumpErrorCountThreshold) &#123;</span><br><span class="line">                // binlog定位位点失败,可能有两个原因:</span><br><span class="line">                // 1. binlog位点被删除</span><br><span class="line">                // 2.vip模式的mysql,发生了主备切换,判断一下serverId是否变化,针对这种模式可以发起一次基于时间戳查找合适的binlog位点</span><br><span class="line">                boolean case2 = (standbyInfo == null || standbyInfo.getAddress() == null)</span><br><span class="line">                                &amp;&amp; logPosition.getPostion().getServerId() != null</span><br><span class="line">                                &amp;&amp; !logPosition.getPostion().getServerId().equals(findServerId(mysqlConnection));</span><br><span class="line">                if (case2) &#123;</span><br><span class="line">                    EntryPosition findPosition = fallbackFindByStartTimestamp(logPosition, mysqlConnection);</span><br><span class="line">                    dumpErrorCount = 0;</span><br><span class="line">                    return findPosition;</span><br><span class="line">                &#125;</span><br><span class="line">                // 处理 binlog 位点被删除的情况，提供自动重置到当前位点的功能</span><br><span class="line">                // 应用场景: 测试环境不稳定，位点经常被删。强烈不建议在正式环境中开启此控制参数，因为binlog 丢失调到最新位点也即意味着数据丢失</span><br><span class="line">                if (isAutoResetLatestPosMode()) &#123;</span><br><span class="line">                    dumpErrorCount = 0;</span><br><span class="line">                    return findEndPosition(mysqlConnection);</span><br><span class="line">                &#125;</span><br><span class="line">                Long timestamp = logPosition.getPostion().getTimestamp();</span><br><span class="line">                if (isRdsOssMode() &amp;&amp; (timestamp != null &amp;&amp; timestamp &gt; 0)) &#123;</span><br><span class="line">                    // 如果binlog位点不存在，并且属于timestamp不为空,可以返回null走到oss binlog处理</span><br><span class="line">                    return null;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else if (StringUtils.isBlank(logPosition.getPostion().getJournalName())</span><br><span class="line">                    &amp;&amp; logPosition.getPostion().getPosition() &lt;= 0</span><br><span class="line">                    &amp;&amp; logPosition.getPostion().getTimestamp() &gt; 0) &#123;</span><br><span class="line">                return fallbackFindByStartTimestamp(logPosition,mysqlConnection);</span><br><span class="line">            &#125;</span><br><span class="line">            // 其余情况</span><br><span class="line">            logger.warn(&quot;prepare to find start position just last position\n &#123;&#125;&quot;,</span><br><span class="line">                JsonUtils.marshalToString(logPosition));</span><br><span class="line">            return logPosition.getPostion();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 针对切换的情况，考虑回退时间</span><br><span class="line">            long newStartTimestamp = logPosition.getPostion().getTimestamp() - fallbackIntervalInSeconds * 1000;</span><br><span class="line">            logger.warn(&quot;prepare to find start position by switch &#123;&#125;:&#123;&#125;:&#123;&#125;&quot;, new Object[] &#123; &quot;&quot;, &quot;&quot;,</span><br><span class="line">                    logPosition.getPostion().getTimestamp() &#125;);</span><br><span class="line">            return findByStartTimeStamp(mysqlConnection, newStartTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="事件类型"><a href="#事件类型" class="headerlink" title="事件类型"></a>事件类型</h2><p>事件有很多类型,我现在只对update和insert 感兴趣</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">public enum EventType</span><br><span class="line">      implements com.google.protobuf.ProtocolMessageEnum &#123;</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;INSERT = 1;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    INSERT(0, 1),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;UPDATE = 2;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    UPDATE(1, 2),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;DELETE = 3;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    DELETE(2, 3),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;CREATE = 4;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    CREATE(3, 4),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;ALTER = 5;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    ALTER(4, 5),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;ERASE = 6;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    ERASE(5, 6),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;QUERY = 7;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    QUERY(6, 7),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;TRUNCATE = 8;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    TRUNCATE(7, 8),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;RENAME = 9;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    RENAME(8, 9),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;CINDEX = 10;&lt;/code&gt;</span><br><span class="line">     *</span><br><span class="line">     * &lt;pre&gt;</span><br><span class="line">     **CREATE INDEX*</span><br><span class="line">     * &lt;/pre&gt;</span><br><span class="line">     */</span><br><span class="line">    CINDEX(9, 10),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;DINDEX = 11;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    DINDEX(10, 11),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;GTID = 12;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    GTID(11, 12),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;XACOMMIT = 13;&lt;/code&gt;</span><br><span class="line">     *</span><br><span class="line">     * &lt;pre&gt;</span><br><span class="line">     ** XA *</span><br><span class="line">     * &lt;/pre&gt;</span><br><span class="line">     */</span><br><span class="line">    XACOMMIT(12, 13),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;XAROLLBACK = 14;&lt;/code&gt;</span><br><span class="line">     */</span><br><span class="line">    XAROLLBACK(13, 14),</span><br><span class="line">    /**</span><br><span class="line">     * &lt;code&gt;MHEARTBEAT = 15;&lt;/code&gt;</span><br><span class="line">     *</span><br><span class="line">     * &lt;pre&gt;</span><br><span class="line">     ** MASTER HEARTBEAT *</span><br><span class="line">     * &lt;/pre&gt;</span><br><span class="line">     */</span><br><span class="line">    MHEARTBEAT(14, 15),</span><br><span class="line">    ;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>相关阅读</li>
-</ul>
-<p><a href="http://www.tianshouzhi.com/api/tutorials/canal" target="_blank" rel="noopener">http://www.tianshouzhi.com/api/tutorials/canal</a></p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/01/tcp协议/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/04/01/tcp协议/" class="post-title-link" itemprop="url">tcp协议</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-04-01 09:28:22 / 修改时间：14:15:19" itemprop="dateCreated datePublished" datetime="2021-04-01T09:28:22+08:00">2021-04-01</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/04/01/tcp协议/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/01/tcp协议/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">                             +---------+ ---------\      active OPEN</span><br><span class="line">                             |  CLOSED |            \    -----------</span><br><span class="line">                             +---------+&lt;---------\   \   create TCB</span><br><span class="line">                               |     ^              \   \  snd SYN</span><br><span class="line">                  passive OPEN |     |   CLOSE        \   \</span><br><span class="line">                  ------------ |     | ----------       \   \</span><br><span class="line">                   create TCB  |     | delete TCB         \   \</span><br><span class="line">                               V     |                      \   \</span><br><span class="line">                             +---------+            CLOSE    |    \</span><br><span class="line">                             |  LISTEN |          ---------- |     |</span><br><span class="line">                             +---------+          delete TCB |     |</span><br><span class="line">                  rcv SYN      |     |     SEND              |     |</span><br><span class="line">                 -----------   |     |    -------            |     V</span><br><span class="line">+---------+      snd SYN,ACK  /       \   snd SYN          +---------+</span><br><span class="line">|         |&lt;-----------------           ------------------&gt;|         |</span><br><span class="line">|   SYN   |                    rcv SYN                     |   SYN   |</span><br><span class="line">|   RCVD  |&lt;-----------------------------------------------|   SENT  |</span><br><span class="line">|         |                    snd ACK                     |         |</span><br><span class="line">|         |------------------           -------------------|         |</span><br><span class="line">+---------+   rcv ACK of SYN  \       /  rcv SYN,ACK       +---------+</span><br><span class="line">  |           --------------   |     |   -----------</span><br><span class="line">  |                  x         |     |     snd ACK</span><br><span class="line">  |                            V     V</span><br><span class="line">  |  CLOSE                   +---------+</span><br><span class="line">  | -------                  |  ESTAB  |</span><br><span class="line">  | snd FIN                  +---------+</span><br><span class="line">  |                   CLOSE    |     |    rcv FIN</span><br><span class="line">  V                  -------   |     |    -------</span><br><span class="line">+---------+          snd FIN  /       \   snd ACK          +---------+</span><br><span class="line">|  FIN    |&lt;-----------------           ------------------&gt;|  CLOSE  |</span><br><span class="line">| WAIT-1  |------------------                              |   WAIT  |</span><br><span class="line">+---------+          rcv FIN  \                            +---------+</span><br><span class="line">  | rcv ACK of FIN   -------   |                            CLOSE  |</span><br><span class="line">  | --------------   snd ACK   |                           ------- |</span><br><span class="line">  V        x                   V                           snd FIN V</span><br><span class="line">+---------+                  +---------+                   +---------+</span><br><span class="line">|FINWAIT-2|                  | CLOSING |                   | LAST-ACK|</span><br><span class="line">+---------+                  +---------+                   +---------+</span><br><span class="line">  |                rcv ACK of FIN |                 rcv ACK of FIN |</span><br><span class="line">  |  rcv FIN       -------------- |    Timeout=2MSL -------------- |</span><br><span class="line">  |  -------              x       V    ------------        x       V</span><br><span class="line">   \ snd ACK                 +---------+delete TCB         +---------+</span><br><span class="line">    ------------------------&gt;|TIME WAIT|------------------&gt;| CLOSED  |</span><br><span class="line">                             +---------+                   +---------+</span><br></pre></td></tr></table></figure>
-
-<h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><p>1 慢开始和拥塞避免<br>2 快速重传</p>
-<h3 id="慢开始"><a href="#慢开始" class="headerlink" title="慢开始"></a>慢开始</h3><p>慢开始为了什么?</p>
-<h3 id="快速重传"><a href="#快速重传" class="headerlink" title="快速重传"></a>快速重传</h3><h3 id="快速恢复"><a href="#快速恢复" class="headerlink" title="快速恢复"></a>快速恢复</h3><p>相关阅读</p>
-<ul>
-<li><a href="https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf" target="_blank" rel="noopener">https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf</a></li>
-<li><a href="https://tools.ietf.org/html/rfc793" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc793</a></li>
-<li><a href="https://ee.lbl.gov/papers/congavoid.pdf" target="_blank" rel="noopener">https://ee.lbl.gov/papers/congavoid.pdf</a></li>
-<li><a href="https://www.cnblogs.com/diegodu/p/4538897.html" target="_blank" rel="noopener">https://www.cnblogs.com/diegodu/p/4538897.html</a></li>
-<li><a href="https://tools.ietf.org/html/rfc3782" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc3782</a></li>
-<li><a href="https://tools.ietf.org/html/rfc2581" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc2581</a></li>
-<li><a href="http://www.eecs.umich.edu/courses/eecs489/w07/LectureSlides/lec8_tcp.pdf" target="_blank" rel="noopener">http://www.eecs.umich.edu/courses/eecs489/w07/LectureSlides/lec8_tcp.pdf</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/31/跳表/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/31/跳表/" class="post-title-link" itemprop="url">跳表</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-31 10:48:03 / 修改时间：11:02:33" itemprop="dateCreated datePublished" datetime="2021-03-31T10:48:03+08:00">2021-03-31</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/31/跳表/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/31/跳表/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li>Skip Lists: A Probabilistic Alternative to<br>Balanced Trees <a href="https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf" target="_blank" rel="noopener">https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf</a></li>
-<li><a href="https://blog.csdn.net/ryo1060732496/article/details/109458405" target="_blank" rel="noopener">https://blog.csdn.net/ryo1060732496/article/details/109458405</a></li>
-</ul>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/30/ipc/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2021/03/30/ipc/" class="post-title-link" itemprop="url">ipc</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2021-03-30 13:19:40" itemprop="dateCreated datePublished" datetime="2021-03-30T13:19:40+08:00">2021-03-30</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-09 11:31:33" itemprop="dateModified" datetime="2021-04-09T11:31:33+08:00">2021-04-09</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/30/ipc/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/30/ipc/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2>
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1199,7 +1225,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">107</span>
+          <span class="site-state-item-count">111</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

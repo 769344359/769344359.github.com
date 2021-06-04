@@ -55,18 +55,18 @@
   };
 </script>
 
-  <meta name="description" content="1_attribute_((packed))  你会在redis的sds.h看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的">
+  <meta name="description" content="1_attribute_((packed))  你会在redis的sds.h看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的 1234This attribute, attached to an enum, struct, or union type definition, specified that the minimum required memory be used">
 <meta name="keywords" content="c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="c字节对齐">
 <meta property="og:url" content="http://yoursite.com/2021/05/11/c字节对齐/index.html">
 <meta property="og:site_name" content="dinosaur">
-<meta property="og:description" content="1_attribute_((packed))  你会在redis的sds.h看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的">
+<meta property="og:description" content="1_attribute_((packed))  你会在redis的sds.h看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的 1234This attribute, attached to an enum, struct, or union type definition, specified that the minimum required memory be used">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-05-11T02:36:52.266Z">
+<meta property="og:updated_time" content="2021-05-11T05:51:19.830Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="c字节对齐">
-<meta name="twitter:description" content="1_attribute_((packed))  你会在redis的sds.h看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的">
+<meta name="twitter:description" content="1_attribute_((packed))  你会在redis的sds.h看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的 1234This attribute, attached to an enum, struct, or union type definition, specified that the minimum required memory be used">
   <link rel="canonical" href="http://yoursite.com/2021/05/11/c字节对齐/">
 
 
@@ -253,7 +253,7 @@
                 
               
 
-              <time title="创建时间：2021-05-11 10:34:32 / 修改时间：10:36:52" itemprop="dateCreated datePublished" datetime="2021-05-11T10:34:32+08:00">2021-05-11</time>
+              <time title="创建时间：2021-05-11 10:34:32 / 修改时间：13:51:19" itemprop="dateCreated datePublished" datetime="2021-05-11T10:34:32+08:00">2021-05-11</time>
             </span>
           
             
@@ -299,6 +299,11 @@
         <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_attribute_((packed))</span><br></pre></td></tr></table></figure>
 
 <p>你会在redis的<code>sds.h</code>看到这个gcc的扩展属性,这个属性是拿来干嘛呢?其实是拿来压缩字段长度的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This attribute, attached to an enum, struct, or union type definition, specified that the minimum required memory be used to represent the type.</span><br><span class="line">Specifying this attribute for struct and union types is equivalent to specifying the packed attribute on each of the structure or union members. Specifying the -fshort-enums flag on the line is equivalent to specifying the packed attribute on all enum definitions.</span><br><span class="line"></span><br><span class="line">You may only specify this attribute after a closing curly brace on an enum definition, not in a typedef declaration, unless that declaration also contains the definition of the enum.</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc-3.3/gcc/Type-Attributes.html" target="_blank" rel="noopener">https://gcc.gnu.org/onlinedocs/gcc-3.3/gcc/Type-Attributes.html</a></li>
+</ul>
 
     </div>
 
@@ -391,6 +396,8 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#相关阅读"><span class="nav-number">1.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+        
       </div>
       <!--/noindex-->
 
@@ -405,7 +412,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">107</span>
+          <span class="site-state-item-count">111</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

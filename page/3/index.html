@@ -217,6 +217,392 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/15/c-标准库的vector/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/03/15/c-标准库的vector/" class="post-title-link" itemprop="url">c++ 标准库的vector</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-03-15 12:46:47 / 修改时间：12:47:43" itemprop="dateCreated datePublished" datetime="2021-03-15T12:46:47+08:00">2021-03-15</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/15/c-标准库的vector/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/15/c-标准库的vector/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>c++的标准库也没有银弹,也是写出来的,至少消除了我的恐惧</p>
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a href="https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/include/bits/stl_vector.h" target="_blank" rel="noopener">https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/include/bits/stl_vector.h</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/11/mysqlbinlog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/03/11/mysqlbinlog/" class="post-title-link" itemprop="url">mysqlbinlog</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-03-11 15:59:16" itemprop="dateCreated datePublished" datetime="2021-03-11T15:59:16+08:00">2021-03-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-26 11:41:49" itemprop="dateModified" datetime="2021-04-26T11:41:49+08:00">2021-04-26</time>
+              </span>
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/11/mysqlbinlog/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/11/mysqlbinlog/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="如何读取mysql的binlog"><a href="#如何读取mysql的binlog" class="headerlink" title="如何读取mysql的binlog?"></a>如何读取mysql的binlog?</h2><p>可以使用mysql默认的mysqlbinlog</p>
+<p>重要的是需要加<code>v</code><br>命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlbinlog   -v  mysql-bin.000006</span><br></pre></td></tr></table></figure>
+
+<p>你会看到具体的sql了,我这里的sql是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">#210311 14:51:10 server id 1  end_log_pos 1606 CRC32 0x783f56ab 	Query	thread_id=64	exec_time=0	error_code=0</span><br><span class="line">SET TIMESTAMP=1615445470/*!*/;</span><br><span class="line">BEGIN</span><br><span class="line">/*!*/;</span><br><span class="line"># at 1606</span><br><span class="line">#210311 14:51:10 server id 1  end_log_pos 1672 CRC32 0x52632df5 	Table_map: `user_db`.`tb_user` mapped to number 119</span><br><span class="line"># at 1672</span><br><span class="line">#210311 14:51:10 server id 1  end_log_pos 1783 CRC32 0xf565f574 	Update_rows: table id 119 flags: STMT_END_F</span><br><span class="line"></span><br><span class="line">BINLOG &apos;</span><br><span class="line">3r1JYBMBAAAAQgAAAIgGAAAAAHcAAAAAAAEAB3VzZXJfZGIAB3RiX3VzZXIABgMPDw8BDwgUAEAA</span><br><span class="line">FAAyADj1LWNS</span><br><span class="line">3r1JYB8BAAAAbwAAAPcGAAAAAHcAAAAAAAEAAgAG///AYAAAAAI5NgYxMjM0NTYFOTk5OTcSD3po</span><br><span class="line">YW5nc2FuQGJ1Zy5jbsBgAAAAATUGMTIzNDU2BTk5OTk3Eg96aGFuZ3NhbkBidWcuY2509WX1</span><br><span class="line">&apos;/*!*/;</span><br><span class="line">### UPDATE `user_db`.`tb_user`</span><br><span class="line">### WHERE</span><br><span class="line">###   @1=96</span><br><span class="line">###   @2=&apos;96&apos;</span><br><span class="line">###   @3=&apos;123456&apos;</span><br><span class="line">###   @4=&apos;99997&apos;</span><br><span class="line">###   @5=18</span><br><span class="line">###   @6=&apos;zhangsan@bug.cn&apos;</span><br><span class="line">### SET</span><br><span class="line">###   @1=96</span><br><span class="line">###   @2=&apos;5&apos;</span><br><span class="line">###   @3=&apos;123456&apos;</span><br><span class="line">###   @4=&apos;99997&apos;</span><br><span class="line">###   @5=18</span><br><span class="line">###   @6=&apos;zhangsan@bug.cn&apos;</span><br><span class="line"># at 1783</span><br><span class="line">#210311 14:51:10 server id 1  end_log_pos 1814 CRC32 0xa90279ec 	Xid = 1794</span><br><span class="line">COMMIT/*!*/;</span><br><span class="line">SET @@SESSION.GTID_NEXT= &apos;AUTOMATIC&apos; /* added by mysqlbinlog */ /*!*/;</span><br><span class="line">DELIMITER ;</span><br><span class="line"># End of log file</span><br><span class="line">/*!50003 SET COMPLETION_TYPE=@OLD_COMPLETION_TYPE*/;</span><br><span class="line">/*!50530 SET @@SESSION.PSEUDO_SLAVE_MODE=0*/;</span><br></pre></td></tr></table></figure>
+
+<h3 id="协议流程"><a href="#协议流程" class="headerlink" title="协议流程"></a>协议流程</h3><p>COM_BINLOG_DUMP  -&gt;  com_binlog_dump</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><p><a href="https://www.cnblogs.com/netsa/p/7350629.html" target="_blank" rel="noopener">https://www.cnblogs.com/netsa/p/7350629.html</a><br><a href="https://dev.mysql.com/doc/internals/en/replication-protocol.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/internals/en/replication-protocol.html</a></p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/10/docker-compose-spec/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/03/10/docker-compose-spec/" class="post-title-link" itemprop="url">docker-compose spec</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-03-10 12:07:12 / 修改时间：14:00:57" itemprop="dateCreated datePublished" datetime="2021-03-10T12:07:12+08:00">2021-03-10</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/10/docker-compose-spec/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/10/docker-compose-spec/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>docker-compose 的spec</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TOP :</span><br><span class="line">   version</span><br><span class="line">   service</span><br><span class="line">   network</span><br><span class="line">   volumes</span><br><span class="line">   config</span><br><span class="line">   secrets</span><br></pre></td></tr></table></figure>
+
+<p>service :<br>   build<br>   deploy</p>
+<blockquote>
+<blockquote>
+<p>Each service MAY also include a Build section, which defines how to create the Docker image for the service. Compose implementations MAY support building docker images using this service definition. If not implemented the Build section SHOULD be ignored and the Compose file MUST still be considered valid.</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>Build support is an OPTIONAL aspect of the Compose specification, and is described in detail here</p>
+</blockquote>
+<blockquote>
+<p>Each Service defines runtime constraints and requirements to run its containers. The deploy section groups these constraints and allows the platform to adjust the deployment strategy to best match containers’ needs with available resources.</p>
+</blockquote>
+<h3 id="相关文档"><a href="#相关文档" class="headerlink" title="相关文档"></a>相关文档</h3><ul>
+<li><a href="https://github.com/compose-spec/compose-spec/blob/master/spec.md" target="_blank" rel="noopener">https://github.com/compose-spec/compose-spec/blob/master/spec.md</a></li>
+</ul>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/05/如何写一个正确的代码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2021/03/05/如何写一个正确的代码/" class="post-title-link" itemprop="url">如何写一个正确的代码</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2021-03-05 09:56:04 / 修改时间：15:17:34" itemprop="dateCreated datePublished" datetime="2021-03-05T09:56:04+08:00">2021-03-05</time>
+            </span>
+          
+            
+
+            
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/05/如何写一个正确的代码/#comments" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/05/如何写一个正确的代码/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>我们如何写一个正确的代码?</p>
+<p>答案是形式化验证,其中一个是霍尔逻辑</p>
+<p>举个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">快速幂</span><br><span class="line">x&gt; 0 </span><br><span class="line">x/2/2 ... 必定会归到1 或者0, 所以递归会有限次</span><br><span class="line"></span><br><span class="line">快速幂</span><br><span class="line">a^x = floor(a^(x/2))^2 *a^(x%1);</span><br><span class="line">fun(a,x) =&#123;</span><br><span class="line">    if(x== 0)&#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;elseif(x== 1)&#123;</span><br><span class="line">        return  a;</span><br><span class="line">    &#125;</span><br><span class="line">    return  fun(a , floor(x/2)  )*a^(x%1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/18/mvcc-translate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -843,391 +1229,11 @@
   
 
     
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/21/pushdown/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/12/21/pushdown/" class="post-title-link" itemprop="url">pushdown</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-12-21 09:29:50" itemprop="dateCreated datePublished" datetime="2020-12-21T09:29:50+08:00">2020-12-21</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-23 13:18:47" itemprop="dateModified" datetime="2020-12-23T13:18:47+08:00">2020-12-23</time>
-              </span>
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/12/21/pushdown/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/12/21/pushdown/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="谓词下推"><a href="#谓词下推" class="headerlink" title="谓词下推:"></a>谓词下推:</h2><p>为什么可以谓词下推?</p>
-<p>因为交换律结合律</p>
-<h2 id="怎么下推-也就是触发条件"><a href="#怎么下推-也就是触发条件" class="headerlink" title="怎么下推,也就是触发条件?"></a>怎么下推,也就是触发条件?</h2><p>rule instance</p>
-<h2 id="语义"><a href="#语义" class="headerlink" title="语义"></a>语义</h2>
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/17/tcp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/12/17/tcp/" class="post-title-link" itemprop="url">tcp与消息队列与paxos与顺序</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-12-17 10:11:02 / 修改时间：15:48:32" itemprop="dateCreated datePublished" datetime="2020-12-17T10:11:02+08:00">2020-12-17</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/12/17/tcp/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/12/17/tcp/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我们如何保证消息的可靠性?</p>
-<p>前提:<br>每块消息都是分割成一小块</p>
-<p>如何保证不丢消息?</p>
-<p>每块消息映射一个id , 我们只要保证每个id都有就能保证我们的消息必然是全的(没有丢失的 , 因为id是全序的 , id映射的内容本身已是不会丢失的)</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/07/泛型/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/12/07/泛型/" class="post-title-link" itemprop="url">泛型</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-12-07 11:05:10 / 修改时间：11:20:00" itemprop="dateCreated datePublished" datetime="2020-12-07T11:05:10+08:00">2020-12-07</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/12/07/泛型/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/12/07/泛型/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>对于没有泛型的情况<br>比如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">max(a : int , b:int)&#123;</span><br><span class="line">    xxx</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>入参是a , b ,这两个参数的类型的约束是 <code>int</code> ,<br>也就是这个函数的约束是 <code>max(int , int)</code><br>泛型的语义就是:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">max(a :&lt;T&gt; , b:&lt;T&gt;)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个约束是什么? </p>
-<p>约束变成<br><code>max(&lt;T&gt; ,&lt;T&gt;)</code></p>
-<p>作用:<br>我们的约束变更加范化了,这个如果按照编译原理或者解空间来说,我们可选的映射更多了.</p>
-<p>泛型的作用:和类的继承差不多,因为继承既是优点也是缺点.</p>
-<p>泛型这个约束也是既有优点也有缺点,泛型的优点是更加接近无类型类型,所以缺点也是大家会滥用无类型的内容</p>
-<p>就像继承一样,其实很多继承是没有必要的,或者重构的继承非常难.</p>
-<p>说到底,如果我们写了一个通用的轮子,如果和多地方用到了这个轮子,那么如果这个轮子经常更改,就需要考虑用到这个轮子的相关代码是不是要兼容</p>
-<p>如果这个轮子被共用的地方少,那么就不用兼容那么多</p>
-<p>所以我们抽象就比如面临改动频繁的缺点</p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/27/约束和结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2020/11/27/约束和结构/" class="post-title-link" itemprop="url">约束和结构</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              
-                
-              
-
-              <time title="创建时间：2020-11-27 17:53:43 / 修改时间：18:06:28" itemprop="dateCreated datePublished" datetime="2020-11-27T17:53:43+08:00">2020-11-27</time>
-            </span>
-          
-            
-
-            
-          
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-        
-      
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/11/27/约束和结构/#comments" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/27/约束和结构/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>结构和性质是同构的吗?</p>
-<p>约束和结构是同构的吗? </p>
-<p>我一直觉得,我们之所以很难维护好业务代码,是因为我们的约束和我们的业务不是同构的,我们一个又一个函数在传递,大部分时间都工作得很好,但是总有一些误差经过传递之后会被触发.</p>
-<p>为什么代码庞大之后很难改?<br>因为经过传递之后依赖太多值了.对于一个函数来说<code>(a , b) -&gt; (c)</code> , 一开始只依赖a和b</p>
-<p>过了几天,我们改了a的依赖,a依赖于d,e 然后就这样了<code>(d,e) -&gt; (a)</code></p>
-<p>这样一直迭代后,依赖就没人能理清了   </p>
-
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
   </div>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1272,7 +1278,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">107</span>
+          <span class="site-state-item-count">111</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1407,15 +1413,15 @@
       
     
       
+    
+      
+    
+      
+    
+      
+    
+      
         
-      
-    
-      
-    
-      
-    
-      
-    
       
     
       
