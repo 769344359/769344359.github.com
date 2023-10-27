@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景排查一个gc问题的时候想到需要了解java的对象大小 举例这样创建一个1099 的对象会占用多少个字节呢?  那如果是一个特定的对象NumClass 12345public class NumClass&amp;#123;    public int num1 ;    public int num2 ; &amp;#125;  那样创建NunClass[] 又占用多少字节呢? 1234## 这样 的arra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java 对象大小">
+<meta property="og:url" content="https://shakudada.xyz/2023/01/11/java-%E5%AF%B9%E8%B1%A1%E5%A4%A7%E5%B0%8F/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景排查一个gc问题的时候想到需要了解java的对象大小 举例这样创建一个1099 的对象会占用多少个字节呢?  那如果是一个特定的对象NumClass 12345public class NumClass&amp;#123;    public int num1 ;    public int num2 ; &amp;#125;  那样创建NunClass[] 又占用多少字节呢? 1234## 这样 的arra">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-11T00:43:54.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.899Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/01/11/java-%E5%AF%B9%E8%B1%A1%E5%A4%A7%E5%B0%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java 对象大小 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/01/11/java-%E5%AF%B9%E8%B1%A1%E5%A4%A7%E5%B0%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java 对象大小
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-01-11 08:43:54" itemprop="dateCreated datePublished" datetime="2023-01-11T08:43:54+08:00">2023-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>排查一个gc问题的时候想到需要了解java的对象大小</p>
+<p>举例这样创建一个1099 的对象会占用多少个字节呢? </p>
+<p>那如果是一个特定的对象<code>NumClass</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class NumClass&#123;</span><br><span class="line">    public int num1 ;</span><br><span class="line">    public int num2 ; </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>那样创建<code>NunClass[]</code> 又占用多少字节呢?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">## 这样 的array占用多少字节呢? </span><br><span class="line">Object[] array = <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">10245</span>] ; </span><br><span class="line">## 这样 的array占用多少字节呢? </span><br><span class="line">Object[] array = <span class="keyword">new</span> <span class="title class_">NumClass</span>[<span class="number">10245</span>] ; </span><br></pre></td></tr></table></figure>
+
+<p>结论是两者占用的字节是一样的</p>
+<h2 id="object-数组例子"><a href="#object-数组例子" class="headerlink" title="object 数组例子"></a>object 数组例子</h2><p>先上最简单的new Object的代码，在这个例子里面： 创建了一个长度是10245的对象数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">package com;</span><br><span class="line">public class Hello&#123;</span><br><span class="line">        public static volatile Object[] arr ;</span><br><span class="line">        public static void main(String [] argv)&#123;</span><br><span class="line">                arr = new Object[10245];    // 创建一个对象数组 ， 数组也是一个对象 ， 那么这个对象有多大呢？ </span><br><span class="line">                arr[1] = &quot;hihi&quot;;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上是在64位机器上，没有开启指针压缩的情况下是：  <code>8+ 4 + 10245*8</code>个字节长度</p>
+<p>oop 是指针<code>oopDesc* </code>的别名 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef class oopDesc*                    oop;</span><br><span class="line">typedef class   instanceOopDesc*            instanceOop;</span><br><span class="line">typedef class   arrayOopDesc*               arrayOop;</span><br><span class="line">typedef class     objArrayOopDesc*            objArrayOop;</span><br><span class="line">typedef class     typeArrayOopDesc*           typeArrayOop;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----------++----------++-------++------+           </span><br><span class="line">|           ||          ||       ||      |           </span><br><span class="line">|           ||          ||       ||      |           </span><br><span class="line">|  MarkWord || length   ||  oop  ||  oop |                  </span><br><span class="line">+-----------++----------++-------++------+ repeat 10254 次  </span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="jol"><a href="#jol" class="headerlink" title="jol"></a>jol</h2><p>核心函数: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">jol\jol-core\src\main\java\org\openjdk\jol\layouters\CurrentLayouter.java</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public ClassLayout layout(ClassData data) &#123;</span><br><span class="line">        VirtualMachine vm = VM.current();</span><br><span class="line"></span><br><span class="line">        if (data.isArray()) &#123;</span><br><span class="line">            // special case of arrays</span><br><span class="line">            int base = vm.arrayBaseOffset(data.arrayComponentType());</span><br><span class="line">            int scale = vm.arrayIndexScale(data.arrayComponentType());</span><br><span class="line"></span><br><span class="line">            long instanceSize = MathUtil.align(base + data.arrayLength() * scale, vm.objectAlignment());</span><br><span class="line"></span><br><span class="line">            SortedSet&lt;FieldLayout&gt; result = new TreeSet&lt;&gt;();</span><br><span class="line">            result.add(new FieldLayout(FieldData.create(data.arrayClass(), &quot;&lt;elements&gt;&quot;, data.arrayComponentType()), base, scale * data.arrayLength()));</span><br><span class="line">            return ClassLayout.create(data, result, CURRENT, instanceSize, false);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Collection&lt;FieldData&gt; fields = data.fields();</span><br><span class="line"></span><br><span class="line">        SortedSet&lt;FieldLayout&gt; result = new TreeSet&lt;&gt;();</span><br><span class="line">        for (FieldData f : fields) &#123;</span><br><span class="line">            result.add(new FieldLayout(f, vm.fieldOffset(f.refField()), vm.sizeOfField(f.typeClass())));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        long instanceSize;</span><br><span class="line">        if (result.isEmpty()) &#123;</span><br><span class="line">            instanceSize = vm.objectHeaderSize();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            FieldLayout f = result.last();</span><br><span class="line">            instanceSize = f.offset() + f.size();</span><br><span class="line">            // TODO: This calculation is incorrect if there is a trailing @Contended field, or the instance is @Contended</span><br><span class="line">        &#125;</span><br><span class="line">        instanceSize = MathUtil.align(instanceSize, vm.objectAlignment());</span><br><span class="line">        return ClassLayout.create(data, result, CURRENT, instanceSize, true);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static int length_offset_in_bytes() &#123;</span><br><span class="line">  return UseCompressedClassPointers ? klass_gap_offset_in_bytes() :</span><br><span class="line">                             sizeof(arrayOopDesc);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>创建一个数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  arrayOopDesc::length_offset_in_bytes () at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:83</span><br><span class="line">#1  0x00007f93c2fdc06e in arrayOopDesc::length_addr_impl (obj_ptr=0x7162010c0) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:67</span><br><span class="line">#2  0x00007f93c2fdc0ba in arrayOopDesc::length (this=0x7162010c0) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:114</span><br><span class="line">#3  0x00007f93c3239521 in arrayOopDesc::is_within_bounds (this=0x7162010c0, index=10) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:110</span><br><span class="line">#4  0x00007f93c3239690 in typeArrayOopDesc::byte_at_addr (this=0x7162010c0, which=10) at /var/jdk/src/hotspot/share/oops/typeArrayOop.inline.hpp:48</span><br><span class="line">#5  0x00007f93c323972d in typeArrayOopDesc::byte_at_put (this=0x7162010c0, which=10, contents=112 &#x27;p&#x27;) at /var/jdk/src/hotspot/share/oops/typeArrayOop.inline.hpp:96</span><br><span class="line">#6  0x00007f93c389e259 in java_lang_String::create_from_unicode (unicode=0x7f93bc037c88, length=33, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/javaClasses.cpp:300</span><br><span class="line">#7  0x00007f93c3f7b91d in StringTable::do_intern (string_or_null_h=..., name=0x7f93bc037c88, len=33, hash=2694772907, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/stringTable.cpp:347</span><br><span class="line">#8  0x00007f93c3f7b87e in StringTable::intern (string_or_null_h=..., name=0x7f93bc037c88, len=33, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/stringTable.cpp:336</span><br><span class="line">#9  0x00007f93c3f7b5b0 in StringTable::intern (symbol=0x7f93c0018d38, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/stringTable.cpp:296</span><br><span class="line">#10 0x00007f93c35740b5 in ConstantPool::uncached_string_at (this=0x7f938c02e0a0, which=250, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/oops/constantPool.cpp:1171</span><br><span class="line">#11 0x00007f93c36a19cd in fieldDescriptor::string_initial_value (this=0x7f93c2bd3a68, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/runtime/fieldDescriptor.cpp:103</span><br><span class="line">#12 0x00007f93c389ff2d in initialize_static_string_field (fd=0x7f93c2bd3a68, mirror=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/javaClasses.cpp:809</span><br><span class="line">#13 0x00007f93c38a0444 in initialize_static_field (fd=0x7f93c2bd3a68, mirror=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/javaClasses.cpp:866</span><br><span class="line">#14 0x00007f93c3869f51 in InstanceKlass::do_local_static_fields (this=0x8000431a0, f=0x7f93c38a0365 &lt;initialize_static_field(fieldDescriptor*, Handle, JavaThread*)&gt;, mirror=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/oops/instanceKlass.cpp:1672</span><br><span class="line">#15 0x00007f93c38a08d5 in java_lang_Class::initialize_mirror_fields (k=0x8000431a0, mirror=..., protection_domain=..., classData=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/javaClasses.cpp:930</span><br><span class="line">#16 0x00007f93c38a10d1 in java_lang_Class::create_mirror (k=0x8000431a0, class_loader=..., module=..., protection_domain=..., classData=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/javaClasses.cpp:1035</span><br><span class="line">#17 0x00007f93c34c6144 in ClassFileParser::fill_instance_klass (this=0x7f93c2bd3dd0, ik=0x8000431a0, changed_by_loadhook=false, cl_inst_info=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/classFileParser.cpp:5426</span><br><span class="line">#18 0x00007f93c34c532e in ClassFileParser::create_instance_klass (this=0x7f93c2bd3dd0, changed_by_loadhook=false, cl_inst_info=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/classFileParser.cpp:5255</span><br><span class="line">#19 0x00007f93c3b554d1 in KlassFactory::create_from_stream (stream=0x7f93bc036fb0, name=0x7f93c00001f8, loader_data=0x7f93bc121170, cl_info=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/klassFactory.cpp:202</span><br><span class="line">#20 0x00007f93c34d86e9 in ClassLoader::load_class (name=0x7f93c00001f8, search_append_only=false, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/classLoader.cpp:1231</span><br><span class="line">#21 0x00007f93c4000806 in SystemDictionary::load_instance_class_impl (class_name=0x7f93c00001f8, class_loader=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:1289</span><br><span class="line">#22 0x00007f93c4000ba3 in SystemDictionary::load_instance_class (name_hash=2036240099, name=0x7f93c00001f8, class_loader=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:1354</span><br><span class="line">#23 0x00007f93c3ffeca9 in SystemDictionary::resolve_instance_class_or_null (name=0x7f93c00001f8, class_loader=..., protection_domain=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:723</span><br><span class="line">#24 0x00007f93c3ffd82e in SystemDictionary::resolve_instance_class_or_null_helper (class_name=0x7f93c00001f8, class_loader=..., protection_domain=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:294</span><br><span class="line">#25 0x00007f93c3ffd6d4 in SystemDictionary::resolve_or_null (class_name=0x7f93c00001f8, class_loader=..., protection_domain=..., __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:277</span><br><span class="line">#26 0x00007f93c3ffd617 in SystemDictionary::resolve_or_fail (class_name=0x7f93c00001f8, class_loader=..., protection_domain=..., throw_error=true, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:263</span><br><span class="line">#27 0x00007f93c32b8d98 in SystemDictionary::resolve_or_fail (class_name=0x7f93c00001f8, throw_error=true, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.hpp:100</span><br><span class="line">#28 0x00007f93c40dca98 in vmClasses::resolve (id=vmClassID::Throwable_klass_knum, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/vmClasses.cpp:99</span><br><span class="line">#29 0x00007f93c40dcb96 in vmClasses::resolve_until (limit_id=vmClassID::SoftReference_klass_knum, start_id=@0x7f93c2bd48f0: vmClassID::Cloneable_klass_knum, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/vmClasses.cpp:108</span><br><span class="line">#30 0x00007f93c40dd59a in vmClasses::resolve_through (last_id=vmClassID::Reference_klass_knum, start_id=@0x7f93c2bd48f0: vmClassID::Cloneable_klass_knum, __the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/vmClasses.hpp:64</span><br><span class="line">#31 0x00007f93c40dce23 in vmClasses::resolve_all (__the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/vmClasses.cpp:168</span><br><span class="line">#32 0x00007f93c4001ab2 in SystemDictionary::initialize (__the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/classfile/systemDictionary.cpp:1655</span><br><span class="line">#33 0x00007f93c40812fb in Universe::genesis (__the_thread__=0x7f93bc028fa0) at /var/jdk/src/hotspot/share/memory/universe.cpp:335</span><br><span class="line">#34 0x00007f93c408378f in universe2_init () at /var/jdk/src/hotspot/share/memory/universe.cpp:937</span><br><span class="line">#35 0x00007f93c3863d8a in init_globals () at /var/jdk/src/hotspot/share/runtime/init.cpp:132</span><br><span class="line">#36 0x00007f93c404a1ca in Threads::create_vm (args=0x7f93c2bd4d50, canTryAgain=0x7f93c2bd4c5b) at /var/jdk/src/hotspot/share/runtime/thread.cpp:2843</span><br><span class="line">#37 0x00007f93c396f43b in JNI_CreateJavaVM_inner (vm=0x7f93c2bd4da8, penv=0x7f93c2bd4db0, args=0x7f93c2bd4d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:3613</span><br><span class="line">#38 0x00007f93c396f787 in JNI_CreateJavaVM (vm=0x7f93c2bd4da8, penv=0x7f93c2bd4db0, args=0x7f93c2bd4d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:3701</span><br><span class="line">#39 0x00007f93c50e6a6a in InitializeJVM (pvm=0x7f93c2bd4da8, penv=0x7f93c2bd4db0, ifn=0x7f93c2bd4e00) at /var/jdk/src/java.base/share/native/libjli/java.c:1459</span><br><span class="line">#40 0x00007f93c50e35ec in JavaMain (_args=0x7ffedd44e1a0) at /var/jdk/src/java.base/share/native/libjli/java.c:411</span><br><span class="line">#41 0x00007f93c50ea5ec in ThreadJavaMain (args=0x7ffedd44e1a0) at /var/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#42 0x00007f93c4f45b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#43 0x00007f93c4fd6bb4 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:100</span><br></pre></td></tr></table></figure>
+
+
+
+<p>分配数组大小：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">  static int array_size(int length) &#123;</span><br><span class="line">    const uint OopsPerHeapWord = HeapWordSize/heapOopSize;</span><br><span class="line">    assert(OopsPerHeapWord &gt;= 1 &amp;&amp; (HeapWordSize % heapOopSize == 0),</span><br><span class="line">           &quot;Else the following (new) computation would be in error&quot;);</span><br><span class="line">    uint res = ((uint)length + OopsPerHeapWord - 1)/OopsPerHeapWord;</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">    // The old code is left in for sanity-checking; it&#x27;ll</span><br><span class="line">    // go away pretty soon. XXX</span><br><span class="line">    // Without UseCompressedOops, this is simply:</span><br><span class="line">    // oop-&gt;length() * HeapWordsPerOop;</span><br><span class="line">    // With narrowOops, HeapWordsPerOop is 1/2 or equal 0 as an integer.</span><br><span class="line">    // The oop elements are aligned up to wordSize</span><br><span class="line">    const uint HeapWordsPerOop = heapOopSize/HeapWordSize;</span><br><span class="line">    uint old_res;</span><br><span class="line">    if (HeapWordsPerOop &gt; 0) &#123;</span><br><span class="line">      old_res = length * HeapWordsPerOop;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      old_res = align_up((uint)length, OopsPerHeapWord)/OopsPerHeapWord;</span><br><span class="line">    &#125;</span><br><span class="line">    assert(res == old_res, &quot;Inconsistency between old and new.&quot;);</span><br><span class="line">#endif  // ASSERT</span><br><span class="line">    return res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Thread 2 &quot;java&quot; hit Breakpoint 5, jni_invoke_static (env=0x7fca48029310, result=0x7fca4c534bf0, receiver=0x0, call_type=JNI_STATIC, method_id=0x7fca48542d50, args=0x7fca4c534c60, __the_thread__=0x7fca48029030) at /var/jdk/src/hotspot/share/prims/jni.cpp:881</span><br><span class="line">881       args-&gt;push_arguments_on(&amp;java_args);</span><br><span class="line">(gdb) p method._value-&gt;print()</span><br><span class="line">&#123;method&#125;</span><br><span class="line"> - this oop:          0x00007fca14411240</span><br><span class="line"> - method holder:     &#x27;com/Hello&#x27;</span><br><span class="line"> - constants:         0x00007fca14411020 constant pool [20] &#123;0x00007fca14411020&#125; for &#x27;com/Hello&#x27; cache=0x00007fca14411348</span><br><span class="line"> - access:            0x9  public static </span><br><span class="line"> - name:              &#x27;main&#x27;</span><br><span class="line"> - signature:         &#x27;([Ljava/lang/String;)V&#x27;</span><br><span class="line"> - max stack:         2</span><br><span class="line"> - max locals:        1</span><br><span class="line"> - size of params:    1</span><br><span class="line"> - method size:       13</span><br><span class="line"> - vtable index:      -2</span><br><span class="line"> - i2i entry:         0x00007fca3900dc00</span><br><span class="line"> - adapters:          AHE@0x00007fca4812b8d0: 0xb i2c: 0x00007fca39114d60 c2i: 0x00007fca39114e1a c2iUV: 0x00007fca39114de4 c2iNCI: 0x00007fca39114e57</span><br><span class="line"> - compiled entry     0x00007fca39114e1a</span><br><span class="line"> - code size:         10</span><br><span class="line"> - code start:        0x00007fca14411230</span><br><span class="line"> - code end (excl):   0x00007fca1441123a</span><br><span class="line"> - checked ex length: 0</span><br><span class="line"> - linenumber start:  0x00007fca1441123a</span><br><span class="line"> - localvar length:   0</span><br><span class="line">$17 = void</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  jni_invoke_static (env=0x7fca48029310, result=0x7fca4c534bf0, receiver=0x0, call_type=JNI_STATIC, method_id=0x7fca48542d50, args=0x7fca4c534c60, __the_thread__=0x7fca48029030) at /var/jdk/src/hotspot/share/prims/jni.cpp:881</span><br><span class="line">#1  0x00007fca4d2c141c in jni_CallStaticVoidMethod (env=0x7fca48029310, cls=0x7fca4802b368, methodID=0x7fca48542d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:1710</span><br><span class="line">#2  0x00007fca4ea4415e in JavaMain (_args=0x7fff1ad56b60) at /var/jdk/src/java.base/share/native/libjli/java.c:545</span><br><span class="line">#3  0x00007fca4ea4a5ec in ThreadJavaMain (args=0x7fff1ad56b60) at /var/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#4  0x00007fca4e8a5b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#5  0x00007fca4e936bb4 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:100</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">Thread 2 &quot;java&quot; hit Breakpoint 5, jni_invoke_static (env=0x7f8674029310, result=0x7f86791b0bf0, receiver=0x0, call_type=JNI_STATIC, method_id=0x7f8674652560, args=0x7f86791b0c60, __the_thread__=0x7f8674029030) at /var/jdk/src/hotspot/share/prims/jni.cpp:881</span><br><span class="line">881       args-&gt;push_arguments_on(&amp;java_args);</span><br><span class="line">(gdb) p method._value-&gt;print()</span><br><span class="line">&#123;method&#125;</span><br><span class="line"> - this oop:          0x00007f8644411240</span><br><span class="line"> - method holder:     &#x27;com/Hello&#x27;</span><br><span class="line"> - constants:         0x00007f8644411020 constant pool [20] &#123;0x00007f8644411020&#125; for &#x27;com/Hello&#x27; cache=0x00007f8644411348</span><br><span class="line"> - access:            0x9  public static </span><br><span class="line"> - name:              &#x27;main&#x27;</span><br><span class="line"> - signature:         &#x27;([Ljava/lang/String;)V&#x27;</span><br><span class="line"> - max stack:         2</span><br><span class="line"> - max locals:        1</span><br><span class="line"> - size of params:    1</span><br><span class="line"> - method size:       13</span><br><span class="line"> - vtable index:      -2</span><br><span class="line"> - i2i entry:         0x00007f866500dc00</span><br><span class="line"> - adapters:          AHE@0x00007f867412b8d0: 0xb i2c: 0x00007f8665114d60 c2i: 0x00007f8665114e1a c2iUV: 0x00007f8665114de4 c2iNCI: 0x00007f8665114e57</span><br><span class="line"> - compiled entry     0x00007f8665114e1a</span><br><span class="line"> - code size:         10</span><br><span class="line"> - code start:        0x00007f8644411230</span><br><span class="line"> - code end (excl):   0x00007f864441123a</span><br><span class="line"> - checked ex length: 0</span><br><span class="line"> - linenumber start:  0x00007f864441123a</span><br><span class="line"> - localvar length:   0</span><br><span class="line">$23 = void</span><br><span class="line">(gdb) enable 1</span><br><span class="line">(gdb) c</span><br><span class="line">Continuing.</span><br><span class="line"></span><br><span class="line">Thread 2 &quot;java&quot; hit Breakpoint 1, oopFactory::new_objArray (klass=0x800040f80, length=2019, __the_thread__=0x7f8674029030) at /var/jdk/src/hotspot/share/memory/oopFactory.cpp:118</span><br><span class="line">118       assert(klass-&gt;is_klass(), &quot;must be instance class&quot;);</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  oopFactory::new_objArray (klass=0x800040f80, length=2019, __the_thread__=0x7f8674029030) at /var/jdk/src/hotspot/share/memory/oopFactory.cpp:118</span><br><span class="line">#1  0x00007f8679e68a5b in InterpreterRuntime::anewarray (current=0x7f8674029030, pool=0x7f8644411020, index=2, size=2019) at /var/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:254</span><br><span class="line">#2  0x00007f8665024083 in ?? ()</span><br><span class="line">#3  0x00007f867b4520a0 in TemplateInterpreter::_active_table () from /var/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="line">#4  0x00007f8665024002 in ?? ()</span><br><span class="line">#5  0x00007f86791b07b0 in ?? ()</span><br><span class="line">#6  0x00007f8644411233 in ?? ()</span><br><span class="line">#7  0x00007f86791b0808 in ?? ()</span><br><span class="line">#8  0x00007f8644411348 in ?? ()</span><br><span class="line">#9  0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line">Bottom (innermost) frame selected; you cannot go down.</span><br><span class="line">(gdb) p _do_zero </span><br><span class="line">$35 = true</span><br><span class="line">(gdb) n</span><br><span class="line">413       if (_do_zero) &#123;</span><br><span class="line">(gdb) n</span><br><span class="line">414         mem_clear(mem);</span><br><span class="line">(gdb) n</span><br><span class="line">416       arrayOopDesc::set_length(mem, _length);</span><br><span class="line">(gdb) l</span><br><span class="line">411       // concurrent GC.</span><br><span class="line">412       assert(_length &gt;= 0, &quot;length should be non-negative&quot;);</span><br><span class="line">413       if (_do_zero) &#123;</span><br><span class="line">414         mem_clear(mem);</span><br><span class="line">415       &#125;</span><br><span class="line">416       arrayOopDesc::set_length(mem, _length);</span><br><span class="line">417       return finish(mem);</span><br><span class="line">418     &#125;</span><br><span class="line">419</span><br><span class="line">420     oop ClassAllocator::initialize(HeapWord* mem) const &#123;</span><br><span class="line">(gdb) up</span><br><span class="line">#1  0x00007f867a27af4b in MemAllocator::allocate (this=0x7f86791b0650) at /var/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:365</span><br><span class="line">365           obj = initialize(mem);</span><br><span class="line">(gdb) down</span><br><span class="line">#0  ObjArrayAllocator::initialize (this=0x7f86791b0650, mem=0x715e73dd0) at /var/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:416</span><br><span class="line">416       arrayOopDesc::set_length(mem, _length);</span><br><span class="line">(gdb) s</span><br><span class="line">arrayOopDesc::set_length (mem=0x715e73dd0, length=2019) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:122</span><br><span class="line">122         *length_addr_impl(mem) = length;</span><br><span class="line">(gdb) s</span><br><span class="line">arrayOopDesc::length_addr_impl (obj_ptr=0x715e73dd0) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:66</span><br><span class="line">66          char* ptr = static_cast&lt;char*&gt;(obj_ptr);</span><br><span class="line">(gdb) l</span><br><span class="line">61          return (int)hs;</span><br><span class="line">62        &#125;</span><br><span class="line">63</span><br><span class="line">64        // Returns the address of the length &quot;field&quot;.  See length_offset_in_bytes().</span><br><span class="line">65        static int* length_addr_impl(void* obj_ptr) &#123;</span><br><span class="line">66          char* ptr = static_cast&lt;char*&gt;(obj_ptr);</span><br><span class="line">67          return reinterpret_cast&lt;int*&gt;(ptr + length_offset_in_bytes());</span><br><span class="line">68        &#125;</span><br><span class="line">69</span><br><span class="line">70        // Check whether an element of a typeArrayOop with the given type must be</span><br><span class="line">(gdb) n</span><br><span class="line">67          return reinterpret_cast&lt;int*&gt;(ptr + length_offset_in_bytes());</span><br><span class="line">(gdb) s</span><br><span class="line">arrayOopDesc::length_offset_in_bytes () at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:83</span><br><span class="line">83                                     sizeof(arrayOopDesc);</span><br><span class="line">(gdb) l</span><br><span class="line">78        // The _length field is not declared in C++.  It is allocated after the</span><br><span class="line">79        // declared nonstatic fields in arrayOopDesc if not compressed, otherwise</span><br><span class="line">80        // it occupies the second half of the _klass field in oopDesc.</span><br><span class="line">81        static int length_offset_in_bytes() &#123;</span><br><span class="line">82          return UseCompressedClassPointers ? klass_gap_offset_in_bytes() :</span><br><span class="line">83                                     sizeof(arrayOopDesc);</span><br><span class="line">84        &#125;</span><br><span class="line">85</span><br><span class="line">86        // Returns the offset of the first element.</span><br><span class="line">87        static int base_offset_in_bytes(BasicType type) &#123;</span><br><span class="line">(gdb) p Use</span><br><span class="line">Display all 161 possibilities? (y or n)</span><br><span class="line">(gdb) p UseCompressedClassPointers   </span><br><span class="line">$36 = true</span><br><span class="line">(gdb) s</span><br><span class="line">82          return UseCompressedClassPointers ? klass_gap_offset_in_bytes() :</span><br><span class="line">(gdb) s</span><br><span class="line">oopDesc::klass_gap_offset_in_bytes () at /var/jdk/src/hotspot/share/oops/oop.hpp:307</span><br><span class="line">307         assert(has_klass_gap(), &quot;only applicable to compressed klass pointers&quot;);</span><br><span class="line">(gdb) l</span><br><span class="line">302</span><br><span class="line">303       // for code generation</span><br><span class="line">304       static int mark_offset_in_bytes()      &#123; return offset_of(oopDesc, _mark); &#125;</span><br><span class="line">305       static int klass_offset_in_bytes()     &#123; return offset_of(oopDesc, _metadata._klass); &#125;</span><br><span class="line">306       static int klass_gap_offset_in_bytes() &#123;</span><br><span class="line">307         assert(has_klass_gap(), &quot;only applicable to compressed klass pointers&quot;);</span><br><span class="line">308         return klass_offset_in_bytes() + sizeof(narrowKlass);</span><br><span class="line">309       &#125;</span><br><span class="line">310</span><br><span class="line">311       // for error reporting</span><br><span class="line">(gdb) n</span><br><span class="line">oopDesc::klass_gap_offset_in_bytes () at /var/jdk/src/hotspot/share/oops/oop.hpp:308</span><br><span class="line">308         return klass_offset_in_bytes() + sizeof(narrowKlass);</span><br><span class="line">(gdb) n</span><br><span class="line">309       &#125;</span><br><span class="line">(gdb) n</span><br><span class="line">arrayOopDesc::length_offset_in_bytes () at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:83</span><br><span class="line">83                                     sizeof(arrayOopDesc);</span><br><span class="line">(gdb) n</span><br><span class="line">84        &#125;</span><br><span class="line">(gdb) n</span><br><span class="line">arrayOopDesc::length_addr_impl (obj_ptr=0x715e73dd0) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:68</span><br><span class="line">68        &#125;</span><br><span class="line">(gdb) n</span><br><span class="line">arrayOopDesc::set_length (mem=0x715e73dd0, length=2019) at /var/jdk/src/hotspot/share/oops/arrayOop.hpp:122</span><br><span class="line">122         *length_addr_impl(mem) = length;</span><br><span class="line">(gdb) n              </span><br><span class="line">123       &#125;</span><br><span class="line">(gdb) p  (int *)mem@20</span><br><span class="line">Only values in memory can be extended with &#x27;@&#x27;.</span><br><span class="line">(gdb) p  *(int *)mem@20</span><br><span class="line">$37 = &#123;-1163019586, -1163019586, -1163019586, 2019, 0 &lt;repeats 16 times&gt;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="byte-code-生成入口"><a href="#byte-code-生成入口" class="headerlink" title="byte code 生成入口"></a>byte code 生成入口</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// jdk/src/hotspot/share/interpreter/templateInterpreter.cpp</span><br><span class="line">void DispatchTable::set_entry(int i, EntryPoint&amp; entry) &#123;</span><br><span class="line">  assert(0 &lt;= i &amp;&amp; i &lt; length, &quot;index out of bounds&quot;);</span><br><span class="line">  assert(number_of_states == 10, &quot;check the code below&quot;);</span><br><span class="line">  _table[btos][i] = entry.entry(btos);</span><br><span class="line">  _table[ztos][i] = entry.entry(ztos);</span><br><span class="line">  _table[ctos][i] = entry.entry(ctos);</span><br><span class="line">  _table[stos][i] = entry.entry(stos);</span><br><span class="line">  _table[atos][i] = entry.entry(atos);</span><br><span class="line">  _table[itos][i] = entry.entry(itos);</span><br><span class="line">  _table[ltos][i] = entry.entry(ltos);</span><br><span class="line">  _table[ftos][i] = entry.entry(ftos);</span><br><span class="line">  _table[dtos][i] = entry.entry(dtos);</span><br><span class="line">  _table[vtos][i] = entry.entry(vtos);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//src/hotspot/share/interpreter/bytecodes.hpp</span><br><span class="line">   _new                  = 187, // 0xbb</span><br><span class="line">    _newarray             = 188, // 0xbc</span><br><span class="line">    _anewarray            = 189, // 0xbd</span><br><span class="line">    _arraylength          = 190, // 0xbe</span><br></pre></td></tr></table></figure>
+<p>堆栈： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Thread 2 &quot;java&quot; hit Breakpoint 13, 0x00007fffe1011b13 in ?? ()</span><br><span class="line">(gdb) x/20i $pc</span><br><span class="line">=&gt; 0x7fffe1011b13:	movzwl 0x1(%r13),%eax</span><br><span class="line">   0x7fffe1011b18:	bswap  %eax</span><br><span class="line">   0x7fffe1011b1a:	sar    $0x10,%eax</span><br><span class="line">   0x7fffe1011b1d:	movzbl 0x3(%r13),%ebx</span><br><span class="line">   0x7fffe1011b22:	add    $0x3,%r13</span><br><span class="line">   0x7fffe1011b26:	movabs $0x7ffff7bca0a0,%r10</span><br><span class="line">   0x7fffe1011b30:	jmp    *(%r10,%rbx,8)</span><br><span class="line">   0x7fffe1011b34:	nop</span><br><span class="line">   0x7fffe1011b35:	nop</span><br><span class="line">   0x7fffe1011b36:	nop</span><br><span class="line">   0x7fffe1011b37:	nop</span><br><span class="line">   0x7fffe1011b38:	int3   </span><br><span class="line">   0x7fffe1011b39:	int3   </span><br><span class="line">   0x7fffe1011b3a:	int3   </span><br><span class="line">   0x7fffe1011b3b:	int3   </span><br><span class="line">   0x7fffe1011b3c:	int3   </span><br><span class="line">   0x7fffe1011b3d:	int3   </span><br><span class="line">   0x7fffe1011b3e:	int3   </span><br><span class="line">   0x7fffe1011b3f:	int3   </span><br><span class="line">   0x7fffe1011b40:	and    %al,(%rax,%rax,1)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">0x00007fffe1011b1d in ?? ()</span><br><span class="line">(gdb) info registers </span><br><span class="line">rax            0x2805              10245</span><br><span class="line">rbx            0x11                17</span><br><span class="line">rcx            0x2                 2</span><br><span class="line">rdx            0x8                 8</span><br><span class="line">rsi            0x555555581230      93824992416304</span><br><span class="line">rdi            0x7ffff0028f70      140737220087664</span><br><span class="line">rbp            0x7ffff59fe7f8      0x7ffff59fe7f8</span><br><span class="line">rsp            0x7ffff59fe7b0      0x7ffff59fe7b0</span><br><span class="line">r8             0x8                 8</span><br><span class="line">r9             0x0                 0</span><br><span class="line">r10            0x7ffff7bcc8a0      140737349732512</span><br><span class="line">r11            0x216               534</span><br><span class="line">r12            0x0                 0</span><br><span class="line">r13            0x7fffb4411230      140736217551408</span><br><span class="line">r14            0x7ffff59fe808      140737314285576</span><br><span class="line">r15            0x7ffff0028f70      140737220087664</span><br><span class="line">rip            0x7fffe1011b1d      0x7fffe1011b1d</span><br><span class="line">eflags         0x216               [ PF AF IF ]</span><br><span class="line">cs             0x33                51</span><br><span class="line">ss             0x2b                43</span><br><span class="line">ds             0x0                 0</span><br><span class="line">es             0x0                 0</span><br><span class="line">fs             0x0                 0</span><br><span class="line">gs             0x0                 0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>anewarray 汇编代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/20i $pc</span><br><span class="line">=&gt; 0x7fffe102400a:	lea    0x8(%rsp),%rax</span><br><span class="line">   0x7fffe102400f:	mov    %r13,-0x40(%rbp)</span><br><span class="line">   0x7fffe1024013:	cmpq   $0x0,-0x10(%rbp)</span><br><span class="line">   0x7fffe102401b:	je     0x7fffe1024035</span><br><span class="line">   0x7fffe1024021:	movabs $0x7ffff71becc8,%rdi</span><br><span class="line">   0x7fffe102402b:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe102402f:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1024034:	hlt    </span><br><span class="line">   0x7fffe1024035:	push   %r10</span><br><span class="line">   0x7fffe1024037:	cmp    0x16ae2ec2(%rip),%r12        # 0x7ffff7b06f00 &lt;_ZN14CompressedOops11_narrow_oopE&gt;</span><br><span class="line">   0x7fffe102403e:	je     0x7fffe1024058</span><br><span class="line">   0x7fffe1024044:	movabs $0x7ffff7311c28,%rdi</span><br><span class="line">   0x7fffe102404e:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe1024052:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1024057:	hlt    </span><br><span class="line">   0x7fffe1024058:	pop    %r10</span><br><span class="line">   0x7fffe102405a:	mov    %r15,%rdi</span><br><span class="line">   0x7fffe102405d:	vzeroupper </span><br><span class="line">   0x7fffe1024060:	mov    %rbp,0x2d0(%r15)</span><br><span class="line">   0x7fffe1024067:	mov    %rax,0x2c0(%r15)</span><br><span class="line">(gdb) x/200i $pc</span><br><span class="line">=&gt; 0x7fffe102400a:	lea    0x8(%rsp),%rax</span><br><span class="line">   0x7fffe102400f:	mov    %r13,-0x40(%rbp)</span><br><span class="line">   0x7fffe1024013:	cmpq   $0x0,-0x10(%rbp)</span><br><span class="line">   0x7fffe102401b:	je     0x7fffe1024035</span><br><span class="line">   0x7fffe1024021:	movabs $0x7ffff71becc8,%rdi</span><br><span class="line">   0x7fffe102402b:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe102402f:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1024034:	hlt    </span><br><span class="line">   0x7fffe1024035:	push   %r10</span><br><span class="line">   0x7fffe1024037:	cmp    0x16ae2ec2(%rip),%r12        # 0x7ffff7b06f00 &lt;_ZN14CompressedOops11_narrow_oopE&gt;</span><br><span class="line">   0x7fffe102403e:	je     0x7fffe1024058</span><br><span class="line">   0x7fffe1024044:	movabs $0x7ffff7311c28,%rdi</span><br><span class="line">   0x7fffe102404e:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe1024052:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1024057:	hlt    </span><br><span class="line">   0x7fffe1024058:	pop    %r10</span><br><span class="line">   0x7fffe102405a:	mov    %r15,%rdi</span><br><span class="line">   0x7fffe102405d:	vzeroupper </span><br><span class="line">   0x7fffe1024060:	mov    %rbp,0x2d0(%r15)</span><br><span class="line">   0x7fffe1024067:	mov    %rax,0x2c0(%r15)</span><br><span class="line">   0x7fffe102406e:	test   $0xf,%esp</span><br><span class="line">   0x7fffe1024074:	je     0x7fffe102408c</span><br><span class="line">   0x7fffe102407a:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe102407e:	call   0x7ffff65cf968 &lt;_ZN18InterpreterRuntime9anewarrayEP10JavaThreadP12ConstantPoolii&gt;</span><br><span class="line">   0x7fffe1024083:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe1024087:	jmp    0x7fffe1024091</span><br><span class="line">   0x7fffe102408c:	call   0x7ffff65cf968 &lt;_ZN18InterpreterRuntime9anewarrayEP10JavaThreadP12ConstantPoolii&gt;</span><br><span class="line">   0x7fffe1024091:	push   %rax</span><br><span class="line">   0x7fffe1024092:	push   %rdi</span><br><span class="line">   0x7fffe1024093:	push   %rsi</span><br><span class="line">   0x7fffe1024094:	push   %rdx</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">   0x7fffe1024095:	push   %rcx</span><br><span class="line">   0x7fffe1024096:	push   %r8</span><br><span class="line">   0x7fffe1024098:	push   %r9</span><br><span class="line">   0x7fffe102409a:	push   %r10</span><br><span class="line">   0x7fffe102409c:	push   %r11</span><br><span class="line">   0x7fffe102409e:	test   $0xf,%esp</span><br><span class="line">   0x7fffe10240a4:	je     0x7fffe10240bc</span><br><span class="line">   0x7fffe10240aa:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe10240ae:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe10240b3:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe10240b7:	jmp    0x7fffe10240c1</span><br><span class="line">   0x7fffe10240bc:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe10240c1:	pop    %r11</span><br><span class="line">   0x7fffe10240c3:	pop    %r10</span><br><span class="line">   0x7fffe10240c5:	pop    %r9</span><br><span class="line">   0x7fffe10240c7:	pop    %r8</span><br><span class="line">   0x7fffe10240c9:	pop    %rcx</span><br><span class="line">   0x7fffe10240ca:	pop    %rdx</span><br><span class="line">   0x7fffe10240cb:	pop    %rsi</span><br><span class="line">   0x7fffe10240cc:	pop    %rdi</span><br><span class="line">   0x7fffe10240cd:	cmp    %rax,%r15</span><br><span class="line">   0x7fffe10240d0:	je     0x7fffe10240ea</span><br><span class="line">   0x7fffe10240d6:	movabs $0x7ffff7311da0,%rdi</span><br><span class="line">   0x7fffe10240e0:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe10240e4:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe10240e9:	hlt    </span><br><span class="line">   0x7fffe10240ea:	pop    %rax</span><br><span class="line">   0x7fffe10240eb:	movq   $0x0,0x2c0(%r15)</span><br><span class="line">   0x7fffe10240f6:	movq   $0x0,0x2d0(%r15)</span><br><span class="line">   0x7fffe1024101:	movq   $0x0,0x2c8(%r15)</span><br><span class="line">   0x7fffe102410c:	vzeroupper </span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">   0x7fffe102410f:	cmpq   $0x0,0x8(%r15)</span><br><span class="line">   0x7fffe1024117:	je     0x7fffe1024122</span><br><span class="line">   0x7fffe102411d:	jmp    0x7fffe1000c20</span><br><span class="line">   0x7fffe1024122:	mov    0x318(%r15),%rax</span><br><span class="line">   0x7fffe1024129:	movq   $0x0,0x318(%r15)</span><br><span class="line">   0x7fffe1024134:	mov    -0x40(%rbp),%r13</span><br><span class="line">   0x7fffe1024138:	mov    -0x38(%rbp),%r14</span><br><span class="line">   0x7fffe102413c:	ret    </span><br><span class="line">   0x7fffe102413d:	movzbl 0x3(%r13),%ebx</span><br><span class="line">   0x7fffe1024142:	add    $0x3,%r13</span><br><span class="line">   0x7fffe1024146:	movabs $0x7ffff7bcc0a0,%r10</span><br><span class="line">   0x7fffe1024150:	jmp    *(%r10,%rbx,8)</span><br><span class="line">   0x7fffe1024154:	nop</span><br><span class="line">   0x7fffe1024155:	nop</span><br><span class="line"> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h3><p>用的是jdk11以上版本，我这个jdk是用g1来做gc的，所以看看g1 是怎么分配的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  HeapRegion::par_allocate_impl (this=0x7ffff00e11b0, min_word_size=256, desired_word_size=63020, actual_size=0x7ffff59fcba8)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/g1/heapRegion.inline.hpp:63</span><br><span class="line">#1  0x00007ffff640bdcc in HeapRegion::par_allocate (this=0x7ffff00e11b0, min_word_size=256, desired_word_size=63020, actual_word_size=0x7ffff59fcba8)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/g1/heapRegion.inline.hpp:225</span><br><span class="line">#2  0x00007ffff640bfcb in G1AllocRegion::par_allocate (this=0x7ffff0052e10, alloc_region=0x7ffff00e11b0, min_word_size=256, desired_word_size=63020, </span><br><span class="line">    actual_word_size=0x7ffff59fcba8) at /home/dai/jdk/src/hotspot/share/gc/g1/g1AllocRegion.inline.hpp:63</span><br><span class="line">#3  0x00007ffff640c0c6 in G1AllocRegion::attempt_allocation (this=0x7ffff0052e10, min_word_size=256, desired_word_size=63020, actual_word_size=0x7ffff59fcba8)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/g1/g1AllocRegion.inline.hpp:77</span><br><span class="line">#4  0x00007ffff6447142 in G1Allocator::attempt_allocation (this=0x7ffff0052d50, min_word_size=256, desired_word_size=63020, actual_word_size=0x7ffff59fcba8)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/g1/g1Allocator.inline.hpp:62</span><br><span class="line">#5  0x00007ffff6447b1d in G1CollectedHeap::attempt_allocation (this=0x7ffff0048bf0, min_word_size=256, desired_word_size=63020, </span><br><span class="line">    actual_word_size=0x7ffff59fcba8) at /home/dai/jdk/src/hotspot/share/gc/g1/g1CollectedHeap.cpp:709</span><br><span class="line">#6  0x00007ffff64385ea in G1CollectedHeap::allocate_new_tlab (this=0x7ffff0048bf0, min_size=256, requested_size=63020, actual_size=0x7ffff59fcba8)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/g1/g1CollectedHeap.cpp:359</span><br><span class="line">#7  0x00007ffff69e1cf6 in MemAllocator::allocate_inside_tlab_slow (this=0x7ffff59fcc00, allocation=...)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:318</span><br><span class="line">#8  0x00007ffff69e1bc2 in MemAllocator::allocate_inside_tlab (this=0x7ffff59fcc00, allocation=...)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:278</span><br><span class="line">#9  0x00007ffff69e1eb9 in MemAllocator::mem_allocate (this=0x7ffff59fcc00, allocation=...) at /home/dai/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:350</span><br><span class="line">#10 0x00007ffff69e1f22 in MemAllocator::allocate (this=0x7ffff59fcc00) at /home/dai/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:363</span><br><span class="line">#11 0x00007ffff6260d84 in CollectedHeap::array_allocate (this=0x7ffff0048bf0, klass=0x8000407c0, size=106, length=825, do_zero=true, </span><br><span class="line">    __the_thread__=0x7ffff0028f70) at /home/dai/jdk/src/hotspot/share/gc/shared/collectedHeap.inline.hpp:41</span><br><span class="line">#12 0x00007ffff6db9bf2 in TypeArrayKlass::allocate_common (this=0x8000407c0, length=825, do_zero=true, __the_thread__=0x7ffff0028f70)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/oops/typeArrayKlass.cpp:93</span><br><span class="line">#13 0x00007ffff62f7428 in TypeArrayKlass::allocate (this=0x8000407c0, length=825, __the_thread__=0x7ffff0028f70)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/oops/typeArrayKlass.hpp:68</span><br><span class="line">#14 0x00007ffff6ab4757 in oopFactory::new_typeArray (type=T_BYTE, length=825, __the_thread__=0x7ffff0028f70)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/memory/oopFactory.cpp:93</span><br><span class="line">#15 0x00007ffff65cf8e5 in InterpreterRuntime::newarray (current=0x7ffff0028f70, type=T_BYTE, size=825)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:247</span><br><span class="line">#16 0x00007fffe1023eb2 in ?? ()</span><br><span class="line">#17 0x00007ffff7bca0a0 in TemplateInterpreter::_active_table () from /home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="line">#18 0x00007fffe1023e31 in ?? ()</span><br><span class="line">#19 0x000000062a47ab38 in ?? ()</span><br><span class="line">#20 0x00007ffff59fcd88 in ?? ()</span><br><span class="line">#21 0x00007fffb43a23e6 in ?? ()</span><br><span class="line">#22 0x00007ffff59fcde8 in ?? ()</span><br><span class="line">#23 0x00007fffb43a3520 in ?? ()</span><br><span class="line">#24 0x0000000000000000 in ?? ()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="array-copy-反查"><a href="#array-copy-反查" class="headerlink" title="array_copy 反查"></a>array_copy 反查</h2><p>java里面 <code>System.arraycopy</code> 函数就是copy 整个数组到新的数组里面,复制方式是浅拷贝.<br>最后调用的入口是下面的c++代码.所以可以通过这个函数就可以了解数组的内存布局</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">void ObjArrayKlass::copy_array(arrayOop s, int src_pos, arrayOop d,</span><br><span class="line">                               int dst_pos, int length, TRAPS) &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line">    size_t src_offset = (size_t) objArrayOopDesc::obj_at_offset&lt;oop&gt;(src_pos); &lt;----------------------------- 开始地址</span><br><span class="line">    size_t dst_offset = (size_t) objArrayOopDesc::obj_at_offset&lt;oop&gt;(dst_pos);  &lt;---------------------------- 结束地址</span><br><span class="line">    assert(arrayOopDesc::obj_offset_to_raw&lt;oop&gt;(s, src_offset, NULL) ==</span><br><span class="line">           objArrayOop(s)-&gt;obj_at_addr&lt;oop&gt;(src_pos), &quot;sanity&quot;);</span><br><span class="line">    assert(arrayOopDesc::obj_offset_to_raw&lt;oop&gt;(d, dst_offset, NULL) ==</span><br><span class="line">           objArrayOop(d)-&gt;obj_at_addr&lt;oop&gt;(dst_pos), &quot;sanity&quot;);</span><br><span class="line">    do_copy(s, src_offset, d, dst_offset, length, CHECK);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>所以java的对象数组的内存布局就像下面一样 ， 这里的oop 是一个指针</p>
+<p>64位下面是8字节</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/stokito/IdeaJol">jol plugin</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/openjdk/jol">jol</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_15127648/2775603">如何计算对象大小</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eff047d4480a">jvmti</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.modb.pro/db/324615">如何计算对象大小</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/platform/jvmti/jvmti.html#whatIs">jvmti doc</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kelthuzadx/p/10700291.html">java main 函数入口</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/13721111/why-is-invokespecial-used-to-invoke-init-method-in-java">构造函数</a></li>
+<li><a target="_blank" rel="noopener" href="https://asmsupport.github.io/doc/0.4/bytecode/init_clinit.html">bytecode</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/7029212345020710925">main 函数启动</a></li>
+<li><a target="_blank" rel="noopener" href="http://47.100.139.123/blog/article/132">byte code</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/perfma/p/15602013.html">byte code 原理分析 汇编</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhimazhi/p/15232711.html">byte  code</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/a860MHz/article/details/96992475">g1 内存分配</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6925218236208250887">tlab 源码分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/43747221/what-is-a-tlab-thread-local-allocation-buffer">tlab</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/12/29/redission-%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B/" rel="prev" title="redission 调用流程">
+      <i class="fa fa-chevron-left"></i> redission 调用流程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/01/11/java-%E4%B8%80%E6%AC%A1gc%E6%8E%92%E6%9F%A5/" rel="next" title="java 一次gc排查">
+      java 一次gc排查 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#object-%E6%95%B0%E7%BB%84%E4%BE%8B%E5%AD%90"><span class="nav-number">2.</span> <span class="nav-text">object 数组例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jol"><span class="nav-number">3.</span> <span class="nav-text">jol</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#byte-code-%E7%94%9F%E6%88%90%E5%85%A5%E5%8F%A3"><span class="nav-number">3.1.</span> <span class="nav-text">byte code 生成入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">3.2.</span> <span class="nav-text">内存分配</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#array-copy-%E5%8F%8D%E6%9F%A5"><span class="nav-number">4.</span> <span class="nav-text">array_copy 反查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">5.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

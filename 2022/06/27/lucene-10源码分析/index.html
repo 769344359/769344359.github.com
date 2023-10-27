@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景我家里的电脑的lucene是10版本的 创建索引和保存1234### 断点java -agentlib:jdwp&#x3D;transport&#x3D;dt_socket,server&#x3D;y,address&#x3D;8000 -cp &#x2F;home&#x2F;dai&#x2F;lucene&#x2F;lucene&#x2F;demo&#x2F;build&#x2F;libs&#x2F;lucene-demo-10.0.0-SNAPSHOT.jar:&#x2F;home&#x2F;dai&#x2F;lucene&#x2F;lucene">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lucene 10源码分析">
+<meta property="og:url" content="https://shakudada.xyz/2022/06/27/lucene-10%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景我家里的电脑的lucene是10版本的 创建索引和保存1234### 断点java -agentlib:jdwp&#x3D;transport&#x3D;dt_socket,server&#x3D;y,address&#x3D;8000 -cp &#x2F;home&#x2F;dai&#x2F;lucene&#x2F;lucene&#x2F;demo&#x2F;build&#x2F;libs&#x2F;lucene-demo-10.0.0-SNAPSHOT.jar:&#x2F;home&#x2F;dai&#x2F;lucene&#x2F;lucene">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-27T14:50:26.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.907Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="lucene">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2022/06/27/lucene-10%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>lucene 10源码分析 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2022/06/27/lucene-10%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          lucene 10源码分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-27 22:50:26" itemprop="dateCreated datePublished" datetime="2022-06-27T22:50:26+08:00">2022-06-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我家里的电脑的lucene是10版本的</p>
+<h1 id="创建索引和保存"><a href="#创建索引和保存" class="headerlink" title="创建索引和保存"></a>创建索引和保存</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">### 断点</span><br><span class="line">java -agentlib:jdwp=transport=dt_socket,server=y,address=8000 -cp /home/dai/lucene/lucene/demo/build/libs/lucene-demo-10.0.0-SNAPSHOT.jar:/home/dai/lucene/lucene/core/build/libs/lucene-core-10.0.0-SNAPSHOT.jar  org.apache.lucene.demo.IndexFiles  -docs  /home/dai/docs</span><br><span class="line">### jdb 调试</span><br><span class="line">jdb -attach 8000 -sourcepath /home/dai/lucene/lucene/demo/src/java/:/home/dai/lucene/lucene/core/src/java/</span><br></pre></td></tr></table></figure>
+<h2 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h2><p>倒排索引和分词都在这块代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.index.IndexingChain$PerField.invert (IndexingChain.java:1,140)</span><br><span class="line">  [2] org.apache.lucene.index.IndexingChain.processField (IndexingChain.java:729)</span><br><span class="line">  [3] org.apache.lucene.index.IndexingChain.processDocument (IndexingChain.java:620)</span><br><span class="line">  [4] org.apache.lucene.index.DocumentsWriterPerThread.updateDocuments (DocumentsWriterPerThread.java:241)</span><br><span class="line">  [5] org.apache.lucene.index.DocumentsWriter.updateDocuments (DocumentsWriter.java:432)</span><br><span class="line">  [6] org.apache.lucene.index.IndexWriter.updateDocuments (IndexWriter.java:1,531)</span><br><span class="line">  [7] org.apache.lucene.index.IndexWriter.updateDocument (IndexWriter.java:1,816)</span><br><span class="line">  [8] org.apache.lucene.index.IndexWriter.addDocument (IndexWriter.java:1,469)</span><br><span class="line">  [9] org.apache.lucene.demo.IndexFiles.indexDoc (IndexFiles.java:271)</span><br><span class="line">  [10] org.apache.lucene.demo.IndexFiles$1.visitFile (IndexFiles.java:212)</span><br><span class="line">  [11] org.apache.lucene.demo.IndexFiles$1.visitFile (IndexFiles.java:208)</span><br><span class="line">  [12] java.nio.file.Files.walkFileTree (Files.java:2,811)</span><br><span class="line">  [13] java.nio.file.Files.walkFileTree (Files.java:2,882)</span><br><span class="line">  [14] org.apache.lucene.demo.IndexFiles.indexDocs (IndexFiles.java:206)</span><br><span class="line">  [15] org.apache.lucene.demo.IndexFiles.main (IndexFiles.java:157)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Step completed: &quot;thread=main&quot;, org.apache.lucene.index.TermsHashPerField.add(), line=193 bci=22</span><br><span class="line">193        int termID = bytesHash.add(termBytes);</span><br><span class="line"></span><br><span class="line">main[1] print termBytes</span><br><span class="line"> termBytes = &quot;[2f 68 6f 6d 65 2f 64 61 69 2f 64 6f 63 73 2f 62 62 62 2e 74 78 74]&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="invert"><a href="#invert" class="headerlink" title="invert"></a>invert</h2><p>倒排索引，核心是构造一个<code>term=&gt;doc</code> 的映射。比较核心的类是<code>lucene/core/src/java/org/apache/lucene/index/FreqProxTermsWriterPerField.java</code>，这是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">void addTerm(final int termID, final int docID) &#123;</span><br><span class="line">  final FreqProxPostingsArray postings = freqProxPostingsArray;</span><br><span class="line">  assert !hasFreq || postings.termFreqs[termID] &gt; 0;</span><br><span class="line"></span><br><span class="line">  if (!hasFreq) &#123;</span><br><span class="line">    assert postings.termFreqs == null;</span><br><span class="line">    if (termFreqAtt.getTermFrequency() != 1) &#123;</span><br><span class="line">      throw new IllegalStateException(</span><br><span class="line">          &quot;field \&quot;&quot;</span><br><span class="line">              + getFieldName()</span><br><span class="line">              + &quot;\&quot;: must index term freq while using custom TermFrequencyAttribute&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if (docID != postings.lastDocIDs[termID]) &#123;</span><br><span class="line">      // New document; now encode docCode for previous doc:</span><br><span class="line">      assert docID &gt; postings.lastDocIDs[termID];</span><br><span class="line">      writeVInt(0, postings.lastDocCodes[termID]);</span><br><span class="line">      postings.lastDocCodes[termID] = docID - postings.lastDocIDs[termID];</span><br><span class="line">      postings.lastDocIDs[termID] = docID;</span><br><span class="line">      fieldState.uniqueTermCount++;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else if (docID != postings.lastDocIDs[termID]) &#123;</span><br><span class="line">    assert docID &gt; postings.lastDocIDs[termID]</span><br><span class="line">        : &quot;id: &quot; + docID + &quot; postings ID: &quot; + postings.lastDocIDs[termID] + &quot; termID: &quot; + termID;</span><br><span class="line">    // Term not yet seen in the current doc but previously</span><br><span class="line">    // seen in other doc(s) since the last flush</span><br><span class="line"></span><br><span class="line">    // Now that we know doc freq for previous doc,</span><br><span class="line">    // write it &amp; lastDocCode</span><br><span class="line">    if (1 == postings.termFreqs[termID]) &#123;</span><br><span class="line">      writeVInt(0, postings.lastDocCodes[termID] | 1);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      writeVInt(0, postings.lastDocCodes[termID]);</span><br><span class="line">      writeVInt(0, postings.termFreqs[termID]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Init freq for the current document</span><br><span class="line">    postings.termFreqs[termID] = getTermFreq();</span><br><span class="line">    fieldState.maxTermFrequency =</span><br><span class="line">        Math.max(postings.termFreqs[termID], fieldState.maxTermFrequency);</span><br><span class="line">    postings.lastDocCodes[termID] = (docID - postings.lastDocIDs[termID]) &lt;&lt; 1;</span><br><span class="line">    postings.lastDocIDs[termID] = docID;</span><br><span class="line">    if (hasProx) &#123;</span><br><span class="line">      writeProx(termID, fieldState.position);</span><br><span class="line">      if (hasOffsets) &#123;</span><br><span class="line">        postings.lastOffsets[termID] = 0;</span><br><span class="line">        writeOffsets(termID, fieldState.offset);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      assert !hasOffsets;</span><br><span class="line">    &#125;</span><br><span class="line">    fieldState.uniqueTermCount++;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    postings.termFreqs[termID] = Math.addExact(postings.termFreqs[termID], getTermFreq());</span><br><span class="line">    fieldState.maxTermFrequency =</span><br><span class="line">        Math.max(fieldState.maxTermFrequency, postings.termFreqs[termID]);</span><br><span class="line">    if (hasProx) &#123;</span><br><span class="line">      writeProx(termID, fieldState.position - postings.lastPositions[termID]);</span><br><span class="line">      if (hasOffsets) &#123;</span><br><span class="line">        writeOffsets(termID, fieldState.offset);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成termId"><a href="#生成termId" class="headerlink" title="生成termId"></a>生成termId</h3><p>堆栈</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.index.TermsHashPerField.initStreamSlices (TermsHashPerField.java:150)</span><br><span class="line">  [2] org.apache.lucene.index.TermsHashPerField.add (TermsHashPerField.java:198)</span><br><span class="line">  [3] org.apache.lucene.index.IndexingChain$PerField.invert (IndexingChain.java:1,224)</span><br><span class="line">  [4] org.apache.lucene.index.IndexingChain.processField (IndexingChain.java:729)</span><br><span class="line">  [5] org.apache.lucene.index.IndexingChain.processDocument (IndexingChain.java:620)</span><br><span class="line">  [6] org.apache.lucene.index.DocumentsWriterPerThread.updateDocuments (DocumentsWriterPerThread.java:241)</span><br><span class="line">  [7] org.apache.lucene.index.DocumentsWriter.updateDocuments (DocumentsWriter.java:432)</span><br><span class="line">  [8] org.apache.lucene.index.IndexWriter.updateDocuments (IndexWriter.java:1,531)</span><br><span class="line">  [9] org.apache.lucene.index.IndexWriter.updateDocument (IndexWriter.java:1,816)</span><br><span class="line">  [10] org.apache.lucene.index.IndexWriter.addDocument (IndexWriter.java:1,469)</span><br><span class="line">  [11] org.apache.lucene.demo.IndexFiles.indexDoc (IndexFiles.java:271)</span><br><span class="line">  [12] org.apache.lucene.demo.IndexFiles$1.visitFile (IndexFiles.java:212)</span><br><span class="line">  [13] org.apache.lucene.demo.IndexFiles$1.visitFile (IndexFiles.java:208)</span><br><span class="line">  [14] java.nio.file.Files.walkFileTree (Files.java:2,811)</span><br><span class="line">  [15] java.nio.file.Files.walkFileTree (Files.java:2,882)</span><br><span class="line">  [16] org.apache.lucene.demo.IndexFiles.indexDocs (IndexFiles.java:206)</span><br><span class="line">  [17] org.apache.lucene.demo.IndexFiles.main (IndexFiles.java:157)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IntBlockPool intPool,</span><br><span class="line">ByteBlockPool bytePool,</span><br><span class="line">ByteBlockPool termBytePool,</span><br></pre></td></tr></table></figure>
+<p>首先介绍<code>intPool</code>这个变量这个变量维护了一个二维数组<code>int buffers[][]</code>和三个偏移量来保存<code>bytePool</code>的偏移量。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public final class IntBlockPool &#123;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">    // 类初始化是10 ， 后面会自动扩容，核心结构 ， 这个二维数组存的是bytePool 偏移量,默认初始化容量是10</span><br><span class="line">  public int[][] buffers = new int[10][];</span><br><span class="line"></span><br><span class="line">  // 二维数组偏移量，也就是联合buffers使用 。一般这样用  buffers[bufferUpto+offset]</span><br><span class="line">  private int bufferUpto = -1;</span><br><span class="line">  // 二维数组中的一维数组 ， 描述的是最新写入的buffers   </span><br><span class="line">  //  举例  buffer = buffers[1];</span><br><span class="line">  public int[] buffer;</span><br><span class="line">  //intUpto 描述的是相对于一维数组的偏移</span><br><span class="line">  public int intUpto = INT_BLOCK_SIZE;</span><br><span class="line">  // 绝对偏移 ，相对于二维数组的偏移 ，有点像计算机里面的相对跳转和绝对跳转</span><br><span class="line">  public int intOffset = -INT_BLOCK_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后和intPool一样，<code>bytePool</code>和<code>termBytePool</code> 也是用几个变量加一个二维数组描述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public final class ByteBlockPool implements Accountable &#123;</span><br><span class="line">...</span><br><span class="line">    // 核心结构，一个二维数组</span><br><span class="line">  public byte[][] buffers = new byte[10][];</span><br><span class="line"></span><br><span class="line">  /** index into the buffers array pointing to the current buffer used as the head */</span><br><span class="line">  private int bufferUpto = -1; // Which buffer we are upto</span><br><span class="line">  /** Where we are in head buffer */</span><br><span class="line">  public int byteUpto = BYTE_BLOCK_SIZE;</span><br><span class="line"></span><br><span class="line">  /** Current head buffer */</span><br><span class="line">  public byte[] buffer;</span><br><span class="line">  /** Current head offset */</span><br><span class="line">  public int byteOffset = -BYTE_BLOCK_SIZE;</span><br></pre></td></tr></table></figure>
+<h1 id="查询搜索"><a href="#查询搜索" class="headerlink" title="查询搜索"></a>查询搜索</h1><h2 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">## 断点</span><br><span class="line">java -agentlib:jdwp=transport=dt_socket,server=y,address=8000 -cp /home/dai/lucene/lucene/demo/build/libs/lucene-demo-10.0.0-SNAPSHOT.jar:/home/dai/lucene/lucene/core/build/libs/lucene-core-10.0.0-SNAPSHOT.jar:/home/dai/lucene/lucene/queryparser/build/libs/lucene-queryparser-10.0.0-SNAPSHOT.jar  org.apache.lucene.demo.SearchFiles</span><br><span class="line"></span><br><span class="line">## jdb 调试</span><br><span class="line">jdb -attach 8000 -sourcepath /home/dai/lucene/lucene/demo/src/java/:/home/dai/lucene/lucene/core/src/java/</span><br></pre></td></tr></table></figure>
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p><code>termState</code>描述的是term的统计信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ain[1] print termState</span><br><span class="line"> termState = &quot;TermStates</span><br><span class="line">  state=docFreq=1 totalTermFreq=1 termBlockOrd=2 blockFP=0 docStartFP=63 posStartFP=63 payStartFP=0 lastPosBlockOffset=-1 singletonDocID=6</span><br><span class="line">&quot;</span><br><span class="line">main[1] print term</span><br><span class="line"> term = &quot;contents:am&quot;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.TermQuery.createWeight (TermQuery.java:233)</span><br><span class="line">  [2] org.apache.lucene.search.IndexSearcher.createWeight (IndexSearcher.java:894)</span><br><span class="line">  [3] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:686)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [6] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [7] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><p>默认排序是BM25Similarity</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.similarities.BM25Similarity.scorer (BM25Similarity.java:200)</span><br><span class="line">  [2] org.apache.lucene.search.TermQuery$TermWeight.&lt;init&gt; (TermQuery.java:75)</span><br><span class="line">  [3] org.apache.lucene.search.TermQuery.createWeight (TermQuery.java:233)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher.createWeight (IndexSearcher.java:894)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:686)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [8] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [9] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="核心搜索参数"><a href="#核心搜索参数" class="headerlink" title="核心搜索参数"></a>核心搜索参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">main[1] list</span><br><span class="line">763            // there is no doc of interest in this reader context</span><br><span class="line">764            // continue with the following leaf</span><br><span class="line">765            continue;</span><br><span class="line">766          &#125;</span><br><span class="line">767 =&gt;       BulkScorer scorer = weight.bulkScorer(ctx);</span><br><span class="line">768          if (scorer != null) &#123;</span><br><span class="line">769            try &#123;</span><br><span class="line">770              scorer.score(leafCollector, ctx.reader().getLiveDocs());</span><br><span class="line">771            &#125; catch (</span><br><span class="line">772                @SuppressWarnings(&quot;unused&quot;)</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:767)</span><br><span class="line">  [2] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [3] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [6] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [7] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>获取reader</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Step completed: &quot;thread=main&quot;, org.apache.lucene.index.LeafReaderContext.reader(), line=67 bci=0</span><br><span class="line">67        return reader;</span><br><span class="line"></span><br><span class="line">main[1] print reader</span><br><span class="line"> reader = &quot;_0(10.0.0):c7:[diagnostics=&#123;source=flush, os.arch=amd64, java.runtime.version=17.0.3+7-Ubuntu-0ubuntu0.22.04.1, os.version=5.15.0-33-generic, java.vendor=Private Build, os=Linux, timestamp=1656601918836, java.version=17.0.3, java.vm.version=17.0.3+7-Ubuntu-0ubuntu0.22.04.1, lucene.version=10.0.0&#125;]:[attributes=&#123;Lucene90StoredFieldsFormat.mode=BEST_SPEED&#125;] :id=c276i3vlaza4c6uumuxapfnvf&quot;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.index.LeafReaderContext.reader (LeafReaderContext.java:67)</span><br><span class="line">  [2] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:770)</span><br><span class="line">  [3] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [7] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [8] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中的reader 对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">main[1] dump reader</span><br><span class="line"> reader = &#123;</span><br><span class="line">    si: instance of org.apache.lucene.index.SegmentCommitInfo(id=1531)</span><br><span class="line">    originalSi: instance of org.apache.lucene.index.SegmentCommitInfo(id=1532)</span><br><span class="line">    metaData: instance of org.apache.lucene.index.LeafMetaData(id=1533)</span><br><span class="line">    liveDocs: null</span><br><span class="line">    hardLiveDocs: null</span><br><span class="line">    numDocs: 7</span><br><span class="line">    core: instance of org.apache.lucene.index.SegmentCoreReaders(id=1534)</span><br><span class="line">    segDocValues: instance of org.apache.lucene.index.SegmentDocValues(id=1535)</span><br><span class="line">    isNRT: false</span><br><span class="line">    docValuesProducer: null</span><br><span class="line">    fieldInfos: instance of org.apache.lucene.index.FieldInfos(id=1536)</span><br><span class="line">    readerClosedListeners: instance of java.util.concurrent.CopyOnWriteArraySet(id=1537)</span><br><span class="line">    readerCacheHelper: instance of org.apache.lucene.index.SegmentReader$1(id=1538)</span><br><span class="line">    coreCacheHelper: instance of org.apache.lucene.index.SegmentReader$2(id=1539)</span><br><span class="line">    $assertionsDisabled: true</span><br><span class="line">    org.apache.lucene.index.LeafReader.readerContext: instance of org.apache.lucene.index.LeafReaderContext(id=1540)</span><br><span class="line">    org.apache.lucene.index.LeafReader.$assertionsDisabled: true</span><br><span class="line">    org.apache.lucene.index.IndexReader.closed: false</span><br><span class="line">    org.apache.lucene.index.IndexReader.closedByChild: false</span><br><span class="line">    org.apache.lucene.index.IndexReader.refCount: instance of java.util.concurrent.atomic.AtomicInteger(id=1541)</span><br><span class="line">    org.apache.lucene.index.IndexReader.parentReaders: instance of java.util.Collections$SynchronizedSet(id=1542)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>排序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">main[1] list</span><br><span class="line">222    </span><br><span class="line">223        @Override</span><br><span class="line">224        public int score(LeafCollector collector, Bits acceptDocs, int min, int max)</span><br><span class="line">225            throws IOException &#123;</span><br><span class="line">226 =&gt;       collector.setScorer(scorer);</span><br><span class="line">227          DocIdSetIterator scorerIterator = twoPhase == null ? iterator : twoPhase.approximation();</span><br><span class="line">228          DocIdSetIterator competitiveIterator = collector.competitiveIterator();</span><br><span class="line">229          DocIdSetIterator filteredIterator;</span><br><span class="line">230          if (competitiveIterator == null) &#123;</span><br><span class="line">231            filteredIterator = scorerIterator;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.Weight$DefaultBulkScorer.score (Weight.java:226)</span><br><span class="line">  [2] org.apache.lucene.search.BulkScorer.score (BulkScorer.java:38)</span><br><span class="line">  [3] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:770)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [8] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [9] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="排序-1"><a href="#排序-1" class="headerlink" title="排序"></a>排序</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">private static class SimpleTopScoreDocCollector extends TopScoreDocCollector &#123;</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  @Override</span><br><span class="line">  public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException &#123;   </span><br><span class="line">    ...</span><br><span class="line">    return new ScorerLeafCollector() &#123;</span><br><span class="line">        ...</span><br><span class="line">      @Override</span><br><span class="line">      public void collect(int doc) throws IOException &#123;</span><br><span class="line">        float score = scorer.score();            &lt;----   这里不用传docId 就能获取score  ,是因为可以从父类TopScoreDocCollector 获取docId</span><br><span class="line"></span><br><span class="line">        // This collector relies on the fact that scorers produce positive values:</span><br><span class="line">        assert score &gt;= 0; // NOTE: false for NaN</span><br><span class="line"></span><br><span class="line">        totalHits++;</span><br><span class="line">        hitsThresholdChecker.incrementHitCount();</span><br><span class="line"></span><br><span class="line">        if (minScoreAcc != null &amp;&amp; (totalHits &amp; minScoreAcc.modInterval) == 0) &#123;</span><br><span class="line">          updateGlobalMinCompetitiveScore(scorer);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (score &lt;= pqTop.score) &#123;</span><br><span class="line">          if (totalHitsRelation == TotalHits.Relation.EQUAL_TO) &#123;</span><br><span class="line">            // we just reached totalHitsThreshold, we can start setting the min</span><br><span class="line">            // competitive score now</span><br><span class="line">            updateMinCompetitiveScore(scorer);</span><br><span class="line">          &#125;</span><br><span class="line">          // Since docs are returned in-order (i.e., increasing doc Id), a document</span><br><span class="line">          // with equal score to pqTop.score cannot compete since HitQueue favors</span><br><span class="line">          // documents with lower doc Ids. Therefore reject those docs too.</span><br><span class="line">          return;</span><br><span class="line">        &#125;</span><br><span class="line">        pqTop.doc = doc + docBase;</span><br><span class="line">        pqTop.score = score;</span><br><span class="line">        pqTop = pq.updateTop();</span><br><span class="line">        updateMinCompetitiveScore(scorer);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">main[1] print scorer</span><br><span class="line"> scorer = &quot;scorer(weight(contents:am))[org.apache.lucene.search.TermScorer@290dbf45]&quot;</span><br><span class="line">main[1] dump scorer</span><br><span class="line"> scorer = &#123;</span><br><span class="line">    postingsEnum: instance of org.apache.lucene.index.SlowImpactsEnum(id=1546)</span><br><span class="line">    impactsEnum: instance of org.apache.lucene.index.SlowImpactsEnum(id=1546)</span><br><span class="line">    iterator: instance of org.apache.lucene.search.ImpactsDISI(id=1547)</span><br><span class="line">    docScorer: instance of org.apache.lucene.search.LeafSimScorer(id=1548)</span><br><span class="line">    impactsDisi: instance of org.apache.lucene.search.ImpactsDISI(id=1547)</span><br><span class="line">    $assertionsDisabled: true</span><br><span class="line">    org.apache.lucene.search.Scorer.weight: instance of org.apache.lucene.search.TermQuery$TermWeight(id=1549)</span><br><span class="line">&#125;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector$1.collect (TopScoreDocCollector.java:76)     &lt;--- 这里没有传doc_id 进去scorer 是因为有个回调, 可以获取doc_id , 这里会有歌pq，是一个排序好的doc</span><br><span class="line">  [2] org.apache.lucene.search.Weight$DefaultBulkScorer.scoreAll (Weight.java:305)   </span><br><span class="line">  [3] org.apache.lucene.search.Weight$DefaultBulkScorer.score (Weight.java:247)</span><br><span class="line">  [4] org.apache.lucene.search.BulkScorer.score (BulkScorer.java:38)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:770)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [9] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [10] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [11] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line">main[1] </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="核心算分函数"><a href="#核心算分函数" class="headerlink" title="核心算分函数"></a>核心算分函数</h4><p>排序算分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">main[1] list</span><br><span class="line">246          // float. And then monotonicity is preserved through composition via</span><br><span class="line">247          // x -&gt; 1 + x and x -&gt; 1 - 1/x.</span><br><span class="line">248          // Finally we expand weight * (1 - 1 / (1 + freq * 1/norm)) to</span><br><span class="line">249          // weight - weight / (1 + freq * 1/norm), which runs slightly faster.</span><br><span class="line">250 =&gt;       float normInverse = cache[((byte) encodedNorm) &amp; 0xFF];</span><br><span class="line">251          return weight - weight / (1f + freq * normInverse);</span><br><span class="line">252        &#125;</span><br><span class="line">253    </span><br><span class="line">254        @Override</span><br><span class="line">255        public Explanation explain(Explanation freq, long encodedNorm) &#123;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.similarities.BM25Similarity$BM25Scorer.score (BM25Similarity.java:250)</span><br><span class="line">  [2] org.apache.lucene.search.LeafSimScorer.score (LeafSimScorer.java:60)</span><br><span class="line">  [3] org.apache.lucene.search.TermScorer.score (TermScorer.java:75)</span><br><span class="line">  [4] org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector$1.collect (TopScoreDocCollector.java:73)</span><br><span class="line">  [5] org.apache.lucene.search.Weight$DefaultBulkScorer.scoreAll (Weight.java:305)</span><br><span class="line">  [6] org.apache.lucene.search.Weight$DefaultBulkScorer.score (Weight.java:247)</span><br><span class="line">  [7] org.apache.lucene.search.BulkScorer.score (BulkScorer.java:38)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:770)</span><br><span class="line">  [9] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [10] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [11] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [12] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [13] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [14] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>reduce 过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">main[1] list</span><br><span class="line">60       * Populates the results array with the ScoreDoc instances. This can be overridden in case a</span><br><span class="line">61       * different ScoreDoc type should be returned.</span><br><span class="line">62       */</span><br><span class="line">63      protected void populateResults(ScoreDoc[] results, int howMany) &#123;</span><br><span class="line">64 =&gt;     for (int i = howMany - 1; i &gt;= 0; i--) &#123;</span><br><span class="line">65          results[i] = pq.pop();</span><br><span class="line">66        &#125;</span><br><span class="line">67      &#125;</span><br><span class="line">68    </span><br><span class="line">69      /**</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.TopDocsCollector.populateResults (TopDocsCollector.java:64)</span><br><span class="line">  [2] org.apache.lucene.search.TopDocsCollector.topDocs (TopDocsCollector.java:166)</span><br><span class="line">  [3] org.apache.lucene.search.TopDocsCollector.topDocs (TopDocsCollector.java:98)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher$2.reduce (IndexSearcher.java:526)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher$2.reduce (IndexSearcher.java:505)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:694)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [9] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [10] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [11] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br></pre></td></tr></table></figure>
+
+<p>辅助函数，获取topk的数据内容</p>
+<p>堆栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.search.TopDocs.mergeAux (TopDocs.java:312)</span><br><span class="line">  [2] org.apache.lucene.search.TopDocs.merge (TopDocs.java:216)</span><br><span class="line">  [3] org.apache.lucene.search.IndexSearcher$2.reduce (IndexSearcher.java:528)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher$2.reduce (IndexSearcher.java:505)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:694)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [9] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [10] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Auxiliary method used by the &#123;@link #merge&#125; impls. A sort value of null is used to indicate</span><br><span class="line"> * that docs should be sorted by score.</span><br><span class="line"> */</span><br><span class="line">private static TopDocs mergeAux(</span><br><span class="line">    Sort sort, int start, int size, TopDocs[] shardHits, Comparator&lt;ScoreDoc&gt; tieBreaker) &#123;</span><br><span class="line"></span><br><span class="line">  final PriorityQueue&lt;ShardRef&gt; queue;</span><br><span class="line">  if (sort == null) &#123;</span><br><span class="line">    queue = new ScoreMergeSortQueue(shardHits, tieBreaker);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    queue = new MergeSortQueue(sort, shardHits, tieBreaker);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  long totalHitCount = 0;</span><br><span class="line">  TotalHits.Relation totalHitsRelation = TotalHits.Relation.EQUAL_TO;</span><br><span class="line">  int availHitCount = 0;</span><br><span class="line">  for (int shardIDX = 0; shardIDX &lt; shardHits.length; shardIDX++) &#123;</span><br><span class="line">    final TopDocs shard = shardHits[shardIDX];</span><br><span class="line">    // totalHits can be non-zero even if no hits were</span><br><span class="line">    // collected, when searchAfter was used:</span><br><span class="line">    totalHitCount += shard.totalHits.value;</span><br><span class="line">    // If any hit count is a lower bound then the merged</span><br><span class="line">    // total hit count is a lower bound as well</span><br><span class="line">    if (shard.totalHits.relation == TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO) &#123;</span><br><span class="line">      totalHitsRelation = TotalHits.Relation.GREATER_THAN_OR_EQUAL_TO;</span><br><span class="line">    &#125;</span><br><span class="line">    if (shard.scoreDocs != null &amp;&amp; shard.scoreDocs.length &gt; 0) &#123;</span><br><span class="line">      availHitCount += shard.scoreDocs.length;</span><br><span class="line">      queue.add(new ShardRef(shardIDX));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  final ScoreDoc[] hits;</span><br><span class="line">  boolean unsetShardIndex = false;</span><br><span class="line">  if (availHitCount &lt;= start) &#123;</span><br><span class="line">    hits = new ScoreDoc[0];</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    hits = new ScoreDoc[Math.min(size, availHitCount - start)];</span><br><span class="line">    int requestedResultWindow = start + size;</span><br><span class="line">    int numIterOnHits = Math.min(availHitCount, requestedResultWindow);</span><br><span class="line">    int hitUpto = 0;</span><br><span class="line">    while (hitUpto &lt; numIterOnHits) &#123;</span><br><span class="line">      assert queue.size() &gt; 0;</span><br><span class="line">      ShardRef ref = queue.top();</span><br><span class="line">      final ScoreDoc hit = shardHits[ref.shardIndex].scoreDocs[ref.hitIndex++];</span><br><span class="line"></span><br><span class="line">      // Irrespective of whether we use shard indices for tie breaking or not, we check for</span><br><span class="line">      // consistent</span><br><span class="line">      // order in shard indices to defend against potential bugs</span><br><span class="line">      if (hitUpto &gt; 0) &#123;</span><br><span class="line">        if (unsetShardIndex != (hit.shardIndex == -1)) &#123;</span><br><span class="line">          throw new IllegalArgumentException(&quot;Inconsistent order of shard indices&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      unsetShardIndex |= hit.shardIndex == -1;</span><br><span class="line"></span><br><span class="line">      if (hitUpto &gt;= start) &#123;</span><br><span class="line">        hits[hitUpto - start] = hit;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      hitUpto++;</span><br><span class="line"></span><br><span class="line">      if (ref.hitIndex &lt; shardHits[ref.shardIndex].scoreDocs.length) &#123;</span><br><span class="line">        // Not done with this these TopDocs yet:</span><br><span class="line">        queue.updateTop();</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        queue.pop();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  TotalHits totalHits = new TotalHits(totalHitCount, totalHitsRelation);</span><br><span class="line">  if (sort == null) &#123;</span><br><span class="line">    return new TopDocs(totalHits, hits);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    return new TopFieldDocs(totalHits, hits, sort.getSort());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="通过docid-获取对应的文档"><a href="#通过docid-获取对应的文档" class="headerlink" title="通过docid 获取对应的文档"></a>通过docid 获取对应的文档</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fieldsStream.seek(startPointer);</span><br><span class="line">decompressor.decompress(fieldsStream, totalLength, offset, length, bytes);</span><br><span class="line">assert bytes.length == length;</span><br><span class="line">documentInput = new ByteArrayDataInput(bytes.bytes, bytes.offset, bytes.length);</span><br></pre></td></tr></table></figure>
+
+<p>堆栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.seek (ByteBufferIndexInput.java:576)</span><br><span class="line">  [2] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader$BlockState.document (Lucene90CompressingStoredFieldsReader.java:594)</span><br><span class="line">  [3] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.document (Lucene90CompressingStoredFieldsReader.java:610)</span><br><span class="line">  [4] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.visitDocument (Lucene90CompressingStoredFieldsReader.java:628)</span><br><span class="line">  [5] org.apache.lucene.index.CodecReader.document (CodecReader.java:89)</span><br><span class="line">  [6] org.apache.lucene.index.BaseCompositeReader.document (BaseCompositeReader.java:154)</span><br><span class="line">  [7] org.apache.lucene.index.IndexReader.document (IndexReader.java:380)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.doc (IndexSearcher.java:380)</span><br><span class="line">  [9] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:214)</span><br><span class="line">  [10] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>mmap加载文件到内存：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint hit: &quot;thread=main&quot;, org.apache.lucene.store.ByteBufferIndexInput.setCurBuf(), line=86 bci=0</span><br><span class="line">86        this.curBuf = curBuf;</span><br><span class="line"></span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.store.ByteBufferIndexInput.setCurBuf (ByteBufferIndexInput.java:86)</span><br><span class="line">  [2] org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.&lt;init&gt; (ByteBufferIndexInput.java:556)</span><br><span class="line">  [3] org.apache.lucene.store.ByteBufferIndexInput.newInstance (ByteBufferIndexInput.java:63)</span><br><span class="line">  [4] org.apache.lucene.store.MMapDirectory.openInput (MMapDirectory.java:238)</span><br><span class="line">  [5] org.apache.lucene.store.Directory.openChecksumInput (Directory.java:152)</span><br><span class="line">  [6] org.apache.lucene.index.SegmentInfos.readCommit (SegmentInfos.java:290)</span><br><span class="line">  [7] org.apache.lucene.index.StandardDirectoryReader$1.doBody (StandardDirectoryReader.java:88)</span><br><span class="line">  [8] org.apache.lucene.index.StandardDirectoryReader$1.doBody (StandardDirectoryReader.java:77)</span><br><span class="line">  [9] org.apache.lucene.index.SegmentInfos$FindSegmentsFile.run (SegmentInfos.java:798)</span><br><span class="line">  [10] org.apache.lucene.index.StandardDirectoryReader.open (StandardDirectoryReader.java:109)</span><br><span class="line">  [11] org.apache.lucene.index.StandardDirectoryReader.open (StandardDirectoryReader.java:67)</span><br><span class="line">  [12] org.apache.lucene.index.DirectoryReader.open (DirectoryReader.java:60)</span><br><span class="line">  [13] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:105)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>很明显，打开文件是在<code>org.apache.lucene.store.MMapDirectory.openInput</code> 这个类实现就是打开文件。</p>
+<p>先打开文件<code>segments_1</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">main[1] print name</span><br><span class="line"> name = &quot;segments_1&quot;</span><br><span class="line">main[1] list</span><br><span class="line">228    </span><br><span class="line">229      /** Creates an IndexInput for the file with the given name. */</span><br><span class="line">230      @Override</span><br><span class="line">231      public IndexInput openInput(String name, IOContext context) throws IOException &#123;</span><br><span class="line">232 =&gt;     ensureOpen();</span><br><span class="line">233        ensureCanRead(name);</span><br><span class="line">234        Path path = directory.resolve(name);</span><br><span class="line">235        try (FileChannel c = FileChannel.open(path, StandardOpenOption.READ)) &#123;</span><br><span class="line">236          final String resourceDescription = &quot;MMapIndexInput(path=\&quot;&quot; + path.toString() + &quot;\&quot;)&quot;;</span><br><span class="line">237          final boolean useUnmap = getUseUnmap();</span><br><span class="line">main[1] </span><br></pre></td></tr></table></figure>
+
+
+<p>举例读取字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">private static void readField(DataInput in, StoredFieldVisitor visitor, FieldInfo info, int bits)</span><br><span class="line">    throws IOException &#123;</span><br><span class="line">  switch (bits &amp; TYPE_MASK) &#123;</span><br><span class="line">    case BYTE_ARR:</span><br><span class="line">      int length = in.readVInt();</span><br><span class="line">      byte[] data = new byte[length];</span><br><span class="line">      in.readBytes(data, 0, length);</span><br><span class="line">      visitor.binaryField(info, data);</span><br><span class="line">      break;</span><br><span class="line">    case STRING:</span><br><span class="line">      visitor.stringField(info, in.readString());</span><br><span class="line">      break;</span><br><span class="line">    case NUMERIC_INT:</span><br><span class="line">      visitor.intField(info, in.readZInt());</span><br><span class="line">      break;</span><br><span class="line">    case NUMERIC_FLOAT:</span><br><span class="line">      visitor.floatField(info, readZFloat(in));</span><br><span class="line">      break;</span><br><span class="line">    case NUMERIC_LONG:</span><br><span class="line">      visitor.longField(info, readTLong(in));</span><br><span class="line">      break;</span><br><span class="line">    case NUMERIC_DOUBLE:</span><br><span class="line">      visitor.doubleField(info, readZDouble(in));</span><br><span class="line">      break;</span><br><span class="line">    default:</span><br><span class="line">      throw new AssertionError(&quot;Unknown type flag: &quot; + Integer.toHexString(bits));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.readField (Lucene90CompressingStoredFieldsReader.java:246)</span><br><span class="line">  [2] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.visitDocument (Lucene90CompressingStoredFieldsReader.java:640)</span><br><span class="line">  [3] org.apache.lucene.index.CodecReader.document (CodecReader.java:89)</span><br><span class="line">  [4] org.apache.lucene.index.BaseCompositeReader.document (BaseCompositeReader.java:154)</span><br><span class="line">  [5] org.apache.lucene.index.IndexReader.document (IndexReader.java:380)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.doc (IndexSearcher.java:380)</span><br><span class="line">  [7] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:214)</span><br><span class="line">  [8] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line">main[1] </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">main[1] list</span><br><span class="line">66      &#125;</span><br><span class="line">67    </span><br><span class="line">68      @Override</span><br><span class="line">69      public void stringField(FieldInfo fieldInfo, String value) throws IOException &#123;</span><br><span class="line">70 =&gt;     final FieldType ft = new FieldType(TextField.TYPE_STORED);</span><br><span class="line">71        ft.setStoreTermVectors(fieldInfo.hasVectors());</span><br><span class="line">72        ft.setOmitNorms(fieldInfo.omitsNorms());</span><br><span class="line">73        ft.setIndexOptions(fieldInfo.getIndexOptions());</span><br><span class="line">74        doc.add(</span><br><span class="line">75            new StoredField(</span><br><span class="line">main[1] print value</span><br><span class="line"> value = &quot;/home/dai/docs/aaa.txt&quot;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.document.DocumentStoredFieldVisitor.stringField (DocumentStoredFieldVisitor.java:70)</span><br><span class="line">  [2] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.readField (Lucene90CompressingStoredFieldsReader.java:246)</span><br><span class="line">  [3] org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.visitDocument (Lucene90CompressingStoredFieldsReader.java:640)</span><br><span class="line">  [4] org.apache.lucene.index.CodecReader.document (CodecReader.java:89)</span><br><span class="line">  [5] org.apache.lucene.index.BaseCompositeReader.document (BaseCompositeReader.java:154)</span><br><span class="line">  [6] org.apache.lucene.index.IndexReader.document (IndexReader.java:380)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.doc (IndexSearcher.java:380)</span><br><span class="line">  [8] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:214)</span><br><span class="line">  [9] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="将读到的string-加载到doc对象里面"><a href="#将读到的string-加载到doc对象里面" class="headerlink" title="将读到的string 加载到doc对象里面"></a>将读到的string 加载到doc对象里面</h3><p>这是核心函数 ， mmap 读取文件，然后seek 算出偏移和长度 ，从文件中读取出来并构造成对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  /**</span><br><span class="line">   * Get the serialized representation of the given docID. This docID has to be contained in the</span><br><span class="line">   * current block.</span><br><span class="line">   */</span><br><span class="line">  SerializedDocument document(int docID) throws IOException &#123;</span><br><span class="line">    if (contains(docID) == false) &#123;</span><br><span class="line">      throw new IllegalArgumentException();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    final int index = docID - docBase;</span><br><span class="line">    final int offset = Math.toIntExact(offsets[index]);</span><br><span class="line">    final int length = Math.toIntExact(offsets[index + 1]) - offset;</span><br><span class="line">    final int totalLength = Math.toIntExact(offsets[chunkDocs]);</span><br><span class="line">    final int numStoredFields = Math.toIntExact(this.numStoredFields[index]);</span><br><span class="line"></span><br><span class="line">    final BytesRef bytes;</span><br><span class="line">    if (merging) &#123;</span><br><span class="line">      bytes = this.bytes;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      bytes = new BytesRef();</span><br><span class="line">    &#125;</span><br><span class="line">    ... </span><br><span class="line">      fieldsStream.seek(startPointer);  // 计算偏移量</span><br><span class="line">      decompressor.decompress(fieldsStream, totalLength, offset, length, bytes);   // 解压内容</span><br><span class="line">      assert bytes.length == length;</span><br><span class="line">      documentInput = new ByteArrayDataInput(bytes.bytes, bytes.offset, bytes.length);  // 将内容塞到对象里面</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return new SerializedDocument(documentInput, length, numStoredFields);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取doc"><a href="#获取doc" class="headerlink" title="获取doc"></a>获取doc</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint hit: &quot;thread=main&quot;, org.apache.lucene.codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.advance(), line=498 bci=0</span><br><span class="line">498          if (docFreq &gt; BLOCK_SIZE &amp;&amp; target &gt; nextSkipDoc) &#123;</span><br><span class="line"></span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.advance (Lucene90PostingsReader.java:498)</span><br><span class="line">  [2] org.apache.lucene.index.SlowImpactsEnum.advance (SlowImpactsEnum.java:77)</span><br><span class="line">  [3] org.apache.lucene.search.ImpactsDISI.advance (ImpactsDISI.java:128)</span><br><span class="line">  [4] org.apache.lucene.search.ImpactsDISI.nextDoc (ImpactsDISI.java:133)</span><br><span class="line">  [5] org.apache.lucene.search.Weight$DefaultBulkScorer.scoreAll (Weight.java:301)</span><br><span class="line">  [6] org.apache.lucene.search.Weight$DefaultBulkScorer.score (Weight.java:247)</span><br><span class="line">  [7] org.apache.lucene.search.BulkScorer.score (BulkScorer.java:38)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:770)</span><br><span class="line">  [9] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [10] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [11] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [12] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [13] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [14] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="term-query-和遍历"><a href="#term-query-和遍历" class="headerlink" title="term query 和遍历"></a>term query 和遍历</h2><p>注意到 <code>ImpactsEnum</code> 实现了iteratorDocId</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1,138      &#125;</span><br><span class="line">1,139    </span><br><span class="line">1,140      @Override</span><br><span class="line">1,141      public ImpactsEnum impacts(int flags) throws IOException &#123;</span><br><span class="line">1,142 =&gt;     assert !eof;</span><br><span class="line">1,143        // if (DEBUG) &#123;</span><br><span class="line">1,144        // System.out.println(&quot;BTTR.docs seg=&quot; + segment);</span><br><span class="line">1,145        // &#125;</span><br><span class="line">1,146        currentFrame.decodeMetaData();</span><br><span class="line">1,147        // if (DEBUG) &#123;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.impacts (SegmentTermsEnum.java:1,142)</span><br><span class="line">  [2] org.apache.lucene.search.TermQuery$TermWeight.scorer (TermQuery.java:114)</span><br><span class="line">  [3] org.apache.lucene.search.Weight.bulkScorer (Weight.java:166)</span><br><span class="line">  [4] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:767)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:693)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [9] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [10] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>注意到<code>PostingsEnum</code> 也有docidIterater</p>
+<h3 id="排序topk"><a href="#排序topk" class="headerlink" title="排序topk"></a>排序topk</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">main[1] where</span><br><span class="line">  [1] org.apache.lucene.util.PriorityQueue.upHeap (PriorityQueue.java:276)</span><br><span class="line">  [2] org.apache.lucene.util.PriorityQueue.add (PriorityQueue.java:161)</span><br><span class="line">  [3] org.apache.lucene.search.TopDocs.mergeAux (TopDocs.java:303)</span><br><span class="line">  [4] org.apache.lucene.search.TopDocs.merge (TopDocs.java:216)</span><br><span class="line">  [5] org.apache.lucene.search.IndexSearcher$2.reduce (IndexSearcher.java:528)</span><br><span class="line">  [6] org.apache.lucene.search.IndexSearcher$2.reduce (IndexSearcher.java:505)</span><br><span class="line">  [7] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:694)</span><br><span class="line">  [8] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:687)</span><br><span class="line">  [9] org.apache.lucene.search.IndexSearcher.searchAfter (IndexSearcher.java:532)</span><br><span class="line">  [10] org.apache.lucene.search.IndexSearcher.search (IndexSearcher.java:542)</span><br><span class="line">  [11] org.apache.lucene.demo.SearchFiles.doPagingSearch (SearchFiles.java:180)</span><br><span class="line">  [12] org.apache.lucene.demo.SearchFiles.main (SearchFiles.java:150)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   @Override</span><br><span class="line">    public boolean lessThan(ShardRef first, ShardRef second) &#123;</span><br><span class="line">      assert first != second;</span><br><span class="line">      ScoreDoc firstScoreDoc = shardHits[first.shardIndex][first.hitIndex];</span><br><span class="line">      ScoreDoc secondScoreDoc = shardHits[second.shardIndex][second.hitIndex];</span><br><span class="line">      if (firstScoreDoc.score &lt; secondScoreDoc.score) &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125; else if (firstScoreDoc.score &gt; secondScoreDoc.score) &#123;</span><br><span class="line">        return true;</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        return tieBreakLessThan(first, firstScoreDoc, second, secondScoreDoc, tieBreakerComparator);</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://kkewwei.github.io/elasticsearch_learning/2019/10/06/Lucene8-2-0%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84-ByteBlockPool%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/">https://kkewwei.github.io/elasticsearch_learning/2019/10/06/Lucene8-2-0%E5%BA%95%E5%B1%82%E6%9E%B6%E6%9E%84-ByteBlockPool%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</a></li>
+<li><a target="_blank" rel="noopener" href="https://lucene.apache.org/core/7_2_1/core/org/apache/lucene/util/ByteBlockPool.html">https://lucene.apache.org/core/7_2_1/core/org/apache/lucene/util/ByteBlockPool.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaoyu_BD/article/details/124143835">https://blog.csdn.net/xiaoyu_BD/article/details/124143835</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/523056198">https://zhuanlan.zhihu.com/p/523056198</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/lucene/" rel="tag"># lucene</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/06/26/c-%E5%9F%BA%E7%A1%80/" rel="prev" title="cpp基础">
+      <i class="fa fa-chevron-left"></i> cpp基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/06/clickhouse-parser/" rel="next" title="clickhouse parser">
+      clickhouse parser <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E5%92%8C%E4%BF%9D%E5%AD%98"><span class="nav-number"></span> <span class="nav-text">创建索引和保存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E8%AF%8D"><span class="nav-number">1.</span> <span class="nav-text">分词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#invert"><span class="nav-number">2.</span> <span class="nav-text">invert</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90termId"><span class="nav-number">2.1.</span> <span class="nav-text">生成termId</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%90%9C%E7%B4%A2"><span class="nav-number"></span> <span class="nav-text">查询搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%AD%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">3.</span> <span class="nav-text">排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%90%9C%E7%B4%A2%E5%8F%82%E6%95%B0"><span class="nav-number">4.</span> <span class="nav-text">核心搜索参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F-1"><span class="nav-number">5.</span> <span class="nav-text">排序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%AE%97%E5%88%86%E5%87%BD%E6%95%B0"><span class="nav-number">5.0.1.</span> <span class="nav-text">核心算分函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87docid-%E8%8E%B7%E5%8F%96%E5%AF%B9%E5%BA%94%E7%9A%84%E6%96%87%E6%A1%A3"><span class="nav-number">6.</span> <span class="nav-text">通过docid 获取对应的文档</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E8%AF%BB%E5%88%B0%E7%9A%84string-%E5%8A%A0%E8%BD%BD%E5%88%B0doc%E5%AF%B9%E8%B1%A1%E9%87%8C%E9%9D%A2"><span class="nav-number">6.1.</span> <span class="nav-text">将读到的string 加载到doc对象里面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96doc"><span class="nav-number">6.2.</span> <span class="nav-text">获取doc</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#term-query-%E5%92%8C%E9%81%8D%E5%8E%86"><span class="nav-number">7.</span> <span class="nav-text">term query 和遍历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8Ftopk"><span class="nav-number">7.1.</span> <span class="nav-text">排序topk</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">8.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

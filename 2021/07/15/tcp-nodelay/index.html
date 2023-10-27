@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="tcp_nodealy123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tcp_nodelay">
+<meta property="og:url" content="https://shakudada.xyz/2021/07/15/tcp-nodelay/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="tcp_nodealy123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-15T02:57:27.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.929Z">
+<meta property="article:author" content="dinosaur">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2021/07/15/tcp-nodelay/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>tcp_nodelay | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2021/07/15/tcp-nodelay/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          tcp_nodelay
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-15 10:57:27" itemprop="dateCreated datePublished" datetime="2021-07-15T10:57:27+08:00">2021-07-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="tcp-nodealy"><a href="#tcp-nodealy" class="headerlink" title="tcp_nodealy"></a>tcp_nodealy</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"> The solution to the small-packet problem</span><br><span class="line"> 解决小包问题的方法</span><br><span class="line"></span><br><span class="line">Clearly an adaptive approach is desirable.  One  would  expect  a</span><br><span class="line">proposal  for  an  adaptive  inter-packet time limit based on the</span><br><span class="line">round-trip delay observed by TCP.  While such a  mechanism  could</span><br><span class="line">certainly  be  implemented,  it  is  unnecessary.   A  simple and</span><br><span class="line">elegant solution has been discovered.</span><br><span class="line"></span><br><span class="line">The solution is to inhibit the sending of new TCP  segments  when</span><br><span class="line">new  outgoing  data  arrives  from  the  user  if  any previously</span><br><span class="line">transmitted data on the connection remains unacknowledged.   This</span><br><span class="line">inhibition  is  to be unconditional; no timers, tests for size of</span><br><span class="line">data received, or other conditions are required.   Implementation</span><br><span class="line">typically requires one or two lines inside a TCP program.</span><br><span class="line">解决的方式是如果之前发送的数据没有被ack,阻止发送新的tcp段.这个抑制条件是不需要前置的条件的:不需要定时器,不需要探测包是否被接收,以及其他条件.实现上只需要添加一两行代码在tcp程序里面</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">At first glance, this solution seems to imply drastic changes  in</span><br><span class="line">the  behavior of TCP.  This is not so.  It all works out right in</span><br><span class="line">the end.  Let us see why this is so.</span><br><span class="line">乍看起来,这会很大地改变tcp的行为.但是实际上并不是这样,这从头到尾都没有太大变化.让我们看看为什么是这样.</span><br><span class="line"></span><br><span class="line">When a user process writes to a TCP connection, TCP receives some</span><br><span class="line">data.   It  may  hold  that data for future sending or may send a</span><br><span class="line">packet immediately.  If it refrains from  sending  now,  it  will</span><br><span class="line">typically send the data later when an incoming packet arrives and</span><br><span class="line">changes the state of the system.  The state changes in one of two</span><br><span class="line">ways;  the incoming packet acknowledges old data the distant host</span><br><span class="line">has received, or announces the availability of  buffer  space  in</span><br><span class="line">the  distant  host  for  new  data.  (This last is referred to as</span><br><span class="line">&quot;updating the window&quot;).    Each time data arrives  on  a  connec-</span><br><span class="line">tion,  TCP must reexamine its current state and perhaps send some</span><br><span class="line">packets out.  Thus, when we omit sending data on arrival from the</span><br><span class="line">user,  we  are  simply  deferring its transmission until the next</span><br><span class="line">message arrives from the distant host.   A  message  must  always</span><br><span class="line">arrive soon unless the connection was previously idle or communi-</span><br><span class="line">cations with the other end have been lost.  In  the  first  case,</span><br><span class="line">the  idle  connection,  our  scheme will result in a packet being</span><br><span class="line">sent whenever the user writes to the TCP connection.  Thus we  do</span><br><span class="line">not  deadlock  in  the idle condition.  In the second case, where</span><br><span class="line">当一个用户写消息到tcp连接,Tcp协议栈会受到这些信息.tcp协议栈会保持这些内容或者立马发送这些内容.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RFC 896    Congestion Control in IP/TCP Internetworks      1/6/84</span><br><span class="line"></span><br><span class="line">the distant host has failed, sending more data is futile  anyway.</span><br><span class="line">Note  that we have done nothing to inhibit normal TCP retransmis-</span><br><span class="line">sion logic, so lost messages are not a problem.</span><br><span class="line"></span><br><span class="line">Examination of the behavior of this scheme under  various  condi-</span><br><span class="line">tions  demonstrates  that the scheme does work in all cases.  The</span><br><span class="line">first case to examine is the one we wanted to solve, that of  the</span><br><span class="line">character-oriented  Telnet  connection.   Let us suppose that the</span><br><span class="line">user is sending TCP a new character every  200ms,  and  that  the</span><br><span class="line">connection  is  via  an Ethernet with a round-trip time including</span><br><span class="line">software processing of 50ms.  Without any  mechanism  to  prevent</span><br><span class="line">small-packet congestion, one packet will be sent for each charac-</span><br><span class="line">ter, and response will be optimal.  Overhead will be  4000%,  but</span><br><span class="line">this  is  acceptable  on  an Ethernet.  The classic timer scheme,</span><br><span class="line">with a limit of 2 packets per second, will  cause  two  or  three</span><br><span class="line">characters to be sent per packet.  Response will thus be degraded</span><br><span class="line">even though on a high-bandwidth  Ethernet  this  is  unnecessary.</span><br><span class="line">Overhead  will  drop  to  1500%, but on an Ethernet this is a bad</span><br><span class="line">tradeoff.  With our scheme, every character the user  types  will</span><br><span class="line">find  TCP with an idle connection, and the character will be sent</span><br><span class="line">at once, just as in the no-control case.  The user  will  see  no</span><br><span class="line">visible  delay.   Thus,  our  scheme  performs as well as the no-</span><br><span class="line">control scheme and provides better responsiveness than the  timer</span><br><span class="line">scheme.</span><br><span class="line"></span><br><span class="line">The second case to examine is the same Telnet  test  but  over  a</span><br><span class="line">long-haul  link  with  a  5-second  round trip time.  Without any</span><br><span class="line">mechanism to prevent  small-packet  congestion,  25  new  packets</span><br><span class="line">would be sent in 5 seconds.* Overhead here is  4000%.   With  the</span><br><span class="line">classic timer scheme, and the same limit of 2 packets per second,</span><br><span class="line">there would still be 10 packets outstanding and  contributing  to</span><br><span class="line">congestion.  Round-trip time will not be improved by sending many</span><br><span class="line">packets, of course; in general it will be worse since the packets</span><br><span class="line">will  contend  for line time.  Overhead now drops to 1500%.  With</span><br><span class="line">our scheme, however, the first character from the user would find</span><br><span class="line">an  idle  TCP connection and would be sent immediately.  The next</span><br><span class="line">24 characters, arriving from the user at 200ms  intervals,  would</span><br><span class="line">be  held  pending  a  message from the distant host.  When an ACK</span><br><span class="line">arrived for the first packet at the end of 5  seconds,  a  single</span><br><span class="line">packet  with  the 24 queued characters would be sent.  Our scheme</span><br><span class="line">thus results in an overhead reduction to 320% with no penalty  in</span><br><span class="line">response  time.   Response time will usually be improved with our</span><br><span class="line">scheme because packet overhead is reduced, here by  a  factor  of</span><br><span class="line">4.7 over the classic timer scheme.  Congestion will be reduced by</span><br><span class="line">this factor and round-trip delay will decrease sharply.  For this</span><br><span class="line">________</span><br><span class="line">  * This problem is not seen in the pure ARPANET case because the</span><br><span class="line">    IMPs will block the host when the count of packets</span><br><span class="line">    outstanding becomes excessive, but in the case where a pure</span><br><span class="line">    datagram local net (such as an Ethernet) or a pure datagram</span><br><span class="line">    gateway (such as an ARPANET / MILNET gateway) is involved, it</span><br><span class="line">    is possible to have large numbers of tiny packets</span><br><span class="line">    outstanding.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">RFC 896    Congestion Control in IP/TCP Internetworks      1/6/84</span><br><span class="line"></span><br><span class="line">case, our scheme has a striking  advantage  over  either  of  the</span><br><span class="line">other approaches.</span><br><span class="line"></span><br><span class="line">We use our scheme for all TCP connections, not just  Telnet  con-</span><br><span class="line">nections.   Let us see what happens for a file transfer data con-</span><br><span class="line">nection using our technique. The two extreme cases will again  be</span><br><span class="line">considered.</span><br><span class="line"></span><br><span class="line">As before, we first consider the Ethernet case.  The user is  now</span><br><span class="line">writing data to TCP in 512 byte blocks as fast as TCP will accept</span><br><span class="line">them.  The user&#x27;s first write to TCP will start things going; our</span><br><span class="line">first  datagram  will  be  512+40  bytes  or 552 bytes long.  The</span><br><span class="line">user&#x27;s second write to TCP will not cause a send but  will  cause</span><br><span class="line">the  block  to  be buffered.  Assume that the user fills up TCP&#x27;s</span><br><span class="line">outgoing buffer area before the first ACK comes back.  Then  when</span><br><span class="line">the  ACK  comes in, all queued data up to the window size will be</span><br><span class="line">sent.  From then on, the window will be kept full,  as  each  ACK</span><br><span class="line">initiates  a  sending  cycle  and queued data is sent out.  Thus,</span><br><span class="line">after a one round-trip time initial period when only one block is</span><br><span class="line">sent,  our  scheme  settles down into a maximum-throughput condi-</span><br><span class="line">tion.  The delay in startup is only 50ms on the Ethernet, so  the</span><br><span class="line">startup  transient  is  insignificant.  All three schemes provide</span><br><span class="line">equivalent performance for this case.</span><br><span class="line"></span><br><span class="line">Finally, let us look at a file transfer over the  5-second  round</span><br><span class="line">trip  time connection.  Again, only one packet will be sent until</span><br><span class="line">the first ACK comes back; the window will then be filled and kept</span><br><span class="line">full.   Since the round-trip time is 5 seconds, only 512 bytes of</span><br><span class="line">data are transmitted in the first 5 seconds.  Assuming a 2K  win-</span><br><span class="line">dow,  once  the first ACK comes in, 2K of data will be sent and a</span><br><span class="line">steady rate of 2K per 5 seconds will  be  maintained  thereafter.</span><br><span class="line">Only  for  this  case is our scheme inferior to the timer scheme,</span><br><span class="line">and the difference is only in the startup transient; steady-state</span><br><span class="line">throughput  is  identical.  The naive scheme and the timer scheme</span><br><span class="line">would both take 250 seconds to transmit a 100K  byte  file  under</span><br><span class="line">the  above  conditions  and  our scheme would take 254 seconds, a</span><br><span class="line">difference of 1.6%.</span><br><span class="line"></span><br><span class="line">Thus, for all cases examined, our scheme provides at least 98% of</span><br><span class="line">the  performance  of  both other schemes, and provides a dramatic</span><br><span class="line">improvement in Telnet performance over paths with long round trip</span><br><span class="line">times.   We  use  our  scheme  in  the  Ford  Aerospace  Software</span><br><span class="line">Engineering Network, and are able to run screen editors over Eth-</span><br><span class="line">ernet and talk to distant TOPS-20 hosts with improved performance</span><br><span class="line">in both cases.</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://dt-test.rjsparks.org/doc/rfc896/?include_text=1">https://dt-test.rjsparks.org/doc/rfc896/?include_text=1</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/22/skiplist/" rel="prev" title="skiplist">
+      <i class="fa fa-chevron-left"></i> skiplist
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/07/29/mysql-5-7-in-%E7%9A%84%E4%BC%98%E5%8C%96%E5%BC%95%E8%B5%B7%E7%9A%84bug/" rel="next" title="mysql 5.7 in 的优化引起的bug">
+      mysql 5.7 in 的优化引起的bug <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#tcp-nodealy"><span class="nav-number">1.</span> <span class="nav-text">tcp_nodealy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number"></span> <span class="nav-text">相关阅读</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

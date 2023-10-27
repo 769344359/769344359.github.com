@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="为什么想看select的代码有一个场景,遇到一个表只有十多万,但是表大小有几十g,为什么呢?因为有个字段是longtext.放了很多很长的文本.发现select * from table limit  1000就已经读不出来了 一个简单的select语句1select id from test wher  id &lt; 100 ;  这个流程究竟发生了什么?  第一步其实和php差不多,先是编译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql的select">
+<meta property="og:url" content="https://shakudada.xyz/2021/01/28/mysql%E7%9A%84select/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="为什么想看select的代码有一个场景,遇到一个表只有十多万,但是表大小有几十g,为什么呢?因为有个字段是longtext.放了很多很长的文本.发现select * from table limit  1000就已经读不出来了 一个简单的select语句1select id from test wher  id &lt; 100 ;  这个流程究竟发生了什么?  第一步其实和php差不多,先是编译">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-28T05:42:30.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.919Z">
+<meta property="article:author" content="dinosaur">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2021/01/28/mysql%E7%9A%84select/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mysql的select | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2021/01/28/mysql%E7%9A%84select/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql的select
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-28 13:42:30" itemprop="dateCreated datePublished" datetime="2021-01-28T13:42:30+08:00">2021-01-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="为什么想看select的代码"><a href="#为什么想看select的代码" class="headerlink" title="为什么想看select的代码"></a>为什么想看select的代码</h3><p>有一个场景,遇到一个表只有十多万,但是表大小有几十g,为什么呢?因为有个字段是longtext.<br>放了很多很长的文本.发现<code>select * from table limit  1000</code>就已经读不出来了</p>
+<h3 id="一个简单的select语句"><a href="#一个简单的select语句" class="headerlink" title="一个简单的select语句"></a>一个简单的select语句</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from test wher  id &lt; 100 ;</span><br></pre></td></tr></table></figure>
+
+<p>这个流程究竟发生了什么? </p>
+<p>第一步其实和php差不多,先是编译原理的前端几步lex和parse<br>第二步就是逻辑优化和物理优化, 其实可以想成是常用的编程语言的常量折叠或者数据流图的分析,就是编译时的优化<br>第三步也就是语义动作了,也就是真正的执行过程也可以想做是运行时:<br>但是条件对于读来说是不可见的,条件是作用于索引上 , 然后返回所有行 , 再根据列筛选出来,然后再join和排序,对于这个sql来说,他唯一作用就是通过索引读出内容,内存和硬盘对于他来说是不存在的</p>
+<p>首先是读表,这个表是从ibd文件来的.所以终究是需要调用系统调用读文件,那么linux用系统调用是<code>pread</code></p>
+<p>索引在哪保存?<br>保存在表空间里面<br>内容保存到哪里?<br>保存到表空间里面<br>关联是在哪里发生?<br>发生在从索引从表空间读出来<br>关联是整整一行关联吗?<br>是的.<br>二级索引怎么读的?<br>通过二级索引读一级索引,一级索引读内容.</p>
+<p>所以实际上是有一个语义上的层是:<br>sql -&gt; 语义动作 作用于索引 -&gt; 索引访问表空间(有点像交换空间或者物理内存和虚拟内存的关系一样一样, 需要的时候才从硬盘硬盘加载)</p>
+<h3 id="下面是相关代码"><a href="#下面是相关代码" class="headerlink" title="下面是相关代码"></a>下面是相关代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  srv_start (create_new_db=create_new_db@entry=false) at /home/ubuntu/mysql-8.0.23/storage/innobase/srv/srv0start.cc:1857</span><br><span class="line">#1  0x00005555577275b6 in innobase_init_files (tablespaces=0x7fffea1f1380, dict_init_mode=DICT_INIT_CHECK_FILES) at /home/ubuntu/mysql-8.0.23/storage/innobase/handler/ha_innodb.cc:5042</span><br><span class="line">#2  innobase_ddse_dict_init (dict_init_mode=DICT_INIT_CHECK_FILES, version=&lt;optimized out&gt;, tables=0x7fffea1f1360, tablespaces=0x7fffea1f1380)</span><br><span class="line">    at /home/ubuntu/mysql-8.0.23/storage/innobase/handler/ha_innodb.cc:12323</span><br><span class="line">#3  0x00005555573d2aef in dd::bootstrap::DDSE_dict_init (thd=thd@entry=0x55555b899410, dict_init_mode=dict_init_mode@entry=DICT_INIT_CHECK_FILES, version=80023)</span><br><span class="line">    at /home/ubuntu/mysql-8.0.23/sql/dd/impl/bootstrap/bootstrapper.cc:737</span><br><span class="line">#4  0x00005555575f92e4 in dd::upgrade_57::do_pre_checks_and_initialize_dd (thd=0x55555b899410) at /home/ubuntu/mysql-8.0.23/sql/dd/upgrade_57/upgrade.cc:911</span><br><span class="line">#5  0x0000555556697ec5 in bootstrap::handle_bootstrap (arg=arg@entry=0x7fffffffda10) at /home/ubuntu/mysql-8.0.23/sql/bootstrap.cc:323</span><br><span class="line">#6  0x0000555557b934a1 in pfs_spawn_thread (arg=0x55555b834c80) at /home/ubuntu/mysql-8.0.23/storage/perfschema/pfs.cc:2900</span><br><span class="line">#7  0x00007ffff7bbb6db in start_thread (arg=0x7fffea1f2700) at pthread_create.c:463</span><br><span class="line">#8  0x00007ffff61b571f in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:95</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info threads </span><br><span class="line">  Id   Target Id         Frame </span><br><span class="line">  1    Thread 0x7ffff7fe7880 (LWP 17988) &quot;mysqld&quot; 0x00007ffff7bbcd2d in __GI___pthread_timedjoin_ex (threadid=140737121298176, thread_return=thread_return@entry=0x0, abstime=abstime@entry=0x0, </span><br><span class="line">    block=block@entry=true) at pthread_join_common.c:89</span><br><span class="line">* 2    Thread 0x7fffea1f2700 (LWP 18000) &quot;mysqld&quot; __libc_pread64 (fd=4, buf=0x7fffe81d0000, count=65536, offset=0) at ../sysdeps/unix/sysv/linux/pread64.c:29</span><br><span class="line">  4    Thread 0x7fffe8f49700 (LWP 18269) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42eda10)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  5    Thread 0x7fffe3b32700 (LWP 18270) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edab0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  6    Thread 0x7fffe3331700 (LWP 18271) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edb50)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  7    Thread 0x7fffe2b30700 (LWP 18272) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edbf0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  8    Thread 0x7fffe232f700 (LWP 18273) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edc90)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  9    Thread 0x7fffe1b2e700 (LWP 18274) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edd30)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  10   Thread 0x7fffe132d700 (LWP 18275) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42eddd0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  11   Thread 0x7fffe0b2c700 (LWP 18276) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42ede70)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  12   Thread 0x7fffd3d5f700 (LWP 18277) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edf10)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  13   Thread 0x7fffd355e700 (LWP 18278) &quot;mysqld&quot; 0x00007ffff7bc1ad3 in futex_wait_cancelable (private=&lt;optimized out&gt;, expected=0, futex_word=0x7fffe42edfb0)</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/futex-internal.h:88</span><br><span class="line">  14   Thread 0x7fffd2d5d700 (LWP 18279) &quot;mysqld&quot; 0x00007ffff6ace280 in operator new(unsigned long) () from /usr/lib/x86_64-linux-gnu/libstdc++.so.6</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dba-john/p/12096666.html">https://www.cnblogs.com/dba-john/p/12096666.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/13/RSA/" rel="prev" title="RSA">
+      <i class="fa fa-chevron-left"></i> RSA
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/18/mvcc-translate/" rel="next" title="mvcc translate">
+      mvcc translate <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%83%B3%E7%9C%8Bselect%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">为什么想看select的代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84select%E8%AF%AD%E5%8F%A5"><span class="nav-number">2.</span> <span class="nav-text">一个简单的select语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E9%9D%A2%E6%98%AF%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">下面是相关代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

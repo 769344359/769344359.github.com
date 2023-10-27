@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景很多时候可以通过java 命令打印反汇编信息 相关命令jvm参数: HotSpot options (with an -XX: prefix on the command line)  核心参数是 -XX:+PrintAssembly , 这个参数可以获取对应的反汇编编码 1.&#x2F;java   -Xcomp -XX:+UnlockDiagnosticVMOptions -XX:+PrintAss">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jdk 反汇编">
+<meta property="og:url" content="https://shakudada.xyz/2022/11/16/jdk-%E5%8F%8D%E6%B1%87%E7%BC%96/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景很多时候可以通过java 命令打印反汇编信息 相关命令jvm参数: HotSpot options (with an -XX: prefix on the command line)  核心参数是 -XX:+PrintAssembly , 这个参数可以获取对应的反汇编编码 1.&#x2F;java   -Xcomp -XX:+UnlockDiagnosticVMOptions -XX:+PrintAss">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-16T05:31:02.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.903Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2022/11/16/jdk-%E5%8F%8D%E6%B1%87%E7%BC%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>jdk 反汇编 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2022/11/16/jdk-%E5%8F%8D%E6%B1%87%E7%BC%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          jdk 反汇编
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-16 13:31:02" itemprop="dateCreated datePublished" datetime="2022-11-16T13:31:02+08:00">2022-11-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>很多时候可以通过java 命令打印反汇编信息</p>
+<h2 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h2><p>jvm参数: HotSpot options (with an -XX: prefix on the command line) </p>
+<p>核心参数是 <code>-XX:+PrintAssembly</code> , 这个参数可以获取对应的反汇编编码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./java   -Xcomp -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly -XX:CompileCommand=compileonly,*com.Hello::testIncr  com.Hello  &gt;&gt; test.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="解析参数"><a href="#解析参数" class="headerlink" title="解析参数"></a>解析参数</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Thread 2 &quot;java&quot; hit Hardware watchpoint 19: PrintAssembly</span><br><span class="line"></span><br><span class="line">Old value = false</span><br><span class="line">New value = true</span><br><span class="line">JVMFlag::write&lt;bool&gt; (this=0x7f1814bcf140 &lt;flagTable+17600&gt;, value=true) at /var/jdk/src/hotspot/share/runtime/flags/jvmFlag.hpp:237</span><br><span class="line">237       &#125;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  JVMFlag::write&lt;bool&gt; (this=0x7f1814bcf140 &lt;flagTable+17600&gt;, value=true) at /var/jdk/src/hotspot/share/runtime/flags/jvmFlag.hpp:237</span><br><span class="line">#1  0x00007f18137cf984 in TypedFlagAccessImpl&lt;bool, EventBooleanFlagChanged&gt;::check_constraint_and_set (this=0x7f1814bd49c0 &lt;flag_access_bool&gt;, flag=0x7f1814bcf140 &lt;flagTable+17600&gt;, value_addr=0x7f18129e7f54,</span><br><span class="line">    origin=JVMFlagOrigin::COMMAND_LINE, verbose=true) at /var/jdk/src/hotspot/share/runtime/flags/jvmFlagAccess.cpp:75</span><br><span class="line">#2  0x00007f18137ce655 in FlagAccessImpl_bool::set_impl (this=0x7f1814bd49c0 &lt;flag_access_bool&gt;, flag=0x7f1814bcf140 &lt;flagTable+17600&gt;, value_addr=0x7f18129e7f54, origin=JVMFlagOrigin::COMMAND_LINE)</span><br><span class="line">    at /var/jdk/src/hotspot/share/runtime/flags/jvmFlagAccess.cpp:94</span><br><span class="line">#3  0x00007f18137ce576 in FlagAccessImpl::set (this=0x7f1814bd49c0 &lt;flag_access_bool&gt;, flag=0x7f1814bcf140 &lt;flagTable+17600&gt;, value=0x7f18129e7f54, origin=JVMFlagOrigin::COMMAND_LINE)</span><br><span class="line">    at /var/jdk/src/hotspot/share/runtime/flags/jvmFlagAccess.cpp:49</span><br><span class="line">#4  0x00007f18137cc5db in JVMFlagAccess::set_impl (flag=0x7f1814bcf140 &lt;flagTable+17600&gt;, value=0x7f18129e7f54, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/flags/jvmFlagAccess.cpp:299</span><br><span class="line">#5  0x00007f181306cdf9 in JVMFlagAccess::set&lt;bool, 0&gt; (flag=0x7f1814bcf140 &lt;flagTable+17600&gt;, value=0x7f18129e7f54, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/flags/jvmFlagAccess.hpp:120</span><br><span class="line">#6  0x00007f181306bd96 in JVMFlagAccess::set_bool (f=0x7f1814bcf140 &lt;flagTable+17600&gt;, v=0x7f18129e7f54, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/flags/jvmFlagAccess.hpp:133</span><br><span class="line">#7  0x00007f1813060002 in set_bool_flag (flag=0x7f1814bcf140 &lt;flagTable+17600&gt;, value=true, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/arguments.cpp:825</span><br><span class="line">#8  0x00007f18130607a9 in Arguments::parse_argument (arg=0x55dcf2d093a4 &quot;+PrintAssembly&quot;, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/arguments.cpp:993</span><br><span class="line">#9  0x00007f18130611be in Arguments::process_argument (arg=0x55dcf2d093a4 &quot;+PrintAssembly&quot;, ignore_unrecognized=0 &#x27;\000&#x27;, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/arguments.cpp:1179</span><br><span class="line">#10 0x00007f1813066867 in Arguments::parse_each_vm_init_arg (args=0x7f18129e8d50, patch_mod_javabase=0x7f18129e87fb, origin=JVMFlagOrigin::COMMAND_LINE) at /var/jdk/src/hotspot/share/runtime/arguments.cpp:2972</span><br><span class="line">#11 0x00007f18130639da in Arguments::parse_vm_init_args (vm_options_args=0x7f18129e8878, java_tool_options_args=0x7f18129e88b8, java_options_args=0x7f18129e88f8, cmd_line_args=0x7f18129e8d50)</span><br><span class="line">    at /var/jdk/src/hotspot/share/runtime/arguments.cpp:2174</span><br><span class="line">#12 0x00007f1813068a46 in Arguments::parse (initial_cmd_args=0x7f18129e8d50) at /var/jdk/src/hotspot/share/runtime/arguments.cpp:3946</span><br><span class="line">#13 0x00007f1813e5def7 in Threads::create_vm (args=0x7f18129e8d50, canTryAgain=0x7f18129e8c5b) at /var/jdk/src/hotspot/share/runtime/thread.cpp:2734</span><br><span class="line">#14 0x00007f181378343b in JNI_CreateJavaVM_inner (vm=0x7f18129e8da8, penv=0x7f18129e8db0, args=0x7f18129e8d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:3613</span><br><span class="line">#15 0x00007f1813783787 in JNI_CreateJavaVM (vm=0x7f18129e8da8, penv=0x7f18129e8db0, args=0x7f18129e8d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:3701</span><br><span class="line">#16 0x00007f1814efaa6a in InitializeJVM (pvm=0x7f18129e8da8, penv=0x7f18129e8db0, ifn=0x7f18129e8e00) at /var/jdk/src/java.base/share/native/libjli/java.c:1459</span><br><span class="line">#17 0x00007f1814ef75ec in JavaMain (_args=0x7ffc68186870) at /var/jdk/src/java.base/share/native/libjli/java.c:411</span><br><span class="line">#18 0x00007f1814efe5ec in ThreadJavaMain (args=0x7ffc68186870) at /var/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#19 0x00007f1814d59b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br></pre></td></tr></table></figure>
+
+
+
+<p>堆栈:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#0  Compile::Compile (this=0x7f5eb0b5ea80, ci_env=0x7f5eb0b5f6b0, generator=0x7f5ecfee55f2 &lt;OptoRuntime::new_instance_Type()&gt;, </span><br><span class="line">    stub_function=0x7f5ecfee3d90 &lt;OptoRuntime::new_instance_C(Klass*, JavaThread*)&gt; &quot;\363\017\036\372UH\211\345H\203\354`H\211&#125;\250H\211u\240\350[2$\377H9E\240\017\225\300\204\300t?H\215\005m\241\364&quot;,</span><br><span class="line">    stub_name=0x7f5ed074e78a &quot;_new_instance_Java&quot;, is_fancy_jump=0, pass_tls=true, return_pc=false, directive=0x7f5ec822a050) at /var/jdk/src/hotspot/share/opto/compile.cpp:892</span><br><span class="line">#1  0x00007f5ecfee3c98 in OptoRuntime::generate_stub (env=0x7f5eb0b5f6b0, gen=0x7f5ecfee55f2 &lt;OptoRuntime::new_instance_Type()&gt;,</span><br><span class="line">    C_function=0x7f5ecfee3d90 &lt;OptoRuntime::new_instance_C(Klass*, JavaThread*)&gt; &quot;\363\017\036\372UH\211\345H\203\354`H\211&#125;\250H\211u\240\350[2$\377H9E\240\017\225\300\204\300t?H\215\005m\241\364&quot;, name=0x7f5ed074e78a &quot;_new_instance_Java&quot;,    </span><br><span class="line">    is_fancy_jump=0, pass_tls=true, return_pc=false) at /var/jdk/src/hotspot/share/opto/runtime.cpp:171</span><br><span class="line">#2  0x00007f5ecfee374d in OptoRuntime::generate (env=0x7f5eb0b5f6b0) at /var/jdk/src/hotspot/share/opto/runtime.cpp:139</span><br><span class="line">#3  0x00007f5ecf48ab83 in C2Compiler::init_c2_runtime () at /var/jdk/src/hotspot/share/opto/c2compiler.cpp:78</span><br><span class="line">#4  0x00007f5ecf48ac07 in C2Compiler::initialize (this=0x7f5ec8342980) at /var/jdk/src/hotspot/share/opto/c2compiler.cpp:91</span><br><span class="line">#5  0x00007f5ecf5c2ab2 in CompileBroker::init_compiler_runtime () at /var/jdk/src/hotspot/share/compiler/compileBroker.cpp:1782</span><br><span class="line">#6  0x00007f5ecf5c3046 in CompileBroker::compiler_thread_loop () at /var/jdk/src/hotspot/share/compiler/compileBroker.cpp:1919</span><br><span class="line">#7  0x00007f5ecf5e5462 in CompilerThread::thread_entry (thread=0x7f5ec8343060, __the_thread__=0x7f5ec8343060) at /var/jdk/src/hotspot/share/compiler/compilerThread.cpp:59</span><br><span class="line">#8  0x00007f5ed00c0009 in JavaThread::thread_main_inner (this=0x7f5ec8343060) at /var/jdk/src/hotspot/share/runtime/thread.cpp:1297</span><br><span class="line">#9  0x00007f5ed00bfe92 in JavaThread::run (this=0x7f5ec8343060) at /var/jdk/src/hotspot/share/runtime/thread.cpp:1280</span><br><span class="line">#10 0x00007f5ed00bd57f in Thread::call_run (this=0x7f5ec8343060) at /var/jdk/src/hotspot/share/runtime/thread.cpp:358</span><br><span class="line">#11 0x00007f5ecfe041e7 in thread_native_entry (thread=0x7f5ec8343060) at /var/jdk/src/hotspot/os/linux/os_linux.cpp:705</span><br><span class="line">#12 0x00007f5ed0fc0b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#13 0x00007f5ed1051bb4 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:100</span><br><span class="line">(gdb) b Compile::Compile</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  nmethod::print (this=0x7fd21d591010, st=0x7fd22c000b80) at /var/jdk/src/hotspot/share/code/nmethod.cpp:2518</span><br><span class="line">#1  0x00007fd23498cf10 in nmethod::decode2 (this=0x7fd21d591010, ost=0x7fd22c000b80) at /var/jdk/src/hotspot/share/code/nmethod.cpp:2887</span><br><span class="line">#2  0x00007fd234985e16 in nmethod::print_nmethod (this=0x7fd21d591010, printmethod=true) at /var/jdk/src/hotspot/share/code/nmethod.cpp:962</span><br><span class="line">#3  0x00007fd234985c95 in nmethod::maybe_print_nmethod (this=0x7fd21d591010, directive=0x7fd22c229f20) at /var/jdk/src/hotspot/share/code/nmethod.cpp:935</span><br><span class="line">#4  0x00007fd2341a2a9e in CompileBroker::invoke_compiler_on_method (task=0x7fd22c359c10) at /var/jdk/src/hotspot/share/compiler/compileBroker.cpp:2345</span><br><span class="line">#5  0x00007fd2341a12c1 in CompileBroker::compiler_thread_loop () at /var/jdk/src/hotspot/share/compiler/compileBroker.cpp:1966</span><br><span class="line">#6  0x00007fd2341c3462 in CompilerThread::thread_entry (thread=0x7fd22c344ac0, __the_thread__=0x7fd22c344ac0) at /var/jdk/src/hotspot/share/compiler/compilerThread.cpp:59</span><br><span class="line">#7  0x00007fd234c9e009 in JavaThread::thread_main_inner (this=0x7fd22c344ac0) at /var/jdk/src/hotspot/share/runtime/thread.cpp:1297</span><br><span class="line">#8  0x00007fd234c9de92 in JavaThread::run (this=0x7fd22c344ac0) at /var/jdk/src/hotspot/share/runtime/thread.cpp:1280</span><br><span class="line">#9  0x00007fd234c9b57f in Thread::call_run (this=0x7fd22c344ac0) at /var/jdk/src/hotspot/share/runtime/thread.cpp:358</span><br><span class="line">#10 0x00007fd2349e21e7 in thread_native_entry (thread=0x7fd22c344ac0) at /var/jdk/src/hotspot/os/linux/os_linux.cpp:705</span><br><span class="line">#11 0x00007fd235b9eb43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#12 0x00007fd235c2fbb4 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:100</span><br></pre></td></tr></table></figure>
+
+<p>解析指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  DirectivesStack::getMatchingDirective (method=..., comp=0x7f4b2c2bef40) at /var/jdk/src/hotspot/share/compiler/compilerDirectives.cpp:670</span><br><span class="line">#1  0x00007f4b34793667 in CompileBroker::compile_method (method=..., osr_bci=-1, comp_level=3, hot_method=..., hot_count=0, compile_reason=CompileTask::Reason_MustBeCompiled, __the_thread__=0x7f4b2c02a5c0)</span><br><span class="line">    at /var/jdk/src/hotspot/share/compiler/compileBroker.cpp:1349</span><br><span class="line">#2  0x00007f4b34770655 in CompilationPolicy::compile_if_required (m=..., __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/compiler/compilationPolicy.cpp:110</span><br><span class="line">#3  0x00007f4b34ae8f97 in JavaCalls::call_helper (result=0x7f4b33e21750, method=..., args=0x7f4b33e217a0, __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/runtime/javaCalls.cpp:359</span><br><span class="line">#4  0x00007f4b34fe0344 in os::os_exception_wrapper (f=0x7f4b34ae8ccc &lt;JavaCalls::call_helper(JavaValue*, methodHandle const&amp;, JavaCallArguments*, JavaThread*)&gt;, value=0x7f4b33e21750, method=..., args=0x7f4b33e217a0, thread=0x7f4b2c02a5c0)      </span><br><span class="line">    at /var/jdk/src/hotspot/os/linux/os_linux.cpp:4794</span><br><span class="line">#5  0x00007f4b34ae8cc9 in JavaCalls::call (result=0x7f4b33e21750, method=..., args=0x7f4b33e217a0, __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/runtime/javaCalls.cpp:330</span><br><span class="line">#6  0x00007f4b34ab6626 in InstanceKlass::call_class_initializer (this=0x80004c5e8, __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/oops/instanceKlass.cpp:1519</span><br><span class="line">#7  0x00007f4b34ab50aa in InstanceKlass::initialize_impl (this=0x80004c5e8, __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/oops/instanceKlass.cpp:1177</span><br><span class="line">#8  0x00007f4b34ab3adc in InstanceKlass::initialize (this=0x80004c5e8, __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/oops/instanceKlass.cpp:796</span><br><span class="line">#9  0x00007f4b352905de in initialize_class (class_name=0x7f4b3114d470, __the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/runtime/thread.cpp:689</span><br><span class="line">#10 0x00007f4b35296d82 in Threads::initialize_jsr292_core_classes (__the_thread__=0x7f4b2c02a5c0) at /var/jdk/src/hotspot/share/runtime/thread.cpp:2687</span><br><span class="line">#11 0x00007f4b352975e0 in Threads::create_vm (args=0x7f4b33e21d50, canTryAgain=0x7f4b33e21c5b) at /var/jdk/src/hotspot/share/runtime/thread.cpp:2987</span><br><span class="line">#12 0x00007f4b34bbc43b in JNI_CreateJavaVM_inner (vm=0x7f4b33e21da8, penv=0x7f4b33e21db0, args=0x7f4b33e21d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:3613</span><br><span class="line">#13 0x00007f4b34bbc787 in JNI_CreateJavaVM (vm=0x7f4b33e21da8, penv=0x7f4b33e21db0, args=0x7f4b33e21d50) at /var/jdk/src/hotspot/share/prims/jni.cpp:3701</span><br><span class="line">#14 0x00007f4b36333a6a in InitializeJVM (pvm=0x7f4b33e21da8, penv=0x7f4b33e21db0, ifn=0x7f4b33e21e00) at /var/jdk/src/java.base/share/native/libjli/java.c:1459</span><br><span class="line">#15 0x00007f4b363305ec in JavaMain (_args=0x7fff1f7dd300) at /var/jdk/src/java.base/share/native/libjli/java.c:411</span><br><span class="line">#16 0x00007f4b363375ec in ThreadJavaMain (args=0x7fff1f7dd300) at /var/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#17 0x00007f4b36192b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#18 0x00007f4b36223bb4 in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:100</span><br></pre></td></tr></table></figure>
+
+<h2 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h2><p>输出结果: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">------------------------ OptoAssembly for Compile_id = 26 -----------------------</span><br><span class="line">#</span><br><span class="line">#  void (  )</span><br><span class="line">#</span><br><span class="line"># -- Old rsp -- Framesize: 32 --</span><br><span class="line">#r591 rsp+28: in_preserve</span><br><span class="line">#r590 rsp+24: return address</span><br><span class="line">#r589 rsp+20: in_preserve</span><br><span class="line">#r588 rsp+16: saved fp register</span><br><span class="line">#r587 rsp+12: pad2, stack alignment</span><br><span class="line">#r586 rsp+ 8: pad2, stack alignment</span><br><span class="line">#r585 rsp+ 4: Fixed slot 1</span><br><span class="line">#r584 rsp+ 0: Fixed slot 0</span><br><span class="line">#</span><br><span class="line">000     N1: #   out( B1 ) &lt;- in( B1 )  Freq: 1</span><br><span class="line"></span><br><span class="line">000     B1: #   out( N1 ) &lt;- BLOCK HEAD IS JUNK  Freq: 1</span><br><span class="line">000     # stack bang (96 bytes)</span><br><span class="line">        pushq   rbp     # Save rbp</span><br><span class="line">        subq    rsp, #16        # Create frame</span><br><span class="line"></span><br><span class="line">00c     movq    R10, java/lang/Class:exact *    # ptr</span><br><span class="line">016     movl    R8, [R10 + #112 (8-bit)]        # int ! Field: volatile com/Hello.i</span><br><span class="line">01a     MEMBAR-acquire ! (empty encoding)</span><br><span class="line">01a     MEMBAR-release ! (empty encoding)</span><br><span class="line">01a     incl    R8      # int</span><br><span class="line">01d     movl    [R10 + #112 (8-bit)], R8        # int ! Field: volatile com/Hello.i</span><br><span class="line">021     lock addl [rsp + #0], 0 ! membar_volatile</span><br><span class="line">027     addq    rsp, 16 # Destroy frame</span><br><span class="line">        popq    rbp</span><br><span class="line">        cmpq     rsp, poll_offset[r15_thread]</span><br><span class="line">        ja       #safepoint_stub        # Safepoint: poll for GC</span><br><span class="line"></span><br><span class="line">039     ret</span><br></pre></td></tr></table></figure>
+
+
+<p>相关指令: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// jdk 中的函数输出上面的汇编</span><br><span class="line">PhaseOutput::dump_asm_on</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://wiki.openjdk.org/display/HotSpot/PrintAssembly">https://wiki.openjdk.org/display/HotSpot/PrintAssembly</a></li>
+<li><a target="_blank" rel="noopener" href="https://jpbempel.github.io/2016/03/16/compilecommand-jvm-option.html">https://jpbempel.github.io/2016/03/16/compilecommand-jvm-option.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://jpbempel.github.io/2015/12/30/printassembly-output-explained.html">https://jpbempel.github.io/2015/12/30/printassembly-output-explained.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/11/09/zookeeper-connetion-loss/" rel="prev" title="zookeeper connetion loss">
+      <i class="fa fa-chevron-left"></i> zookeeper connetion loss
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/21/xid-equal-to-close-xid/" rel="next" title="xid equal to close_xid">
+      xid equal to close_xid <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">相关命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90%E5%8F%82%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">解析参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">输出结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">3.1.</span> <span class="nav-text">相关阅读</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景想要了解jvm的bytecode 的汇编实现 ，目标平台是x86 汇编格式同样一个汇编语句：将1赋值给rax 汇编有两种表达方式    desc&#x2F;描述 intel AT&amp;T    将1写入rax寄存器 mov     eax,1 movl    $1,%eax   将rab+3 的地址的值写入rax mov     eax,[ebx+3] movl    3(%ebx),%e">
+<meta property="og:type" content="article">
+<meta property="og:title" content="each jvm bytecode  implement in x86 with asm">
+<meta property="og:url" content="https://shakudada.xyz/2023/03/09/each-jvm-bytecode-implement-in-x86-with-asm/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景想要了解jvm的bytecode 的汇编实现 ，目标平台是x86 汇编格式同样一个汇编语句：将1赋值给rax 汇编有两种表达方式    desc&#x2F;描述 intel AT&amp;T    将1写入rax寄存器 mov     eax,1 movl    $1,%eax   将rab+3 的地址的值写入rax mov     eax,[ebx+3] movl    3(%ebx),%e">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn4.shakudada.xyz/stack.png">
+<meta property="article:published_time" content="2023-03-08T23:15:57.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.880Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="jvm">
+<meta property="article:tag" content="bytecode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn4.shakudada.xyz/stack.png">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/03/09/each-jvm-bytecode-implement-in-x86-with-asm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>each jvm bytecode  implement in x86 with asm | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/03/09/each-jvm-bytecode-implement-in-x86-with-asm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          each jvm bytecode  implement in x86 with asm
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-09 07:15:57" itemprop="dateCreated datePublished" datetime="2023-03-09T07:15:57+08:00">2023-03-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>想要了解jvm的bytecode 的汇编实现 ，目标平台是x86</p>
+<h3 id="汇编格式"><a href="#汇编格式" class="headerlink" title="汇编格式"></a>汇编格式</h3><p>同样一个汇编语句：<em>将1赋值给rax</em></p>
+<p>汇编有两种表达方式</p>
+<table>
+<thead>
+<tr>
+<th>desc&#x2F;描述</th>
+<th>intel</th>
+<th>AT&amp;T</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>将1写入rax寄存器</td>
+<td>mov     eax,1</td>
+<td>movl    $1,%eax</td>
+</tr>
+<tr>
+<td>将rab+3 的地址的值写入rax</td>
+<td>mov     eax,[ebx+3]</td>
+<td>movl    3(%ebx),%eax</td>
+</tr>
+</tbody></table>
+<h2 id="stack-frame"><a href="#stack-frame" class="headerlink" title="stack frame"></a>stack frame</h2><p>在x86 64 位的模式下 <code>rbcp</code> 是用<code>r13</code> , 描述的是下一个指令，<code>i = instruction</code><br><code>r14</code>则存了本地变量指针</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// Global Register Names</span><br><span class="line">static const Register rbcp     = LP64_ONLY(r13) NOT_LP64(rsi);</span><br><span class="line">static const Register rlocals  = LP64_ONLY(r14) NOT_LP64(rdi);</span><br></pre></td></tr></table></figure>
+
+<p>这里LP64_ONLY()和NOT_LP64()是通过宏<a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html">_LP64</a>来确定的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">__LP64__</span><br><span class="line">_LP64</span><br><span class="line">These macros are defined, with value 1, if (and only if) the compilation is for a target where long int and pointer both use 64-bits and int uses 32-bit.</span><br></pre></td></tr></table></figure>
+<h3 id="amd64-下面的寄存器"><a href="#amd64-下面的寄存器" class="headerlink" title="amd64 下面的寄存器"></a>amd64 下面的寄存器</h3><p>java的<code>stack frame</code></p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>含义、描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>r14</td>
+<td>存了本地变量的基地址</td>
+</tr>
+<tr>
+<td>r13</td>
+<td>指向下一个执行的bytecode</td>
+</tr>
+</tbody></table>
+<p>类似c的堆栈，java 的栈如下：</p>
+<p><img src="https://cdn4.shakudada.xyz/stack.png" alt="stack"></p>
+<p><a target="_blank" rel="noopener" href="https://imada.sdu.dk/u/kslarsen/dm546/Material/IntelnATT.htm">相关阅读</a></p>
+<h3 id="frame-用下面的结构描述"><a href="#frame-用下面的结构描述" class="headerlink" title="frame 用下面的结构描述"></a>frame 用下面的结构描述</h3><p>主要包括： </p>
+<ul>
+<li>_sp  :指向栈</li>
+<li>_pc ： 指向指令<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">jdk/src/hotspot/share/runtime/frame.hpp</span><br><span class="line">class frame &#123;</span><br><span class="line"> private:</span><br><span class="line">  // Instance variables:</span><br><span class="line">  intptr_t* _sp; // stack pointer (from Thread::last_Java_sp)  , java 的stack 指针</span><br><span class="line">  address   _pc; // program counter (the next instruction after the call)   下一个指令的指针</span><br><span class="line"></span><br><span class="line">  CodeBlob* _cb; // CodeBlob that &quot;owns&quot; pc</span><br><span class="line">  enum deopt_state &#123;</span><br><span class="line">    not_deoptimized,</span><br><span class="line">    is_deoptimized,</span><br><span class="line">    unknown</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  deopt_state _deopt_state;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="bytecode"><a href="#bytecode" class="headerlink" title="bytecode"></a>bytecode</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">enum TosState &#123;         // describes the tos cache contents</span><br><span class="line">  btos = 0,             // byte, bool tos cached</span><br><span class="line">  ztos = 1,             // byte, bool tos cached</span><br><span class="line">  ctos = 2,             // char tos cached</span><br><span class="line">  stos = 3,             // short tos cached</span><br><span class="line">  itos = 4,             // int tos cached</span><br><span class="line">  ltos = 5,             // long tos cached</span><br><span class="line">  ftos = 6,             // float tos cached</span><br><span class="line">  dtos = 7,             // double tos cached</span><br><span class="line">  atos = 8,             // object cached</span><br><span class="line">  vtos = 9,             // tos not cached</span><br><span class="line">  number_of_states,</span><br><span class="line">  ilgl                  // illegal state: should not occur</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="iload"><a href="#iload" class="headerlink" title="iload"></a>iload</h3><table>
+<thead>
+<tr>
+<th>bytecode</th>
+<th>enum</th>
+<th>asm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>iload</td>
+<td>21</td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$65 = (address) 0x7fffe1012693 &quot;A\017\266]\002\203\373\025\017\204J&quot;</span><br><span class="line">(gdb) x/20i 0x7fffe1012693</span><br><span class="line">   0x7fffe1012693:	movzbl 0x2(%r13),%ebx</span><br><span class="line">   0x7fffe1012698:	cmp    $0x15,%ebx            &lt;---  下一个bytecode</span><br><span class="line">   0x7fffe101269b:	je     0x7fffe10126eb        &lt;--   跳转到 done</span><br><span class="line">   0x7fffe10126a1:	cmp    $0xe0,%ebx             &lt;-- 判断下一个是否是_fast_iload</span><br><span class="line">   0x7fffe10126a7:	mov    $0xe1,%ecx              &lt;------ 下一个是_fast_iload 则重写成fast_iload2</span><br><span class="line">   0x7fffe10126ac:	je     0x7fffe10126bd           &lt;--------  跳转到rewrite label</span><br><span class="line">   0x7fffe10126ae:	cmp    $0x34,%ebx</span><br><span class="line">   0x7fffe10126b1:	mov    $0xe2,%ecx</span><br><span class="line">   0x7fffe10126b6:	je     0x7fffe10126bd</span><br><span class="line">   0x7fffe10126b8:	mov    $0xe0,%ecx</span><br><span class="line">   0x7fffe10126bd:	movzbl 0x0(%r13),%ebx</span><br><span class="line">   0x7fffe10126c2:	cmp    $0x15,%ebx</span><br><span class="line">   0x7fffe10126c5:	je     0x7fffe10126e7</span><br><span class="line">   0x7fffe10126cb:	cmp    %ecx,%ebx</span><br><span class="line">   0x7fffe10126cd:	je     0x7fffe10126e7</span><br><span class="line">   0x7fffe10126d3:	movabs $0x7ffff74ef9d7,%rdi</span><br><span class="line">   0x7fffe10126dd:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe10126e1:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe10126e6:	hlt    </span><br><span class="line">   0x7fffe10126e7:	mov    %cl,0x0(%r13)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>源码分析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">void TemplateTable::iload_internal(RewriteControl rc) &#123;</span><br><span class="line">  transition(vtos, itos);</span><br><span class="line">  if (RewriteFrequentPairs &amp;&amp; rc == may_rewrite) &#123;</span><br><span class="line">    Label rewrite, done;</span><br><span class="line">    Register bc = r4;</span><br><span class="line"></span><br><span class="line">    // get next bytecode</span><br><span class="line">    __ load_unsigned_byte(r1, at_bcp(Bytecodes::length_for(Bytecodes::_iload)));     </span><br><span class="line"></span><br><span class="line">    // if _iload, wait to rewrite to iload2.  We only want to rewrite the</span><br><span class="line">    // last two iloads in a pair.  Comparing against fast_iload means that</span><br><span class="line">    // the next bytecode is neither an iload or a caload, and therefore</span><br><span class="line">    // an iload pair.</span><br><span class="line">    __ cmpw(r1, Bytecodes::_iload);         &lt;--- 下一个bytecode</span><br><span class="line">    __ br(Assembler::EQ, done);             &lt;---- 跳转到done</span><br><span class="line"></span><br><span class="line">    // if _fast_iload rewrite to _fast_iload2</span><br><span class="line">    __ cmpw(r1, Bytecodes::_fast_iload);       &lt;-- 判断下一个是否是_fast_iload</span><br><span class="line">    __ movw(bc, Bytecodes::_fast_iload2);    &lt;------ 下一个是_fast_iload 则重写成fast_iload2</span><br><span class="line">    __ br(Assembler::EQ, rewrite);           &lt;--------  跳转到rewrite label  </span><br><span class="line"></span><br><span class="line">    // if _caload rewrite to _fast_icaload</span><br><span class="line">    __ cmpw(r1, Bytecodes::_caload);</span><br><span class="line">    __ movw(bc, Bytecodes::_fast_icaload);</span><br><span class="line">    __ br(Assembler::EQ, rewrite);</span><br><span class="line"></span><br><span class="line">    // else rewrite to _fast_iload</span><br><span class="line">    __ movw(bc, Bytecodes::_fast_iload);</span><br><span class="line"></span><br><span class="line">    // rewrite</span><br><span class="line">    // bc: new bytecode</span><br><span class="line">    __ bind(rewrite);</span><br><span class="line">    patch_bytecode(Bytecodes::_iload, bc, r1, false);</span><br><span class="line">    __ bind(done);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // do iload, get the local value into tos</span><br><span class="line">  locals_index(r1);</span><br><span class="line">  __ ldr(r0, iaddress(r1));</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="aconst-null"><a href="#aconst-null" class="headerlink" title="aconst_null"></a>aconst_null</h3><table>
+<thead>
+<tr>
+<th>bytecode</th>
+<th>desc</th>
+<th>enum</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>aconst_null</td>
+<td>push a null reference onto the stack</td>
+<td>0x01</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">void TemplateTable::aconst_null() &#123;</span><br><span class="line">  transition(vtos, atos);</span><br><span class="line">  __ xorl(rax, rax);   // rax 就是栈顶</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="istore"><a href="#istore" class="headerlink" title="istore"></a>istore</h3><table>
+<thead>
+<tr>
+<th>bytecode</th>
+<th>desc</th>
+<th>enum</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>istore</td>
+<td>Store int into local variable</td>
+<td>54, &#x2F;&#x2F; 0x36</td>
+</tr>
+</tbody></table>
+<p>可以通过这个bytecode 了解怎么访问本地变量 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void TemplateTable::istore() &#123;</span><br><span class="line">  transition(itos, vtos);   // 这里只是一个断言assert , 断言之前的状态是itos , 之后的状态是vtos , 实际上是由def来定义的</span><br><span class="line">  locals_index(rbx); // 将偏移 也就是index 写入rbx</span><br><span class="line">  __ movl(iaddress(rbx), rax); //iaddress 就是 rlocal + rbx 也就是获取最后的跳转地址 ,然后将rax写入偏移地址</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里<code>iaddress(rbx)</code> 其实是rlocals+rbx 的偏移,也就是相对于本地变量的偏移</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static inline Address iaddress(Register r) &#123;</span><br><span class="line">  return Address(rlocals, r, Address::times_ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>iaddress</code> 的源码在这里: <code>src\hotspot\cpu\x86\assembler_x86.hpp</code><br>调用顺序是<code>iaddress</code> -&gt; <code>Address</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static inline Address iaddress(Register r) &#123;</span><br><span class="line">  return Address(rlocals, r, Address::times_ptr);</span><br><span class="line">&#125;</span><br><span class="line">  Address(Register base, Register index, ScaleFactor scale, int disp = 0)</span><br><span class="line">    : _base (base),</span><br><span class="line">      _index(index),</span><br><span class="line">      _xmmindex(xnoreg),</span><br><span class="line">      _scale(scale),</span><br><span class="line">      _disp (disp),</span><br><span class="line">      _isxmmindex(false) &#123;</span><br><span class="line">    assert(!index-&gt;is_valid() == (scale == Address::no_scale),</span><br><span class="line">           &quot;inconsistent address&quot;);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="def-istore展开"><a href="#def-istore展开" class="headerlink" title="def istore展开"></a>def istore展开</h4><p>前面不是看到<code>transition(itos, vtos); </code> , 这个<code>transition</code>只是一个类似测试时候的断言,真正是在<code>def</code> 处理的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">def(Bytecodes::_istore              , ubcp|____|clvm|____, itos, vtos, istore              ,  _           );</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>下面我们看看<code>def</code>展开,会慢慢展开成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void TemplateTable::def(Bytecodes::Code code, int flags, TosState in, TosState out, void (*gen)(int arg), int arg) &#123;</span><br><span class="line">  ...</span><br><span class="line">  Template* t = is_wide ? template_for_wide(code) : template_for(code);</span><br><span class="line">  // setup entry</span><br><span class="line">  t-&gt;initialize(flags, in, out, gen, arg);</span><br><span class="line">  assert(t-&gt;bytecode() == code, &quot;just checkin&#x27;&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>这里的 in 和out 会在<code>TemplateInterpreterGenerator::generate_and_dispatch</code>的时候使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">//------------------------------------------------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState tos_out) &#123;</span><br><span class="line">#ifndef PRODUCT</span><br><span class="line">  // debugging code</span><br><span class="line">  if (CountBytecodes || TraceBytecodes || StopInterpreterAt &gt; 0) count_bytecode();</span><br><span class="line">  if (PrintBytecodeHistogram)                                    histogram_bytecode(t);</span><br><span class="line">  if (PrintBytecodePairHistogram)                                histogram_bytecode_pair(t);</span><br><span class="line">  if (TraceBytecodes)                                            trace_bytecode(t);</span><br><span class="line">  if (StopInterpreterAt &gt; 0)                                     stop_interpreter_at();</span><br><span class="line">  __ verify_FPU(1, t-&gt;tos_in());</span><br><span class="line">#endif // !PRODUCT</span><br><span class="line">  int step = 0;</span><br><span class="line">  if (!t-&gt;does_dispatch()) &#123;</span><br><span class="line">    step = t-&gt;is_wide() ? Bytecodes::wide_length_for(t-&gt;bytecode()) : Bytecodes::length_for(t-&gt;bytecode());</span><br><span class="line">    if (tos_out == ilgl) tos_out = t-&gt;tos_out();</span><br><span class="line">    // compute bytecode size</span><br><span class="line">    assert(step &gt; 0, &quot;just checkin&#x27;&quot;);</span><br><span class="line">    // setup stuff for dispatching next bytecode</span><br><span class="line">    if (ProfileInterpreter &amp;&amp; VerifyDataPointer</span><br><span class="line">        &amp;&amp; MethodData::bytecode_has_profile(t-&gt;bytecode())) &#123;</span><br><span class="line">      __ verify_method_data_pointer();</span><br><span class="line">    &#125;</span><br><span class="line">    __ dispatch_prolog(tos_out, step);</span><br><span class="line">  &#125;</span><br><span class="line">  // generate template</span><br><span class="line">  t-&gt;generate(_masm);</span><br><span class="line">  // advance</span><br><span class="line">  if (t-&gt;does_dispatch()) &#123;</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">    // make sure execution doesn&#x27;t go beyond this point if code is broken</span><br><span class="line">    __ should_not_reach_here();</span><br><span class="line">#endif // ASSERT</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // dispatch to next bytecode</span><br><span class="line">    __ dispatch_epilog(tos_out, step);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/perfma/p/15602013.html">https://www.cnblogs.com/perfma/p/15602013.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-6.html#jvms-6.5.iload_n">https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-6.html#jvms-6.5.iload_n</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/437592111">https://zhuanlan.zhihu.com/p/437592111</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/List_of_Java_bytecode_instructions">https://en.wikipedia.org/wiki/List_of_Java_bytecode_instructions</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/jvm/" rel="tag"># jvm</a>
+              <a href="/tags/bytecode/" rel="tag"># bytecode</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/02/28/utf8-encoding-and-java/" rel="prev" title="utf8 and utf16 and  encoding and java">
+      <i class="fa fa-chevron-left"></i> utf8 and utf16 and  encoding and java
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/23/tersorflow-%E5%85%A5%E9%97%A8/" rel="next" title="tensorflow  入门">
+      tensorflow  入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%87%E7%BC%96%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">汇编格式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stack-frame"><span class="nav-number">2.</span> <span class="nav-text">stack frame</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#amd64-%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">amd64 下面的寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frame-%E7%94%A8%E4%B8%8B%E9%9D%A2%E7%9A%84%E7%BB%93%E6%9E%84%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.2.</span> <span class="nav-text">frame 用下面的结构描述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bytecode"><span class="nav-number">3.</span> <span class="nav-text">bytecode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iload"><span class="nav-number">3.1.</span> <span class="nav-text">iload</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#aconst-null"><span class="nav-number">3.2.</span> <span class="nav-text">aconst_null</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#istore"><span class="nav-number">3.3.</span> <span class="nav-text">istore</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#def-istore%E5%B1%95%E5%BC%80"><span class="nav-number">3.3.1.</span> <span class="nav-text">def istore展开</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

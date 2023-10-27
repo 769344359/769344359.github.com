@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景了解java volatile实现 实现核心在这里： is_volatile_shift 1234567891011121314151617181920212223242526272829303132void TemplateTable::putfield_or_static(int byte_no, bool is_static, RewriteControl rc) &amp;#123;  tra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="volatile java 实现">
+<meta property="og:url" content="https://shakudada.xyz/2023/04/20/volatile-java-%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景了解java volatile实现 实现核心在这里： is_volatile_shift 1234567891011121314151617181920212223242526272829303132void TemplateTable::putfield_or_static(int byte_no, bool is_static, RewriteControl rc) &amp;#123;  tra">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-20T15:56:08.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.933Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/04/20/volatile-java-%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>volatile java 实现 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/04/20/volatile-java-%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          volatile java 实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-20 23:56:08" itemprop="dateCreated datePublished" datetime="2023-04-20T23:56:08+08:00">2023-04-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>了解java volatile实现</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>核心在这里： is_volatile_shift</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">void TemplateTable::putfield_or_static(int byte_no, bool is_static, RewriteControl rc) &#123;</span><br><span class="line">  transition(vtos, vtos);</span><br><span class="line"></span><br><span class="line">  const Register cache = rcx;</span><br><span class="line">  const Register index = rdx;</span><br><span class="line">  const Register obj   = rcx;</span><br><span class="line">  const Register off   = rbx;</span><br><span class="line">  const Register flags = rax;</span><br><span class="line"></span><br><span class="line">  resolve_cache_and_index(byte_no, cache, index, sizeof(u2));</span><br><span class="line">  jvmti_post_field_mod(cache, index, is_static);</span><br><span class="line">  load_field_cp_cache_entry(obj, cache, index, off, flags, is_static);</span><br><span class="line"></span><br><span class="line">  Label notVolatile, Done;</span><br><span class="line">  __ movl(rdx, flags);</span><br><span class="line">  __ shrl(rdx, ConstantPoolCacheEntry::is_volatile_shift);    // 右移volatile 标志位 ， 然后如果是volatile ，则走到不太分支</span><br><span class="line">  __ andl(rdx, 0x1);</span><br><span class="line"></span><br><span class="line">  // Check for volatile store</span><br><span class="line">  __ testl(rdx, rdx);</span><br><span class="line">  __ jcc(Assembler::zero, notVolatile);</span><br><span class="line"></span><br><span class="line">  putfield_or_static_helper(byte_no, is_static, rc, obj, off, flags);</span><br><span class="line">  volatile_barrier(Assembler::Membar_mask_bits(Assembler::StoreLoad |</span><br><span class="line">                                               Assembler::StoreStore));</span><br><span class="line">  __ jmp(Done);</span><br><span class="line">  __ bind(notVolatile);</span><br><span class="line"></span><br><span class="line">  putfield_or_static_helper(byte_no, is_static, rc, obj, off, flags);</span><br><span class="line"></span><br><span class="line">  __ bind(Done);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这是具体的代码： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">// ----------------------------------------------------------------------------</span><br><span class="line">// Volatile variables demand their effects be made known to all CPU&#x27;s</span><br><span class="line">// in order.  Store buffers on most chips allow reads &amp; writes to</span><br><span class="line">// reorder; the JMM&#x27;s ReadAfterWrite.java test fails in -Xint mode</span><br><span class="line">// without some kind of memory barrier (i.e., it&#x27;s not sufficient that</span><br><span class="line">// the interpreter does not reorder volatile references, the hardware</span><br><span class="line">// also must not reorder them).</span><br><span class="line">//</span><br><span class="line">// According to the new Java Memory Model (JMM):</span><br><span class="line">// (1) All volatiles are serialized wrt to each other.  ALSO reads &amp;</span><br><span class="line">//     writes act as aquire &amp; release, so:</span><br><span class="line">// (2) A read cannot let unrelated NON-volatile memory refs that</span><br><span class="line">//     happen after the read float up to before the read.  It&#x27;s OK for</span><br><span class="line">//     non-volatile memory refs that happen before the volatile read to</span><br><span class="line">//     float down below it.</span><br><span class="line">// (3) Similar a volatile write cannot let unrelated NON-volatile</span><br><span class="line">//     memory refs that happen BEFORE the write float down to after the</span><br><span class="line">//     write.  It&#x27;s OK for non-volatile memory refs that happen after the</span><br><span class="line">//     volatile write to float up before it.</span><br><span class="line">//</span><br><span class="line">// We only put in barriers around volatile refs (they are expensive),</span><br><span class="line">// not _between_ memory refs (that would require us to track the</span><br><span class="line">// flavor of the previous memory refs).  Requirements (2) and (3)</span><br><span class="line">// require some barriers before volatile stores and after volatile</span><br><span class="line">// loads.  These nearly cover requirement (1) but miss the</span><br><span class="line">// volatile-store-volatile-load case.  This final case is placed after</span><br><span class="line">// volatile-stores although it could just as well go before</span><br><span class="line">// volatile-loads.</span><br><span class="line"></span><br><span class="line">void TemplateTable::volatile_barrier(Assembler::Membar_mask_bits order_constraint ) &#123;</span><br><span class="line">  // Helper function to insert a is-volatile test and memory barrier</span><br><span class="line">  __ membar(order_constraint);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有这段：</p>
+<p>ConstantPoolCache 看上去是运行时从<code>.class</code>文件读取的内容， 这里就有<code>volatile</code>的标志位，我们看看是在哪里设置这个值<code>ConstantPoolCacheEntry::is_volatile_shift</code> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">// The ConstantPoolCache is not a cache! It is the resolution table that the</span><br><span class="line">// interpreter uses to avoid going into the runtime and a way to access resolved</span><br><span class="line">// values.</span><br><span class="line"></span><br><span class="line">// A ConstantPoolCacheEntry describes an individual entry of the constant</span><br><span class="line">// pool cache. There&#x27;s 2 principal kinds of entries: field entries for in-</span><br><span class="line">// stance &amp; static field access, and method entries for invokes. Some of</span><br><span class="line">// the entry layout is shared and looks as follows:</span><br><span class="line">//</span><br><span class="line">// bit number |31                0|</span><br><span class="line">// bit length |-8--|-8--|---16----|</span><br><span class="line">// --------------------------------</span><br><span class="line">// _indices   [ b2 | b1 |  index  ]  index = constant_pool_index</span><br><span class="line">// _f1        [  entry specific   ]  metadata ptr (method or klass)</span><br><span class="line">// _f2        [  entry specific   ]  vtable or res_ref index, or vfinal method ptr</span><br><span class="line">// _flags     [tos|0|F=1|0|0|0|f|v|0 |0000|field_index] (for field entries)</span><br><span class="line">// bit length [ 4 |1| 1 |1|1|1|1|1|1 |1     |-3-|----16-----]</span><br><span class="line">// _flags     [tos|0|F=0|S|A|I|f|0|vf|indy_rf|000|00000|psize] (for method entries)</span><br><span class="line">// bit length [ 4 |1| 1 |1|1|1|1|1|1 |-4--|--8--|--8--]</span><br><span class="line"></span><br><span class="line">// --------------------------------</span><br><span class="line">//</span><br><span class="line">// with:</span><br><span class="line">// index  = original constant pool index</span><br><span class="line">// b1     = bytecode 1</span><br><span class="line">// b2     = bytecode 2</span><br><span class="line">// psize  = parameters size (method entries only)</span><br><span class="line">// field_index = index into field information in holder InstanceKlass</span><br><span class="line">//          The index max is 0xffff (max number of fields in constant pool)</span><br><span class="line">//          and is multiplied by (InstanceKlass::next_offset) when accessing.</span><br><span class="line">// tos    = TosState</span><br><span class="line">// F      = the entry is for a field (or F=0 for a method)</span><br><span class="line">// A      = call site has an appendix argument (loaded from resolved references)</span><br><span class="line">// I      = interface call is forced virtual (must use a vtable index or vfinal)</span><br><span class="line">// f      = field or method is final</span><br><span class="line">// v      = field is volatile</span><br><span class="line">// vf     = virtual but final (method entries only: is_vfinal())</span><br><span class="line">// indy_rf = call site specifier method resolution failed</span><br><span class="line">//</span><br><span class="line">// The flags after TosState have the following interpretation:</span><br><span class="line">// bit 27: 0 for fields, 1 for methods</span><br><span class="line">// f  flag true if field is marked final</span><br><span class="line">// v  flag true if field is volatile (only for fields)</span><br><span class="line">// f2 flag true if f2 contains an oop (e.g., virtual final method)</span><br><span class="line">// fv flag true if invokeinterface used for method in class Object</span><br><span class="line">//</span><br><span class="line">// The flags 31, 30, 29, 28 together build a 4 bit number 0 to 16 with the</span><br><span class="line">// following mapping to the TosState states:</span><br><span class="line">//</span><br><span class="line">// btos: 0</span><br><span class="line">// ztos: 1</span><br><span class="line">// ctos: 2</span><br><span class="line">// stos: 3</span><br><span class="line">// itos: 4</span><br><span class="line">// ltos: 5</span><br><span class="line">// ftos: 6</span><br><span class="line">// dtos: 7</span><br><span class="line">// atos: 8</span><br><span class="line">// vtos: 9</span><br><span class="line">//</span><br><span class="line">// Entry specific: field entries:</span><br><span class="line">// _indices = get (b1 section) and put (b2 section) bytecodes, original constant pool index</span><br><span class="line">// _f1      = field holder (as a java.lang.Class, not a Klass*)</span><br><span class="line">// _f2      = field offset in bytes</span><br><span class="line">// _flags   = field type information, original FieldInfo index in field holder</span><br><span class="line">//            (field_index section)</span><br><span class="line">//</span><br><span class="line">// Entry specific: method entries:</span><br><span class="line">// _indices = invoke code for f1 (b1 section), invoke code for f2 (b2 section),</span><br><span class="line">//            original constant pool index</span><br><span class="line">// _f1      = Method* for non-virtual calls, unused by virtual calls.</span><br><span class="line">//            for interface calls, which are essentially virtual but need a klass,</span><br><span class="line">//            contains Klass* for the corresponding interface.</span><br><span class="line">//            for invokedynamic and invokehandle, f1 contains the adapter method which</span><br><span class="line">//            manages the actual call. The appendix is stored in the ConstantPool</span><br><span class="line">//            resolved_references array.</span><br><span class="line">//            (upcoming metadata changes will move the appendix to a separate array)</span><br><span class="line">// _f2      = vtable/itable index (or final Method*) for virtual calls only,</span><br><span class="line">//            unused by non-virtual.  The is_vfinal flag indicates this is a</span><br><span class="line">//            method pointer for a final method, not an index.</span><br><span class="line">// _flags   = has local signature (MHs and indy),</span><br><span class="line">//            virtual final bit (vfinal),</span><br><span class="line">//            parameter size (psize section)</span><br><span class="line">//</span><br><span class="line">// Note: invokevirtual &amp; invokespecial bytecodes can share the same constant</span><br><span class="line">//       pool entry and thus the same constant pool cache entry. All invoke</span><br><span class="line">//       bytecodes but invokevirtual use only _f1 and the corresponding b1</span><br><span class="line">//       bytecode, while invokevirtual uses only _f2 and the corresponding</span><br><span class="line">//       b2 bytecode.  The value of _flags is shared for both types of entries.</span><br><span class="line">//</span><br><span class="line">// The fields are volatile so that they are stored in the order written in the</span><br><span class="line">// source code.  The _indices field with the bytecode must be written last.</span><br><span class="line"></span><br><span class="line">class CallInfo;</span><br><span class="line"></span><br><span class="line">class ConstantPoolCacheEntry &#123;</span><br></pre></td></tr></table></figure>
+
+
+<p>然后我们看看设置值的地方在这里</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"> //源码地址   src/hotspot/share/oops/cpCache.cpp</span><br><span class="line"></span><br><span class="line">// Note that concurrent update of both bytecodes can leave one of them</span><br><span class="line">// reset to zero.  This is harmless; the interpreter will simply re-resolve</span><br><span class="line">// the damaged entry.  More seriously, the memory synchronization is needed</span><br><span class="line">// to flush other fields (f1, f2) completely to memory before the bytecodes</span><br><span class="line">// are updated, lest other processors see a non-zero bytecode but zero f1/f2.</span><br><span class="line">void ConstantPoolCacheEntry::set_field(Bytecodes::Code get_code,</span><br><span class="line">                                       Bytecodes::Code put_code,</span><br><span class="line">                                       Klass* field_holder,</span><br><span class="line">                                       int field_index,</span><br><span class="line">                                       int field_offset,</span><br><span class="line">                                       TosState field_type,</span><br><span class="line">                                       bool is_final,</span><br><span class="line">                                       bool is_volatile) &#123;</span><br><span class="line">  set_f1(field_holder);</span><br><span class="line">  set_f2(field_offset);</span><br><span class="line">  assert((field_index &amp; field_index_mask) == field_index,</span><br><span class="line">         &quot;field index does not fit in low flag bits&quot;);</span><br><span class="line">  set_field_flags(field_type,</span><br><span class="line">                  ((is_volatile ? 1 : 0) &lt;&lt; is_volatile_shift) |           &lt;--- 在这里会设置volatile 的值</span><br><span class="line">                  ((is_final    ? 1 : 0) &lt;&lt; is_final_shift),</span><br><span class="line">                  field_index);</span><br><span class="line">  set_bytecode_1(get_code);</span><br><span class="line">  set_bytecode_2(put_code);</span><br><span class="line">  NOT_PRODUCT(verify(tty));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>然后用gdb调试一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  b ::set_field (this=0x7fffb4151b50, get_code=Bytecodes::_nop, put_code=Bytecodes::_nop, field_holder=0x800042fa0, field_index=2, field_offset=120, field_type=atos, </span><br><span class="line">    is_final=true, is_volatile=false) at /home/dai/jdk/src/hotspot/share/oops/cpCache.cpp:139</span><br><span class="line">#1  0x00007ffff65d2561 in InterpreterRuntime::resolve_get_put (current=0x7ffff0028f70, bytecode=Bytecodes::_putstatic) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:708</span><br><span class="line">#2  0x00007ffff65d3e14 in InterpreterRuntime::resolve_from_cache (current=0x7ffff0028f70, bytecode=Bytecodes::_putstatic) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:959</span><br><span class="line">#3  0x00007fffe10203e3 in ?? ()</span><br><span class="line">#4  0x00007ffff7bcc0a0 in TemplateInterpreter::_active_table () from /home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="line">#5  0x00007fffe1020362 in ?? ()</span><br><span class="line">#6  0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>我们看看<code>ConstantPoolCacheEntry</code>是从哪里取的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// Helper class to access current interpreter state</span><br><span class="line">class LastFrameAccessor : public StackObj &#123;</span><br><span class="line">  frame _last_frame;</span><br><span class="line">public:</span><br><span class="line">  ...</span><br><span class="line">  ConstantPoolCacheEntry* cache_entry_at(int i) const</span><br><span class="line">                                                 &#123; return method()-&gt;constants()-&gt;cache()-&gt;entry_at(i); &#125;</span><br><span class="line">  ConstantPoolCacheEntry* cache_entry() const    &#123; return cache_entry_at(Bytes::get_native_u2(bcp() + 1)); &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p m-&gt;print()</span><br><span class="line">&#123;method&#125;</span><br><span class="line"> - this oop:          0x00007fffd14108e8</span><br><span class="line"> - method holder:     &#x27;java/lang/String&#x27;</span><br><span class="line"> - constants:         0x00007fffd14013b8 constant pool [1396]/operands[28] &#123;0x00007fffd14013b8&#125; for &#x27;java/lang/String&#x27; cache=0x00007fffd1544158</span><br><span class="line"> - access:            0x8  static </span><br><span class="line"> - name:              &#x27;&lt;clinit&gt;&#x27;</span><br><span class="line"> - signature:         &#x27;()V&#x27;</span><br><span class="line"> - max stack:         3</span><br><span class="line"> - max locals:        0</span><br><span class="line"> - size of params:    0</span><br><span class="line"> - method size:       13</span><br><span class="line"> - vtable index:      -2</span><br><span class="line"> - i2i entry:         0x00007fffe100dbe0</span><br><span class="line"> - adapters:          AHE@0x00007ffff009b550: 0x i2c: 0x00007fffe1115060 c2i: 0x00007fffe111510d c2iUV: 0x00007fffe11150e0 c2iNCI: 0x00007fffe111514a</span><br><span class="line"> - compiled entry     0x00007fffe111510d</span><br><span class="line"> - code size:         22</span><br><span class="line"> - code start:        0x00007fffd14108c0</span><br><span class="line"> - code end (excl):   0x00007fffd14108d6</span><br><span class="line"> - checked ex length: 0</span><br><span class="line"> - linenumber start:  0x00007fffd14108d6</span><br><span class="line"> - localvar length:   0</span><br><span class="line">$7 = void</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  frame::interpreter_frame_method (this=0x7ffff5aa43f8) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/frame.cpp:332</span><br><span class="line">#1  0x00007ffff672253c in LastFrameAccessor::method (this=0x7ffff5aa43f0) at /home/ubuntu/daixiao/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:90</span><br><span class="line">#2  0x00007ffff671d2fb in InterpreterRuntime::resolve_get_put (current=0x7ffff0028940, bytecode=Bytecodes::_putstatic) at /home/ubuntu/daixiao/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:650</span><br><span class="line">#3  0x00007ffff671ec81 in InterpreterRuntime::resolve_from_cache (current=0x7ffff0028940, bytecode=Bytecodes::_putstatic) at /home/ubuntu/daixiao/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:948</span><br><span class="line">#4  0x00007fffe10203a3 in ?? ()</span><br><span class="line">#5  0x00007ffff7d4b280 in TemplateInterpreter::_active_table () from /home/ubuntu/daixiao/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="line">#6  0x00007fffe1020322 in ?? ()</span><br><span class="line">#7  0x0000000000000001 in ?? ()</span><br><span class="line">#8  0x00007ffff5aa44d8 in ?? ()</span><br><span class="line">#9  0x00007fffd14108c1 in ?? ()</span><br><span class="line">#10 0x00007ffff5aa4528 in ?? ()</span><br><span class="line">#11 0x00007fffd1544158 in ?? ()</span><br><span class="line">#12 0x0000000000000000 in ?? ()</span><br><span class="line">(gdb) </span><br></pre></td></tr></table></figure>
+
+
+<p>解析cache</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">InterpreterRuntime::resolve_from_cache</span><br><span class="line"></span><br><span class="line"> LinkResolver::resolve_field_access</span><br></pre></td></tr></table></figure>
+
+<p>相关类在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//   src/hotspot/share/oops/cpCache.cpp</span><br><span class="line">// 头文件 在 src/hotspot/share/oops/cpCache.hpp</span><br><span class="line">ConstantPoolCacheEntry</span><br></pre></td></tr></table></figure>
+
+<p>问了一下chatgpt </p>
+<blockquote>
+<p>在HotSpot JVM中，ConstantPoolCacheEntry对象是在解析类文件时动态创建的。具体来说，在解析类文件时，JVM会为类文件中的每个常量创建一个对应的ConstantPoolCacheEntry对象，并将其添加到类的常量池缓存中。</p>
+</blockquote>
+<blockquote>
+<p>ConstantPoolCacheEntry对象的实例化主要是在ClassFileParser类的parse_constant_pool_entry()函数中完成的。在解析常量池时，parse_constant_pool_entry()函数会根据常量的类型和值动态创建一个对应的ConstantPoolCacheEntry对象，并将其添加到类的常量池缓存中。</p>
+</blockquote>
+<blockquote>
+<p>需要注意的是，在解析过程中，JVM可能会使用占位符对象来表示无效的或未知的常量，而不是创建ConstantPoolCacheEntry对象。在这种情况下，JVM会将占位符对象添加到常量池缓存中，以便在解析和执行时可以快速跳过无效的或未知的常量。</p>
+</blockquote>
+<blockquote>
+<p>总之，在HotSpot JVM中，ConstantPoolCacheEntry对象的实例化是在解析类文件时完成的，而具体实现是在ClassFileParser类的parse_constant_pool_entry()函数中完成的。</p>
+</blockquote>
+<p>查看堆栈</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p stream-&gt;_source</span><br><span class="line">$4 = 0x7ffff00bdd40 &quot;/home/ubuntu/daixiao/jdk/build/linux-x86_64-server-slowdebug/jdk/modules/java.base&quot;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  ClassFileParser::parse_constant_pool_entries (this=0x7ffff0028940, stream=0x0, cp=0x7ffff5fadff1 &lt;Thread::as_Java_thread()+39&gt;, length=32767, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/classFileParser.cpp:150</span><br><span class="line">#1  0x00007ffff6378b5e in ClassFileParser::parse_constant_pool (this=0x7ffff5aa27e0, stream=0x7ffff00298e0, cp=0x7fffd169b1c8, length=31, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/classFileParser.cpp:424</span><br><span class="line">#2  0x00007ffff638aacc in ClassFileParser::parse_stream (this=0x7ffff5aa27e0, stream=0x7ffff00298e0, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/classFileParser.cpp:5720</span><br><span class="line">#3  0x00007ffff638a2b1 in ClassFileParser::ClassFileParser (this=0x7ffff5aa27e0, stream=0x7ffff00298e0, name=0x7fffb005b0a0, loader_data=0x7ffff0091890, cl_info=0x7ffff5aa2a10, pub_level=ClassFileParser::BROADCAST, __the_thread__=0x7ffff0028940)</span><br><span class="line">    at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/classFileParser.cpp:5590</span><br><span class="line">#4  0x00007ffff69d5f1f in KlassFactory::create_from_stream (stream=0x7ffff00298e0, name=0x7fffb005b0a0, loader_data=0x7ffff0091890, cl_info=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/klassFactory.cpp:199</span><br><span class="line">#5  0x00007ffff639a9e5 in ClassLoader::load_class (name=0x7fffb005b0a0, search_append_only=false, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/classLoader.cpp:1222</span><br><span class="line">#6  0x00007ffff6e97300 in SystemDictionary::load_instance_class_impl (class_name=0x7fffb005b0a0, class_loader=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/systemDictionary.cpp:1290</span><br><span class="line">#7  0x00007ffff6e976d1 in SystemDictionary::load_instance_class (name_hash=1923324215, name=0x7fffb005b0a0, class_loader=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/systemDictionary.cpp:1356</span><br><span class="line">#8  0x00007ffff6e95874 in SystemDictionary::resolve_instance_class_or_null (name=0x7fffb005b0a0, class_loader=..., protection_domain=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/systemDictionary.cpp:724</span><br><span class="line">#9  0x00007ffff6e94481 in SystemDictionary::resolve_instance_class_or_null_helper (class_name=0x7fffb005b0a0, class_loader=..., protection_domain=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/systemDictionary.cpp:295</span><br><span class="line">#10 0x00007ffff6e94330 in SystemDictionary::resolve_or_null (class_name=0x7fffb005b0a0, class_loader=..., protection_domain=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/systemDictionary.cpp:278</span><br><span class="line">#11 0x00007ffff6e94273 in SystemDictionary::resolve_or_fail (class_name=0x7fffb005b0a0, class_loader=..., protection_domain=..., throw_error=true, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/systemDictionary.cpp:264</span><br><span class="line">#12 0x00007ffff64314d1 in ConstantPool::klass_at_impl (this_cp=..., which=506, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/oops/constantPool.cpp:512</span><br><span class="line">#13 0x00007ffff62aca88 in ConstantPool::klass_at (this=0x7fffd1692c38, which=506, __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/oops/constantPool.hpp:420</span><br><span class="line">#14 0x00007ffff671af3a in InterpreterRuntime::_new (current=0x7ffff0028940, pool=0x7fffd1692c38, index=506) at /home/ubuntu/daixiao/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:219</span><br><span class="line">#15 0x00007fffe1023b92 in ?? ()</span><br><span class="line">#16 0x00007fffe1023b06 in ?? ()</span><br><span class="line">#17 0x00007ffff5aa3368 in ?? ()</span><br><span class="line">#18 0x00007fffd1699fe1 in ?? ()</span><br><span class="line">#19 0x00007ffff5aa33b8 in ?? ()</span><br><span class="line">#20 0x00007fffd169a0a0 in ?? ()</span><br><span class="line">#21 0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+
+<p>设置断点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(gdb) commands</span><br><span class="line">Type commands for breakpoint(s) 5, one per line.</span><br><span class="line">End with a line saying just &quot;end&quot;.</span><br><span class="line">&gt;p name-&gt;print()</span><br><span class="line">&gt;c</span><br><span class="line">&gt;end</span><br></pre></td></tr></table></figure>
+<p>打印</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thread 2 &quot;java&quot; hit Breakpoint 5, KlassFactory::create_from_stream (stream=0x7ffff5aa2f20, name=0x7ffff044c4a0, loader_data=0x7ffff03ddf90, cl_info=..., __the_thread__=0x7ffff0028940) at /home/ubuntu/daixiao/jdk/src/hotspot/share/classfile/klassFactory.cpp:172</span><br><span class="line">172       assert(loader_data != NULL, &quot;invariant&quot;);</span><br><span class="line">Symbol: &#x27;com/HelloWorld&#x27; count 2$1035 = void</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="类加载"><a href="#类加载" class="headerlink" title="类加载"></a>类加载</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">$801 = 0x7ffff59fd0b0 &quot;file:/home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/bin/&quot;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  KlassFactory::create_from_stream (stream=0x7ffff59fce00, name=0x7ffff057a9d0, loader_data=0x7ffff05185c0, cl_info=..., __the_thread__=0x7ffff0028f50)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/classfile/klassFactory.cpp:179</span><br><span class="line">#1  0x00007ffff6d4248e in SystemDictionary::resolve_class_from_stream (st=0x7ffff59fce00, class_name=0x7ffff057a9d0, class_loader=..., cl_info=..., __the_thread__=0x7ffff0028f50)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/classfile/systemDictionary.cpp:914</span><br><span class="line">#2  0x00007ffff6d42708 in SystemDictionary::resolve_from_stream (st=0x7ffff59fce00, class_name=0x7ffff057a9d0, class_loader=..., cl_info=..., __the_thread__=0x7ffff0028f50)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/classfile/systemDictionary.cpp:952</span><br><span class="line">#3  0x00007ffff66e1b51 in jvm_define_class_common (name=0x7ffff59fd030 &quot;Hello&quot;, loader=0x7ffff59fd5a0, buf=0x7ffff04a4b90 &quot;\312\376\272\276&quot;, len=409, pd=0x7ffff59fd578, </span><br><span class="line">    source=0x7ffff59fd0b0 &quot;file:/home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/bin/&quot;, __the_thread__=0x7ffff0028f50) at /home/dai/jdk/src/hotspot/share/prims/jvm.cpp:883</span><br><span class="line">#4  0x00007ffff66e2832 in JVM_DefineClassWithSource (env=0x7ffff0029230, name=0x7ffff59fd030 &quot;Hello&quot;, loader=0x7ffff59fd5a0, buf=0x7ffff04a4b90 &quot;\312\376\272\276&quot;, len=409, pd=0x7ffff59fd578, </span><br><span class="line">    source=0x7ffff59fd0b0 &quot;file:/home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/bin/&quot;) at /home/dai/jdk/src/hotspot/share/prims/jvm.cpp:1047</span><br><span class="line">#5  0x00007ffff58db1f5 in Java_java_lang_ClassLoader_defineClass1 (env=0x7ffff0029230, cls=0x7ffff59fd560, loader=0x7ffff59fd5a0, name=0x7ffff59fd598, data=0x7ffff59fd590, offset=0, length=409, </span><br><span class="line">    pd=0x7ffff59fd578, source=0x7ffff59fd570) at /home/dai/jdk/src/java.base/share/native/libjava/ClassLoader.c:132</span><br><span class="line">#6  0x00007fffe100f6cb in ?? ()</span><br><span class="line">#7  0x0000000000000199 in ?? ()</span><br><span class="line">#8  0x00007ffff59fd578 in ?? ()</span><br><span class="line">#9  0x00007ffff59fd570 in ?? ()</span><br><span class="line">#10 0x0000555555581230 in ?? ()</span><br><span class="line">#11 0x00007ffff0028f50 in ?? ()</span><br><span class="line">#12 0x00007fffb445ba08 in ?? ()</span><br><span class="line">#13 0x00007fffe100f199 in ?? ()</span><br><span class="line">#14 0x00007ffff59fd508 in ?? ()</span><br><span class="line">#15 0x00007fffb4025170 in ?? ()</span><br><span class="line">#16 0x00007ffff59fd5a0 in ?? ()</span><br><span class="line">#17 0x00007fffb4147588 in ?? ()</span><br><span class="line">#18 0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="fileinfo-如何初始化"><a href="#fileinfo-如何初始化" class="headerlink" title="fileinfo 如何初始化"></a>fileinfo 如何初始化</h2><p>ConstantPoolCacheEntry 是由fieldDescriptor 的字段传进去的 ， 那么我们看看fieldDescriptor是怎么初始化的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  fieldDescriptor info;</span><br><span class="line">  ...</span><br><span class="line">void InterpreterRuntime::resolve_get_put(JavaThread* current, Bytecodes::Code bytecode) &#123;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">    LinkResolver::resolve_field_access(info, pool, last_frame.get_index_u2_cpcache(bytecode),</span><br><span class="line">                                       m, bytecode, CHECK);</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>我们最后找到初始化的地方</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">bool InstanceKlass::find_local_field(Symbol* name, Symbol* sig, fieldDescriptor* fd) const &#123;</span><br><span class="line">  for (JavaFieldStream fs(this); !fs.done(); fs.next()) &#123;</span><br><span class="line">    Symbol* f_name = fs.name();</span><br><span class="line">    Symbol* f_sig  = fs.signature();</span><br><span class="line">    if (f_name == name &amp;&amp; f_sig == sig) &#123;</span><br><span class="line">      fd-&gt;reinitialize(const_cast&lt;InstanceKlass*&gt;(this), fs.index());  // 初始化的地方</span><br><span class="line">      return true;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化就在这里： <code>fieldDescriptor::reinitialize</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">void fieldDescriptor::reinitialize(InstanceKlass* ik, int index) &#123;</span><br><span class="line">  ...</span><br><span class="line">  FieldInfo* f = ik-&gt;field(index);</span><br><span class="line">  _access_flags = accessFlags_from(f-&gt;access_flags());</span><br><span class="line">  guarantee(f-&gt;name_index() != 0 &amp;&amp; f-&gt;signature_index() != 0, &quot;bad constant pool index for fieldDescriptor&quot;);</span><br><span class="line">  _index = index;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="jvm-堆栈结构"><a href="#jvm-堆栈结构" class="headerlink" title="jvm 堆栈结构"></a>jvm 堆栈结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">inline frame ContinuationEntry::to_frame() const &#123;</span><br><span class="line">  static CodeBlob* cb = CodeCache::find_blob_fast(entry_pc());</span><br><span class="line">  assert(cb != nullptr, &quot;&quot;);</span><br><span class="line">  assert(cb-&gt;as_compiled_method()-&gt;method()-&gt;is_continuation_enter_intrinsic(), &quot;&quot;);</span><br><span class="line">  return frame(entry_sp(), entry_sp(), entry_fp(), entry_pc(), cb);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  frame::frame (this=0x7ffff59fe348) at /home/dai/jdk/src/hotspot/cpu/x86/frame_x86.inline.hpp:37</span><br><span class="line">#1  0x00007ffff65d76f1 in LastFrameAccessor::LastFrameAccessor (this=0x7ffff59fe340, current=0x7ffff0028f70)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:84</span><br><span class="line">#2  0x00007ffff65d212e in InterpreterRuntime::resolve_get_put (current=0x7ffff0028f70, </span><br><span class="line">    bytecode=Bytecodes::_putstatic) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:652</span><br><span class="line">#3  0x00007ffff65d3e14 in InterpreterRuntime::resolve_from_cache (current=0x7ffff0028f70, </span><br><span class="line">    bytecode=Bytecodes::_putstatic) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:959</span><br><span class="line">#4  0x00007fffe10203e3 in ?? ()</span><br><span class="line">#5  0x00007ffff7bca0a0 in TemplateInterpreter::_active_table ()</span><br><span class="line">   from /home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="line">#6  0x00007fffe1020362 in ?? ()</span><br><span class="line">#7  0x0000000000000001 in ?? ()</span><br><span class="line">#8  0x00007ffff59fe438 in ?? ()</span><br><span class="line">#9  0x00007fffb4010821 in ?? ()</span><br><span class="line">#10 0x00007ffff59fe488 in ?? ()</span><br><span class="line">#11 0x00007fffb4149b38 in ?? ()</span><br><span class="line">#12 0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>后面我们能看到初始化是在这里：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">frame JavaThread::pd_last_frame() &#123;</span><br><span class="line">  assert(has_last_Java_frame(), &quot;must have last_Java_sp() when suspended&quot;);</span><br><span class="line">  vmassert(_anchor.last_Java_pc() != NULL, &quot;not walkable&quot;);</span><br><span class="line">  return frame(_anchor.last_Java_sp(), _anchor.last_Java_fp(), _anchor.last_Java_pc());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="frame-的初始化"><a href="#frame-的初始化" class="headerlink" title="frame 的初始化"></a>frame 的初始化</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  JavaThread::pd_last_frame (this=0x7ffff0028f70) at /home/dai/jdk/src/hotspot/os_cpu/linux_x86/thread_linux_x86.cpp:30</span><br><span class="line">#1  0x00007ffff612888b in JavaThread::last_frame (this=0x7ffff0028f70) at /home/dai/jdk/src/hotspot/share/runtime/thread.hpp:1407</span><br><span class="line">#2  0x00007ffff65d7757 in LastFrameAccessor::LastFrameAccessor (this=0x7ffff59fe340, current=0x7ffff0028f70) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:86</span><br><span class="line">#3  0x00007ffff65d212e in InterpreterRuntime::resolve_get_put (current=0x7ffff0028f70, bytecode=Bytecodes::_putstatic) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:652</span><br><span class="line">#4  0x00007ffff65d3e14 in InterpreterRuntime::resolve_from_cache (current=0x7ffff0028f70, bytecode=Bytecodes::_putstatic) at /home/dai/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:959</span><br><span class="line">#5  0x00007fffe10203e3 in ?? ()</span><br><span class="line">#6  0x00007ffff7bca0a0 in TemplateInterpreter::_active_table () from /home/dai/jdk/build/linux-x86_64-server-slowdebug/jdk/lib/server/libjvm.so</span><br><span class="line">#7  0x00007fffe1020362 in ?? ()</span><br><span class="line">#8  0x0000000000000001 in ?? ()</span><br><span class="line">#9  0x00007ffff59fe438 in ?? ()</span><br><span class="line">#10 0x00007fffb4010821 in ?? ()</span><br><span class="line">#11 0x00007ffff59fe488 in ?? ()</span><br><span class="line">#12 0x00007fffb4149b38 in ?? ()</span><br><span class="line">#13 0x0000000000000000 in ?? ()</span><br><span class="line">(gdb) list</span><br><span class="line">35	// For Forte Analyzer AsyncGetCallTrace profiling support - thread is</span><br><span class="line">36	// currently interrupted by SIGPROF</span><br><span class="line">37	bool JavaThread::pd_get_top_frame_for_signal_handler(frame* fr_addr,</span><br><span class="line">38	  void* ucontext, bool isInJava) &#123;</span><br><span class="line">39	</span><br><span class="line">40	  assert(Thread::current() == this, &quot;caller must be current thread&quot;);</span><br><span class="line">41	  return pd_get_top_frame(fr_addr, ucontext, isInJava);</span><br><span class="line">42	&#125;</span><br><span class="line">43	</span><br><span class="line">44	bool JavaThread::pd_get_top_frame_for_profiling(frame* fr_addr, void* ucontext, bool isInJava) &#123;</span><br><span class="line">(gdb) info registers </span><br><span class="line">rax            0x7ffff59fe220      140737314284064</span><br><span class="line">rbx            0x7ffff59fe340      140737314284352</span><br><span class="line">rcx            0x7ffff00153f0      140737220006896</span><br><span class="line">rdx            0x7ffff0028f70      140737220087664</span><br><span class="line">rsi            0x7ffff0028f70      140737220087664</span><br><span class="line">rdi            0x7ffff59fe220      140737314284064</span><br><span class="line">rbp            0x7ffff59fe1f0      0x7ffff59fe1f0</span><br><span class="line">rsp            0x7ffff59fe1d0      0x7ffff59fe1d0</span><br><span class="line">r8             0x8                 8</span><br><span class="line">r9             0x0                 0</span><br><span class="line">r10            0x7ffff7bca0a0      140737349722272</span><br><span class="line">r11            0x7ffff0000090      140737219920016</span><br><span class="line">r12            0x0                 0</span><br><span class="line">r13            0x7fffb4010821      140736213354529</span><br><span class="line">r14            0x7ffff59fe488      140737314284680</span><br><span class="line">r15            0x7ffff0028f70      140737220087664</span><br><span class="line">rip            0x7ffff6da2ea3      0x7ffff6da2ea3 &lt;JavaThread::pd_last_frame()+23&gt;</span><br><span class="line">eflags         0x202               [ IF ]</span><br><span class="line">cs             0x33                51</span><br><span class="line">ss             0x2b                43</span><br><span class="line">ds             0x0                 0</span><br><span class="line">es             0x0                 0</span><br><span class="line">fs             0x0                 0</span><br><span class="line">gs             0x0                 0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>然后我们看到在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JavaFrameAnchor _anchor;    </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class JavaFrameAnchor &#123;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"> private:</span><br><span class="line">...</span><br><span class="line">  intptr_t* volatile _last_Java_sp;  //stack_pointer</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>JavaFrameAnchor 初始化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">JavaFrameAnchor::clear (this=0x7ffff0029230) at /home/dai/jdk/src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp:44</span><br><span class="line">44	    _last_Java_fp = NULL;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  JavaFrameAnchor::clear (this=0x7ffff0029230) at /home/dai/jdk/src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp:44</span><br><span class="line">#1  0x00007ffff65df910 in JavaFrameAnchor::JavaFrameAnchor (this=0x7ffff0029230) at /home/dai/jdk/src/hotspot/share/runtime/javaFrameAnchor.hpp:88</span><br><span class="line">#2  0x00007ffff6d8730c in JavaThread::JavaThread (this=0x7ffff0028f70) at /home/dai/jdk/src/hotspot/share/runtime/thread.cpp:1076</span><br><span class="line">#3  0x00007ffff6d8d0ee in Threads::create_vm (args=0x7ffff59fed50, canTryAgain=0x7ffff59fec5b) at /home/dai/jdk/src/hotspot/share/runtime/thread.cpp:2817</span><br><span class="line">#4  0x00007ffff66b243b in JNI_CreateJavaVM_inner (vm=0x7ffff59feda8, penv=0x7ffff59fedb0, args=0x7ffff59fed50) at /home/dai/jdk/src/hotspot/share/prims/jni.cpp:3613</span><br><span class="line">#5  0x00007ffff66b2787 in JNI_CreateJavaVM (vm=0x7ffff59feda8, penv=0x7ffff59fedb0, args=0x7ffff59fed50) at /home/dai/jdk/src/hotspot/share/prims/jni.cpp:3701</span><br><span class="line">#6  0x00007ffff7faca6a in InitializeJVM (pvm=0x7ffff59feda8, penv=0x7ffff59fedb0, ifn=0x7ffff59fee00) at /home/dai/jdk/src/java.base/share/native/libjli/java.c:1459</span><br><span class="line">#7  0x00007ffff7fa95ec in JavaMain (_args=0x7fffffffa9a0) at /home/dai/jdk/src/java.base/share/native/libjli/java.c:411</span><br><span class="line">#8  0x00007ffff7fb05ec in ThreadJavaMain (args=0x7fffffffa9a0) at /home/dai/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#9  0x00007ffff7c94b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#10 0x00007ffff7d26a00 in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:81</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在这里会设置last_java_sp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">void MacroAssembler::call_VM_base(Register oop_result,</span><br><span class="line">                                  Register java_thread,</span><br><span class="line">                                  Register last_java_sp,</span><br><span class="line">                                  address  entry_point,</span><br><span class="line">                                  int      number_of_arguments,</span><br><span class="line">                                  bool     check_exceptions) &#123;</span><br><span class="line">  // determine java_thread register</span><br><span class="line">  if (!java_thread-&gt;is_valid()) &#123;</span><br><span class="line">#ifdef _LP64</span><br><span class="line">    java_thread = r15_thread;</span><br><span class="line">#else</span><br><span class="line">    java_thread = rdi;</span><br><span class="line">    get_thread(java_thread);</span><br><span class="line">#endif // LP64</span><br><span class="line">  &#125;</span><br><span class="line">  // determine last_java_sp register</span><br><span class="line">  if (!last_java_sp-&gt;is_valid()) &#123;</span><br><span class="line">    last_java_sp = rsp;</span><br><span class="line">  &#125;</span><br><span class="line">  // debugging support</span><br><span class="line">  assert(number_of_arguments &gt;= 0   , &quot;cannot have negative number of arguments&quot;);</span><br><span class="line">  LP64_ONLY(assert(java_thread == r15_thread, &quot;unexpected register&quot;));</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">  // TraceBytecodes does not use r12 but saves it over the call, so don&#x27;t verify</span><br><span class="line">  // r12 is the heapbase.</span><br><span class="line">  LP64_ONLY(if (UseCompressedOops &amp;&amp; !TraceBytecodes) verify_heapbase(&quot;call_VM_base: heap base corrupted?&quot;);)</span><br><span class="line">#endif // ASSERT</span><br><span class="line"></span><br><span class="line">  assert(java_thread != oop_result  , &quot;cannot use the same register for java_thread &amp; oop_result&quot;);</span><br><span class="line">  assert(java_thread != last_java_sp, &quot;cannot use the same register for java_thread &amp; last_java_sp&quot;);</span><br><span class="line"></span><br><span class="line">  // push java thread (becomes first argument of C function)</span><br><span class="line"></span><br><span class="line">  NOT_LP64(push(java_thread); number_of_arguments++);</span><br><span class="line">  LP64_ONLY(mov(c_rarg0, r15_thread));</span><br><span class="line"></span><br><span class="line">  // set last Java frame before call</span><br><span class="line">  assert(last_java_sp != rbp, &quot;can&#x27;t use ebp/rbp&quot;);</span><br><span class="line"></span><br><span class="line">  // Only interpreter should have to set fp</span><br><span class="line">  set_last_Java_frame(java_thread, last_java_sp, rbp, NULL);</span><br><span class="line"></span><br><span class="line">  // do the call, remove parameters</span><br><span class="line">  MacroAssembler::call_VM_leaf_base(entry_point, number_of_arguments);</span><br><span class="line"></span><br><span class="line">  // restore the thread (cannot use the pushed argument since arguments</span><br><span class="line">  // may be overwritten by C code generated by an optimizing compiler);</span><br><span class="line">  // however can use the register value directly if it is callee saved.</span><br><span class="line">  if (LP64_ONLY(true ||) java_thread == rdi || java_thread == rsi) &#123;</span><br><span class="line">    // rdi &amp; rsi (also r15) are callee saved -&gt; nothing to do</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">    guarantee(java_thread != rax, &quot;change this code&quot;);</span><br><span class="line">    push(rax);</span><br><span class="line">    &#123; Label L;</span><br><span class="line">      get_thread(rax);</span><br><span class="line">      cmpptr(java_thread, rax);</span><br><span class="line">      jcc(Assembler::equal, L);</span><br><span class="line">      STOP(&quot;MacroAssembler::call_VM_base: rdi not callee saved?&quot;);</span><br><span class="line">      bind(L);</span><br><span class="line">    &#125;</span><br><span class="line">    pop(rax);</span><br><span class="line">#endif</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    get_thread(java_thread);</span><br><span class="line">  &#125;</span><br><span class="line">  // reset last Java frame</span><br><span class="line">  // Only interpreter should have to clear fp</span><br><span class="line">  reset_last_Java_frame(java_thread, true);</span><br><span class="line"></span><br><span class="line">   // C++ interp handles this in the interpreter</span><br><span class="line">  check_and_handle_popframe(java_thread);</span><br><span class="line">  check_and_handle_earlyret(java_thread);</span><br><span class="line"></span><br><span class="line">  if (check_exceptions) &#123;</span><br><span class="line">    // check for pending exceptions (java_thread is set upon return)</span><br><span class="line">    cmpptr(Address(java_thread, Thread::pending_exception_offset()), (int32_t) NULL_WORD);</span><br><span class="line">#ifndef _LP64</span><br><span class="line">    jump_cc(Assembler::notEqual,</span><br><span class="line">            RuntimeAddress(StubRoutines::forward_exception_entry()));</span><br><span class="line">#else</span><br><span class="line">    // This used to conditionally jump to forward_exception however it is</span><br><span class="line">    // possible if we relocate that the branch will not reach. So we must jump</span><br><span class="line">    // around so we can always reach</span><br><span class="line"></span><br><span class="line">    Label ok;</span><br><span class="line">    jcc(Assembler::equal, ok);</span><br><span class="line">    jump(RuntimeAddress(StubRoutines::forward_exception_entry()));</span><br><span class="line">    bind(ok);</span><br><span class="line">#endif // LP64</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // get oop result if there is one and reset the value in the thread</span><br><span class="line">  if (oop_result-&gt;is_valid()) &#123;</span><br><span class="line">    get_vm_result(oop_result, java_thread);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="volatile-标志位"><a href="#volatile-标志位" class="headerlink" title="volatile 标志位"></a>volatile 标志位</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">///home/dai/jdk/src/hotspot/share/utilities/accessFlags.hpp</span><br><span class="line"> bool is_volatile    () const         &#123; return (_flags &amp; JVM_ACC_VOLATILE    ) != 0; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/7037413460543537188">https://juejin.cn/post/7037413460543537188</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000038807051">https://segmentfault.com/a/1190000038807051</a></li>
+<li><a target="_blank" rel="noopener" href="https://qilu.me/2019/08/12/2019-08-12/">https://qilu.me/2019/08/12/2019-08-12/</a></li>
+<li><a target="_blank" rel="noopener" href="https://clang.llvm.org/doxygen/classclang_1_1Lexer.html">https://clang.llvm.org/doxygen/classclang_1_1Lexer.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/18/java-integer-divison/" rel="prev" title="java integer divison">
+      <i class="fa fa-chevron-left"></i> java integer divison
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/05/04/insert-ignore-%E6%AD%BB%E9%94%81/" rel="next" title="insert ignore 死锁">
+      insert ignore 死锁 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD"><span class="nav-number">3.</span> <span class="nav-text">类加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fileinfo-%E5%A6%82%E4%BD%95%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">fileinfo 如何初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm-%E5%A0%86%E6%A0%88%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">jvm 堆栈结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#frame-%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">frame 的初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile-%E6%A0%87%E5%BF%97%E4%BD%8D"><span class="nav-number">7.</span> <span class="nav-text">volatile 标志位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">8.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="composer的psr4我这次主要是要描述composer的psr4自动加载相关内容.php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是. include 和 require的大坑例子include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于工作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="composer的psr4">
+<meta property="og:url" content="https://shakudada.xyz/2019/10/22/composer%E7%9A%84psr4/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="composer的psr4我这次主要是要描述composer的psr4自动加载相关内容.php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是. include 和 require的大坑例子include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于工作">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-22T07:38:14.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.876Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="php">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2019/10/22/composer%E7%9A%84psr4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>composer的psr4 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2019/10/22/composer%E7%9A%84psr4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          composer的psr4
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-22 15:38:14" itemprop="dateCreated datePublished" datetime="2019-10-22T15:38:14+08:00">2019-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="composer的psr4"><a href="#composer的psr4" class="headerlink" title="composer的psr4"></a>composer的psr4</h1><p>我这次主要是要描述composer的psr4自动加载相关内容.php有很多历史的包袱,所以需要做很多妥协,而namespace 以及自动加载也是.</p>
+<h2 id="include-和-require的大坑"><a href="#include-和-require的大坑" class="headerlink" title="include 和 require的大坑"></a>include 和 require的大坑</h2><h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><p>include 和require的区别什么的可能还是某些面试官的问题之一,但是include和require都有一个致命的大坑,include和require一个相对路径是相对于<code>工作目录</code>的.</p>
+<p>举个例子.</p>
+<p>当前在index.php 的目录中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># tree</span><br><span class="line"></span><br><span class="line">test</span><br><span class="line">   ├── index.php</span><br><span class="line">   ├── relative.php</span><br><span class="line">   └── subdir</span><br><span class="line">       ├── a.php</span><br><span class="line">       └── relative.php</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>index.php</code> 的代码很简单,就是包含一个路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &quot;./subdir/a.php&quot;;</span><br></pre></td></tr></table></figure>
+<p>两个relative.php 文件分别输出自己的路径<br><code>subdir/relative.php</code>文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test/subdir/relative.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>relative.php</code>文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;test/relative.php&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>那么如果与index.php 同目录下会include哪一个呢? </p>
+<p>答案是:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># php index.php </span><br><span class="line">test/relative.php</span><br></pre></td></tr></table></figure>
+<p>include了与index.php 同一个目录下的relative.php 文件</p>
+<p>而如果你在index.php的上一层目录执行,也就是<code>test</code>目录它甚至会报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php test/index.php </span><br><span class="line">PHP Warning:  include(./subdir/a.php): failed to open stream: No such file or directory in /root/test/index.php on line 2</span><br><span class="line">PHP Warning:  include(): Failed opening &#x27;./subdir/a.php&#x27; for inclusion (include_path=&#x27;.:/usr/share/php&#x27;) in /root/test/index.php on line 2</span><br></pre></td></tr></table></figure>
+
+<p>这一切都是因为当是相对路径的时候,调用了<code>getcwd()</code>来获取工作目录,如果你使用shell的<code>pwd</code>话也可以看自己的工作目录.</p>
+<p>由于这个比较坑的特性,php的代码如果手工使用include并且还使用了相对路径,那之后就非常难以维护了.所以我们需要尽量减少使用include相对路径,因为你知道的原因,你一旦写了一个相对路径,总会有后人copy and paste你的代码,然后把这个include也复制进去了,而这就是下一个屎坑的开始.</p>
+<p>所以,自动加载可以减缓这种大坑的产生,因为他可以减少手工include<code>相对路径</code>的风险,因为他们往往会这样include文件<code>include __DIR__ . &#39;aaa/bbb/ccc.php&#39;</code>,由于不是相对路径,所以会好很多.</p>
+<h4 id="CLI模式与CGI-x2F-FASTCGI工作目录的不同"><a href="#CLI模式与CGI-x2F-FASTCGI工作目录的不同" class="headerlink" title="CLI模式与CGI&#x2F;FASTCGI工作目录的不同"></a>CLI模式与CGI&#x2F;FASTCGI工作目录的不同</h4><p>CLI SAPI <strong>不会</strong>将当前目录改为已运行的脚本所在的目录。</p>
+<p>以下范例显示了本模块与 CGI SAPI 模块之间的不同：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// 名为 test.php 的简单测试程序</span><br><span class="line">echo getcwd(), &quot;\n&quot;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>在使用 CGI 版本时，其输出为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">/tmp</span><br><span class="line"></span><br><span class="line">$ php-cgi -f another_directory/test.php</span><br><span class="line">/tmp/another_directory</span><br></pre></td></tr></table></figure>
+<p>明显可以看到 PHP 将当前目录改成了刚刚运行过的脚本所在的目录。</p>
+<p>使用 CLI SAPI 模式，得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">/tmp</span><br><span class="line"></span><br><span class="line">$ php -q another_directory/test.php</span><br><span class="line">/tmp</span><br></pre></td></tr></table></figure>
+<h4 id="include-和require-的opcode和getcwd"><a href="#include-和require-的opcode和getcwd" class="headerlink" title="include 和require 的opcode和getcwd"></a>include 和require 的opcode和getcwd</h4><p>require 和include 词法分析和语法分析后,生成opcode是73,<code>ZEND_INCLUDE_OR_EVAL</code>,在include或者require之后,如果是相对路径</p>
+<p>最后会调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VCWD_GETCWD(cwd, MAXPATHLEN)</span><br></pre></td></tr></table></figure>
+<p>这个最后就是调用glibc 下面的<code>getcwd</code></p>
+<h4 id="getcwd-系统调用"><a href="#getcwd-系统调用" class="headerlink" title="getcwd 系统调用"></a>getcwd 系统调用</h4><p>每个进程task_struct会有fs_struct 结构,这个结构体会含有<code>pwd</code> 和<code>root</code>,如果使用<code>getcwd()</code>这个函数,通过glibc会通过系统调用读取fs_struct的pwd属性并返回</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">static void get_fs_root_and_pwd_rcu(struct fs_struct *fs, struct path *root,</span><br><span class="line">				    struct path *pwd)</span><br><span class="line">&#123;</span><br><span class="line">    ...</span><br><span class="line">		*root = fs-&gt;root;</span><br><span class="line">		*pwd = fs-&gt;pwd;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)</span><br><span class="line">&#123;</span><br><span class="line">	int error;</span><br><span class="line">	struct path pwd, root;</span><br><span class="line">	char *page = __getname();</span><br><span class="line"></span><br><span class="line">	if (!page)</span><br><span class="line">		return -ENOMEM;</span><br><span class="line"></span><br><span class="line">	rcu_read_lock();</span><br><span class="line">	get_fs_root_and_pwd_rcu(current-&gt;fs, &amp;root, &amp;pwd);  // 每个进程会关联一个fs_struct结构,fs_struct 结构有两个属性root和pwd描述了root目录和pwd目录</span><br><span class="line"></span><br><span class="line">	char *cwd = page + PATH_MAX;</span><br><span class="line">	int buflen = PATH_MAX;</span><br><span class="line"></span><br><span class="line">	prepend(&amp;cwd, &amp;buflen, &quot;\0&quot;, 1);</span><br><span class="line">	error = prepend_path(&amp;pwd, &amp;root, &amp;cwd, &amp;buflen);  </span><br><span class="line">    ...</span><br><span class="line">    copy_to_user(buf, cwd, len)                    // 将处理后的pwd 返回到用户态</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="include和require总结"><a href="#include和require总结" class="headerlink" title="include和require总结"></a>include和require总结</h4><p>include以及require如果引入<strong>相对路径</strong>的文件,那么这个相对路径都是相对于<code>getcwd()</code>,也就是当前工作目录.</p>
+<p>而cgi和cli模式又有不同</p>
+<ul>
+<li>cli模式下的当前路径就是shell <code>pwd</code>的值</li>
+<li>而cgi 这个SAPI和cli这个CLI SAPI不一样的地方在于他会帮你切换一次工作目录到第一次运行的php文件的当前目录作为工作目录.</li>
+</ul>
+<h2 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h2><p>命名空间是什么?</p>
+<p>其实就是一堆限定符.</p>
+<p>为什么要有命名空间?<br>因为我们要复用别人的代码,你想引用别人的一个库,别人库里写了个<code>hello</code>函数,你也写了个<code>hello</code>函数.这就麻烦了,所以引入命名空间,只要保证大家的命名空间不一样,那样就算大家都有相同的函数名,也不会冲突了.</p>
+<h2 id="自动加载"><a href="#自动加载" class="headerlink" title="自动加载"></a>自动加载</h2><p>开始说到自动加载了,自动加载.什么是自动加载呢? </p>
+<p>其实就是动态include,或者叫做运行时include.</p>
+<p>平时我们怎么include文件的呢? </p>
+<p>就是手工include一堆文件,就像我刚才上面的例子一样.这样至少有两个风险:</p>
+<ul>
+<li>新手使用了相对路径include</li>
+<li>得手工引入,但是include会重复引入文件,得使用<code>include_once</code> 或者<code>require_once</code></li>
+</ul>
+<p>就风险而言,新手使用相对路径引入的危险是非常大的.重复引入只是会校验多一点有一点性能影响而言.</p>
+<h4 id="spl-autoload-register"><a href="#spl-autoload-register" class="headerlink" title="spl_autoload_register"></a>spl_autoload_register</h4><p><code>spl_autoload_*</code>这一类的函数都是php自动加载的核心函数,实现自动加载则是依赖<code>spl_autoload_register</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/* &#123;&#123;&#123; proto bool spl_autoload_register([mixed autoload_function [, bool throw [, bool prepend]]])</span><br><span class="line"> Register given function as __autoload() implementation */</span><br><span class="line">PHP_FUNCTION(spl_autoload_register)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">		if (zend_hash_add_mem(SPL_G(autoload_functions), lc_name, &amp;alfi, sizeof(autoload_func_info)) == NULL) &#123;</span><br><span class="line">			...</span><br><span class="line">		&#125;</span><br><span class="line">		... </span><br><span class="line">&#125; /* &#125;&#125;&#125; */</span><br></pre></td></tr></table></figure>
+<p>然后相关的调用会在<code>zend_hash_exists(EG(class_table), lc_name)</code> 判断是否在全局的<code>EG(class_table)</code> 里面<br>下面的<code>spl_autoload_call</code>是一个例子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">PHP_FUNCTION(spl_autoload_call)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	if (SPL_G(autoload_functions)) &#123;     // spl_autoload_register 放进去的 SPL_G(autoload_functions)</span><br><span class="line">		int l_autoload_running = SPL_G(autoload_running);</span><br><span class="line">		SPL_G(autoload_running) = 1;</span><br><span class="line">		lc_name = zend_string_alloc(Z_STRLEN_P(class_name), 0);</span><br><span class="line">		zend_str_tolower_copy(ZSTR_VAL(lc_name), Z_STRVAL_P(class_name), Z_STRLEN_P(class_name));</span><br><span class="line">		zend_hash_internal_pointer_reset_ex(SPL_G(autoload_functions), &amp;pos);</span><br><span class="line">		while (zend_hash_get_current_key_ex(SPL_G(autoload_functions), &amp;func_name, &amp;num_idx, &amp;pos) == HASH_KEY_IS_STRING) &#123;   // 循环回调函数</span><br><span class="line">			alfi = zend_hash_get_current_data_ptr_ex(SPL_G(autoload_functions), &amp;pos);</span><br><span class="line">			zend_call_method(Z_ISUNDEF(alfi-&gt;obj)? NULL : &amp;alfi-&gt;obj, alfi-&gt;ce, &amp;alfi-&gt;func_ptr, ZSTR_VAL(func_name), ZSTR_LEN(func_name), retval, 1, class_name, NULL);    // 调用注册的回调函数</span><br><span class="line"></span><br><span class="line">			if (zend_hash_exists(EG(class_table), lc_name)) &#123;   // 回调找到了类名,则跳出循环</span><br><span class="line"></span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			zend_hash_move_forward_ex(SPL_G(autoload_functions), &amp;pos);</span><br><span class="line">		&#125;</span><br><span class="line">		...</span><br><span class="line">	&#125; </span><br><span class="line">	..</span><br><span class="line">&#125; /* &#125;&#125;&#125; */</span><br></pre></td></tr></table></figure>
+<p>自动加载流程其实很简单<br>自动加载的例子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// test.php</span><br><span class="line">spl_autoload_register(function ($class) &#123;</span><br><span class="line">    include  &quot;$class&quot; . &#x27;.php&#x27;;</span><br><span class="line">&#125;);</span><br><span class="line">$obj = new ClassA();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>以及类<code>ClassA.php</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class ClassA&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面是堆栈</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  zif_spl_autoload_call (execute_data=0x7fffef61e0a0, return_value=0x7fffffffa2f0) at /home/dinosaur/Downloads/php-7.2.2/ext/spl/php_spl.c:393</span><br><span class="line">#1  0x0000000000932807 in zend_call_function (fci=0x7fffffffa330, fci_cache=0x7fffffffa300) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_execute_API.c:833</span><br><span class="line">#2  0x0000000000933000 in zend_lookup_class_ex (name=0x7fffe6920b58, key=0x7fffe70e63f0, use_autoload=1) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_execute_API.c:990</span><br><span class="line">#3  0x0000000000933dbd in zend_fetch_class_by_name (class_name=0x7fffe6920b58, key=0x7fffe70e63f0, fetch_type=512) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_execute_API.c:1425</span><br><span class="line">#4  0x00000000009b7e46 in ZEND_NEW_SPEC_CONST_HANDLER () at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:3211</span><br><span class="line">#5  0x0000000000a380a4 in execute_ex (ex=0x7fffef61e030) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:59929</span><br><span class="line">#6  0x0000000000a3d0ab in zend_execute (op_array=0x7fffef683300, return_value=0x0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:63760</span><br><span class="line">#7  0x000000000094cd22 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend.c:1496</span><br><span class="line">#8  0x00000000008b0b4a in php_execute_script (primary_file=0x7fffffffcaa0) at /home/dinosaur/Downloads/php-7.2.2/main/main.c:2590</span><br><span class="line">#9  0x0000000000a3fd23 in do_cli (argc=2, argv=0x1441a60) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1011</span><br><span class="line">#10 0x0000000000a40ee0 in main (argc=2, argv=0x1441a60) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1404</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>所以整个自动加载的核心流程就是在查找类的时候会去调用<code>spl_autoload_call</code>，这个函数则会回调注册的自动加载函数，直到遍历所有的回调函数都没有找到或者在某个遍历的时候找到了直接返回。</p>
+<h2 id="psr规范与psr4"><a href="#psr规范与psr4" class="headerlink" title="psr规范与psr4"></a>psr规范与psr4</h2><p><code>psr</code>是<code>PHP Standards Recommendations</code>的简称,而psr4和psr0有都是和自动加载相关的内容.</p>
+<p>其实就是规定了一个简单的替换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\Aura\Web\Response\Status	Aura\Web	/path/to/aura-web/src/	/path/to/aura-web/src/Response/Status.php</span><br></pre></td></tr></table></figure>
+<p>psr4规定了我们如何去加载一个文件: 将完全限定名用前缀地址替换,后面则是后面的文件.<br>举个例子:<br>你要加载的类是:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\Aura\Web\Response\Status</span><br></pre></td></tr></table></figure>
+<p>那么你可以使用<code>Aura\Web</code> 映射<code>/path/to/aura-web/src/</code>,那么类<code>\Aura\Web\Response\Status</code>就会去<code>/path/to/aura-web/src/Response/Status.php</code>文件找</p>
+<p>可以说有点像nginx的路由配置:<br>下面是nginx的配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ /images/ &#123;</span><br><span class="line">　　　　# 匹配任何已 /images/ 开头的任何查询并且停止搜索。任何正则表达式将不会被测试。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么上面的<code>\Aura\Web\Response\Status</code>的psr4 有点像这样:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ^~ /Aura/Web/ &#123;</span><br><span class="line">　　　　root /path/to/aura-web/src/;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code">https://stackoverflow.com/questions/7378814/are-php-include-paths-relative-to-the-file-or-the-calling-code</a></li>
+<li><a target="_blank" rel="noopener" href="https://linux.die.net/man/3/getcwd">https://linux.die.net/man/3/getcwd</a></li>
+<li><a target="_blank" rel="noopener" href="https://linux.die.net/man/1/pwd">https://linux.die.net/man/1/pwd</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/wuheshi/article/details/52872463">https://blog.csdn.net/wuheshi/article/details/52872463</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/769344359/reading-php7-code/blob/master/include_or_require.md">https://github.com/769344359/reading-php7-code/blob/master/include_or_require.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/features.commandline.php">https://www.php.net/manual/zh/features.commandline.php</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/language.oop5.autoload.php">https://www.php.net/manual/zh/language.oop5.autoload.php</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.php-fig.org/psr/">https://www.php-fig.org/psr/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/php/" rel="tag"># php</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/19/php-try-catch/" rel="prev" title="php7 异常、错误以及相关坑">
+      <i class="fa fa-chevron-left"></i> php7 异常、错误以及相关坑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/31/ast%E6%9E%84%E9%80%A0/" rel="next" title="ast构造">
+      ast构造 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#composer%E7%9A%84psr4"><span class="nav-number">1.</span> <span class="nav-text">composer的psr4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#include-%E5%92%8C-require%E7%9A%84%E5%A4%A7%E5%9D%91"><span class="nav-number">1.1.</span> <span class="nav-text">include 和 require的大坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">例子</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CLI%E6%A8%A1%E5%BC%8F%E4%B8%8ECGI-x2F-FASTCGI%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">CLI模式与CGI&#x2F;FASTCGI工作目录的不同</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#include-%E5%92%8Crequire-%E7%9A%84opcode%E5%92%8Cgetcwd"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">include 和require 的opcode和getcwd</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getcwd-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">getcwd 系统调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#include%E5%92%8Crequire%E6%80%BB%E7%BB%93"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">include和require总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="nav-number">1.2.</span> <span class="nav-text">命名空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%8A%A0%E8%BD%BD"><span class="nav-number">1.3.</span> <span class="nav-text">自动加载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#spl-autoload-register"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">spl_autoload_register</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#psr%E8%A7%84%E8%8C%83%E4%B8%8Epsr4"><span class="nav-number">1.4.</span> <span class="nav-text">psr规范与psr4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">1.5.</span> <span class="nav-text">相关阅读</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

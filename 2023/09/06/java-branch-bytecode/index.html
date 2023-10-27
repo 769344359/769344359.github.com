@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景了解各种分支跳转 注释1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java branch bytecode">
+<meta property="og:url" content="https://shakudada.xyz/2023/09/06/java-branch-bytecode/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景了解各种分支跳转 注释1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586878889909192939495969798">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-06T14:20:55.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.890Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/09/06/java-branch-bytecode/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java branch bytecode | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/09/06/java-branch-bytecode/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java branch bytecode
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-06 22:20:55" itemprop="dateCreated datePublished" datetime="2023-09-06T22:20:55+08:00">2023-09-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>了解各种分支跳转</p>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br></pre></td><td class="code"><pre><span class="line">(gdb) x/30i 0x7fffe10176ab</span><br><span class="line">  </span><br><span class="line">   0x7fffe10176ab:	mov    -0x18(%rbp),%rcx    ## __ get_method(rcx); // rcx holds method    , rbp-0x18 就是方法地址</span><br><span class="line">   0x7fffe10176af:	mov    -0x28(%rbp),%rax    ## __ profile_taken_branch(rax, rbx); // rax holds updated MDP, rbx  一直到   0x7fffe10176d0都是profile_taken_branch</span><br><span class="line">   0x7fffe10176b3:	test   %rax,%rax</span><br><span class="line">   0x7fffe10176b6:	je     0x7fffe10176d4</span><br><span class="line">   0x7fffe10176bc:	mov    0x8(%rax),%rbx</span><br><span class="line">   0x7fffe10176c0:	add    $0x1,%rbx</span><br><span class="line">   0x7fffe10176c4:	sbb    $0x0,%rbx</span><br><span class="line">   0x7fffe10176c8:	mov    %rbx,0x8(%rax)</span><br><span class="line">   0x7fffe10176cc:	add    0x10(%rax),%rax</span><br><span class="line">   0x7fffe10176d0:	mov    %rax,-0x28(%rbp)</span><br><span class="line">   0x7fffe10176d4:	movswl 0x1(%r13),%edx  ##     __ movl(rdx, at_bcp(1));  r13指向当前要取的字节码指令的地址</span><br><span class="line">  0x7fffe10176d9:	bswap  %edx    ##__ bswapl(rdx);</span><br><span class="line">   0x7fffe10176db:	sar    $0x10,%edx   ##       __ sarl(rdx, 16);</span><br><span class="line">   0x7fffe10176de:	movslq %edx,%rdx  ##   LP64_ONLY(__ movl2ptr(rdx, rdx));</span><br><span class="line">   0x7fffe10176e1:	add    %rdx,%r13 ##   __ addptr(rbcp, rdx);     // Adjust the bcp in r13 by the displacement in rdx</span><br><span class="line">  0x7fffe10176e4:	test   %edx,%edx  ## 判断是不是 0 ,是0 就ZF=1  ，SF</span><br><span class="line">   0x7fffe10176e6:	jns    0x7fffe10176ec ##   大于等于0 ， 跳转到0x7fffe10176ec</span><br><span class="line">   0x7fffe10176ec:	mov    0x20(%rcx),%rax</span><br><span class="line">   0x7fffe10176ec:	mov    0x20(%rcx),%rax ##    __ movptr(rax, Address(rcx, Method::method_counters_offset()));</span><br><span class="line">   0x7fffe10176f0:	test   %rax,%rax ##      __ testptr(rax, rax);</span><br><span class="line">   0x7fffe10176f3:	jne    0x7fffe10176f9  ## ZF!=0 跳转， 也就是rax &gt;0 跳转     __ jcc(Assembler::notZero, has_counters);</span><br><span class="line">   0x7fffe10176f9:	push   %rdx   ##  __ push(rdx);</span><br><span class="line">   0x7fffe10176fa:	push   %rcx   ##     __ push(rcx);</span><br><span class="line">   0x7fffe10176fb:	call   0x7fffe1017705   ## begin ,   __ call_VM(noreg, CAST_FROM_FN_PTR(address, InterpreterRuntime::build_method_counters),</span><br><span class="line">               rcx); 一直到0x7fffe1017828</span><br><span class="line">   0x7fffe1017700:	jmp    0x7fffe1017829</span><br><span class="line">   0x7fffe1017705:	mov    %rcx,%rsi</span><br><span class="line">   0x7fffe1017708:	lea    0x8(%rsp),%rax</span><br><span class="line">   0x7fffe101770d:	mov    %r13,-0x40(%rbp)</span><br><span class="line">   0x7fffe1017711:	cmpq   $0x0,-0x10(%rbp)</span><br><span class="line">   0x7fffe1017719:	je     0x7fffe1017733</span><br><span class="line">   0x7fffe101771f:	movabs $0x7ffff71becc8,%rdi</span><br><span class="line">   0x7fffe1017729:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe101772d:	</span><br><span class="line">    call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017732:	hlt    </span><br><span class="line">   0x7fffe1017733:	push   %r10</span><br><span class="line">   0x7fffe1017735:	</span><br><span class="line">    cmp    0x16aef7c4(%rip),%r12        # 0x7ffff7b06f00 &lt;_ZN14CompressedOops11_narrow_oopE&gt;</span><br><span class="line">   0x7fffe101773c:	je     0x7fffe1017756</span><br><span class="line">   0x7fffe1017742:	movabs $0x7ffff7311c28,%rdi</span><br><span class="line">   0x7fffe101774c:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe1017750:	</span><br><span class="line">    call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017755:	hlt    </span><br><span class="line">   0x7fffe1017756:	pop    %r10</span><br><span class="line">   0x7fffe1017758:	mov    %r15,%rdi</span><br><span class="line">   0x7fffe101775b:	vzeroupper </span><br><span class="line">   0x7fffe101775e:	mov    %rbp,0x2d0(%r15)</span><br><span class="line">   0x7fffe1017765:	mov    %rax,0x2c0(%r15)</span><br><span class="line">   0x7fffe101776c:	test   $0xf,%esp</span><br><span class="line">   0x7fffe1017772:	je     0x7fffe101778a</span><br><span class="line">   0x7fffe1017778:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe101777c:	</span><br><span class="line">    call   0x7ffff65d4a46 &lt;_ZN18InterpreterRuntime21build_method_countersEP10JavaThreadP6Method&gt;</span><br><span class="line">   0x7fffe1017781:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe1017785:	jmp    0x7fffe101778f</span><br><span class="line">   0x7fffe101778a:	</span><br><span class="line">    call   0x7ffff65d4a46 &lt;_ZN18InterpreterRuntime21build_method_countersEP10JavaThreadP6Method&gt;</span><br><span class="line">   0x7fffe101778f:	push   %rax</span><br><span class="line">   0x7fffe1017790:	push   %rdi</span><br><span class="line">   0x7fffe1017791:	push   %rsi</span><br><span class="line">   0x7fffe1017792:	push   %rdx</span><br><span class="line">   0x7fffe1017793:	push   %rcx</span><br><span class="line">   0x7fffe1017794:	push   %r8</span><br><span class="line">   0x7fffe1017796:	push   %r9</span><br><span class="line">   0x7fffe1017798:	push   %r10</span><br><span class="line">   0x7fffe101779a:	push   %r11</span><br><span class="line">   0x7fffe101779c:	test   $0xf,%esp</span><br><span class="line">   0x7fffe10177a2:	je     0x7fffe10177ba</span><br><span class="line">   0x7fffe10177a8:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe10177ac:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe10177b1:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe10177b5:	jmp    0x7fffe10177bf</span><br><span class="line">   0x7fffe10177ba:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe10177bf:	pop    %r11</span><br><span class="line">   0x7fffe10177c1:	pop    %r10</span><br><span class="line">   0x7fffe10177c3:	pop    %r9</span><br><span class="line">   0x7fffe10177c5:	pop    %r8</span><br><span class="line">   0x7fffe10177c7:	pop    %rcx</span><br><span class="line">   0x7fffe10177c8:	pop    %rdx</span><br><span class="line">   0x7fffe10177c9:	pop    %rsi</span><br><span class="line">   0x7fffe10177ca:	pop    %rdi</span><br><span class="line">   0x7fffe10177cb:	cmp    %rax,%r15</span><br><span class="line">   0x7fffe10177ce:	je     0x7fffe10177e8</span><br><span class="line">   0x7fffe10177d4:	movabs $0x7ffff7311da0,%rdi</span><br><span class="line">   0x7fffe10177de:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe10177e2:	</span><br><span class="line">    call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe10177e7:	hlt    </span><br><span class="line">   0x7fffe10177e8:	pop    %rax</span><br><span class="line">   0x7fffe10177e9:	movq   $0x0,0x2c0(%r15)</span><br><span class="line">   0x7fffe10177f4:	movq   $0x0,0x2d0(%r15)</span><br><span class="line">   0x7fffe10177ff:	movq   $0x0,0x2c8(%r15)</span><br><span class="line">   0x7fffe101780a:	vzeroupper </span><br><span class="line">   0x7fffe101780d:	cmpq   $0x0,0x8(%r15)</span><br><span class="line">   0x7fffe1017815:	je     0x7fffe1017820</span><br><span class="line">   0x7fffe101781b:	jmp    0x7fffe1000c20</span><br><span class="line">   0x7fffe1017820:	mov    -0x40(%rbp),%r13</span><br><span class="line">   0x7fffe1017824:	mov    -0x38(%rbp),%r14</span><br><span class="line">   0x7fffe1017828:	ret       ### end  __ call_VM(noreg, CAST_FROM_FN_PTR(address, InterpreterRuntime::build_method_counters),</span><br><span class="line">               rcx);</span><br><span class="line">   0x7fffe1017829:	pop    %rcx   ###    __ pop(rcx);</span><br><span class="line">  0x7fffe101782a:	pop    %rdx   ##     __ pop(rdx);</span><br><span class="line">   0x7fffe101782b:	mov    0x20(%rcx),%rax   ##    __ movptr(rax, Address(rcx, Method::method_counters_offset()));</span><br><span class="line">   0x7fffe101782f:	test   %rax,%rax  ##      __ testptr(rax, rax);</span><br><span class="line">   0x7fffe1017832:	je     0x7fffe1017838  ##     __ jcc(Assembler::zero, dispatch);</span><br><span class="line">   0x7fffe1017838:	mov    0x18(%rcx),%rbx  ##        __ movptr(rbx, Address(rcx, in_bytes(Method::method_data_offset())));   // Are we profiling?</span><br><span class="line">   0x7fffe101783c:	test   %rbx,%rbx  ##       __ testptr(rbx, rbx);</span><br><span class="line">   0x7fffe101783f:	je     0x7fffe1017841  ## __ jccb(Assembler::zero, no_mdo);</span><br><span class="line">   0x7fffe1017841:	mov    0x130(%rbx),%eax   ##   一直到0x7fffe1017856 都是    __ increment_mask_and_jump(mdo_backedge_counter, increment, mask, rax, false, Assembler::zero,</span><br><span class="line">          UseOnStackReplacement ? &amp;backedge_counter_overflow : NULL);</span><br><span class="line">   0x7fffe1017847:	add    $0x2,%eax</span><br><span class="line">   0x7fffe101784a:	mov    %eax,0x130(%rbx)</span><br><span class="line">   0x7fffe1017850:	and    0x144(%rbx),%eax</span><br><span class="line">   0x7fffe1017856:	je     0x7fffe101785c</span><br><span class="line">   0x7fffe101785c:	jmp    0x7fffe1017861   ##       __ jmp(dispatch);</span><br><span class="line">   0x7fffe1017861:	mov    0x20(%rcx),%rcx  ##    __ movptr(rcx, Address(rcx, Method::method_counters_offset()));</span><br><span class="line">   0x7fffe1017865:	mov    0x10(%rcx),%eax   ###     __ increment_mask_and_jump(Address(rcx, be_offset), increment, mask,rax, false, Assembler::zero, UseOnStackReplacement ? &amp;backedge_counter_overflow : NULL);</span><br><span class="line">   0x7fffe1017868:	add    $0x2,%eax</span><br><span class="line">   0x7fffe101786b:	mov    %eax,0x10(%rcx)</span><br><span class="line">   0x7fffe101786e:	and    0x2c(%rcx),%eax</span><br><span class="line">   0x7fffe1017871:	je     0x7fffe1017877</span><br><span class="line">   0x7fffe1017877:	movzbl 0x0(%r13),%ebx   ###  // Pre-load the next target bytecode into rbx   __ load_unsigned_byte(rbx, Address(rbcp, 0));</span><br><span class="line">   0x7fffe101787c:	testb  $0x1,0x388(%r15)   ###      // continue with the bytecode @ target</span><br><span class="line">                                              ### // rax: return bci for jsr&#x27;s, unused otherwise</span><br><span class="line">                                              ###// rbx: target bytecode</span><br><span class="line">                                              ###// r13: target bcp</span><br><span class="line">                                              ###  //  __ dispatch_only(vtos, true);  从0x7fffe101787c 到 0x7fffe101789c</span><br><span class="line">   0x7fffe1017884:	je     0x7fffe1017892</span><br><span class="line">   0x7fffe1017886:	movabs $0x7ffff7bd68a0,%r10</span><br><span class="line">   0x7fffe1017890:	jmp    0x7fffe101789c</span><br><span class="line">   0x7fffe1017892:	movabs $0x7ffff7bcc8a0,%r10</span><br><span class="line">   0x7fffe101789c:	jmp    *(%r10,%rbx,8)</span><br><span class="line">  0x7fffe10178a0:	neg    %rdx    ##       __ negptr(rdx);</span><br><span class="line">   0x7fffe10178a3:	add    %r13,%rdx   ##    __ addptr(rdx, rbcp); // branch bcp</span><br><span class="line">   0x7fffe10178a6:	call   0x7fffe10178b0   ## 从  0x7fffe10178a6 到0x7fffe10179d3 都是call_VM</span><br><span class="line">                                            ##   __ call_VM(noreg,</span><br><span class="line">                                            ##    CAST_FROM_FN_PTR(address,</span><br><span class="line">                                            ##                     InterpreterRuntime::frequency_counter_overflow),</span><br><span class="line">                                            ##    rdx);</span><br><span class="line">   0x7fffe10178ab:	jmp    0x7fffe10179d4</span><br><span class="line">   0x7fffe10178b0:	mov    %rdx,%rsi</span><br><span class="line">   0x7fffe10178b3:	lea    0x8(%rsp),%rax</span><br><span class="line">   0x7fffe10178b8:	mov    %r13,-0x40(%rbp)</span><br><span class="line">   0x7fffe10178bc:	cmpq   $0x0,-0x10(%rbp)</span><br><span class="line">   0x7fffe10178c4:	je     0x7fffe10178de</span><br><span class="line">   0x7fffe10178ca:	movabs $0x7ffff71becc8,%rdi</span><br><span class="line">   0x7fffe10178d4:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe10178d8:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe10178dd:	hlt    </span><br><span class="line">   0x7fffe10178de:	push   %r10</span><br><span class="line">   0x7fffe10178e0:	cmp    0x16aef619(%rip),%r12        # 0x7ffff7b06f00 &lt;_ZN14CompressedOops11_narrow_oopE&gt;</span><br><span class="line">   0x7fffe10178e7:	je     0x7fffe1017901</span><br><span class="line">   0x7fffe10178ed:	movabs $0x7ffff7311c28,%rdi</span><br><span class="line">   0x7fffe10178f7:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe10178fb:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017900:	hlt    </span><br><span class="line">   0x7fffe1017901:	pop    %r10</span><br><span class="line">   0x7fffe1017903:	mov    %r15,%rdi</span><br><span class="line">   0x7fffe1017906:	vzeroupper </span><br><span class="line">   0x7fffe1017909:	mov    %rbp,0x2d0(%r15)</span><br><span class="line">   0x7fffe1017910:	mov    %rax,0x2c0(%r15)</span><br><span class="line">   0x7fffe1017917:	test   $0xf,%esp</span><br><span class="line">   0x7fffe101791d:	je     0x7fffe1017935</span><br><span class="line">   0x7fffe1017923:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe1017927:	call   0x7ffff65d3eb4 &lt;_ZN18InterpreterRuntime26frequency_counter_overflowEP10JavaThreadPh&gt;</span><br><span class="line">   0x7fffe101792c:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe1017930:	jmp    0x7fffe101793a</span><br><span class="line">   0x7fffe1017935:	call   0x7ffff65d3eb4 &lt;_ZN18InterpreterRuntime26frequency_counter_overflowEP10JavaThreadPh&gt;</span><br><span class="line">   0x7fffe101793a:	push   %rax</span><br><span class="line">   0x7fffe101793b:	push   %rdi</span><br><span class="line">   0x7fffe101793c:	push   %rsi</span><br><span class="line">   0x7fffe101793d:	push   %rdx</span><br><span class="line">   0x7fffe101793e:	push   %rcx</span><br><span class="line">   0x7fffe101793f:	push   %r8</span><br><span class="line">   0x7fffe1017941:	push   %r9</span><br><span class="line">   0x7fffe1017943:	push   %r10</span><br><span class="line">   0x7fffe1017945:	push   %r11</span><br><span class="line">   0x7fffe1017947:	test   $0xf,%esp</span><br><span class="line">   0x7fffe101794d:	je     0x7fffe1017965</span><br><span class="line">   0x7fffe1017953:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe1017957:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe101795c:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe1017960:	jmp    0x7fffe101796a</span><br><span class="line">   0x7fffe1017965:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe101796a:	pop    %r11</span><br><span class="line">   0x7fffe101796c:	pop    %r10</span><br><span class="line">   0x7fffe101796e:	pop    %r9</span><br><span class="line">   0x7fffe1017970:	pop    %r8</span><br><span class="line">   0x7fffe1017972:	pop    %rcx</span><br><span class="line">   0x7fffe1017973:	pop    %rdx</span><br><span class="line">   0x7fffe1017974:	pop    %rsi</span><br><span class="line">   0x7fffe1017975:	pop    %rdi</span><br><span class="line">   0x7fffe1017976:	cmp    %rax,%r15</span><br><span class="line">   0x7fffe1017979:	je     0x7fffe1017993</span><br><span class="line">   0x7fffe101797f:	movabs $0x7ffff7311da0,%rdi</span><br><span class="line">   0x7fffe1017989:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe101798d:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017992:	hlt    </span><br><span class="line">   0x7fffe1017993:	pop    %rax</span><br><span class="line">   0x7fffe1017994:	movq   $0x0,0x2c0(%r15)</span><br><span class="line">   0x7fffe101799f:	movq   $0x0,0x2d0(%r15)</span><br><span class="line">   0x7fffe10179aa:	movq   $0x0,0x2c8(%r15)</span><br><span class="line">   0x7fffe10179b5:	vzeroupper </span><br><span class="line">   0x7fffe10179b8:	cmpq   $0x0,0x8(%r15)</span><br><span class="line">   0x7fffe10179c0:	je     0x7fffe10179cb</span><br><span class="line">   0x7fffe10179c6:	jmp    0x7fffe1000c20</span><br><span class="line">   0x7fffe10179cb:	mov    -0x40(%rbp),%r13</span><br><span class="line">   0x7fffe10179cf:	mov    -0x38(%rbp),%r14</span><br><span class="line">   0x7fffe10179d3:	ret </span><br><span class="line">                                        ##         // rax: osr nmethod (osr ok) or NULL (osr not possible)</span><br><span class="line">                                        ##      // rdx: scratch</span><br><span class="line">                                        ##      // r14: locals pointer</span><br><span class="line">                                        ##      // r13: bcp</span><br><span class="line">   0x7fffe10179d4:	test   %rax,%rax    ##       __ testptr(rax, rax);                        // test result</span><br><span class="line">   0x7fffe10179d7:	je     0x7fffe1017877 ## __ jcc(Assembler::zero, dispatch);         // no osr if null</span><br><span class="line">   0x7fffe10179dd:	cmpb   $0x0,0x14b(%rax)  ##        // nmethod may have been invalidated (VM may block upon call_VM return)  __ cmpb(Address(rax, nmethod::state_offset()), nmethod::in_use);</span><br><span class="line">   0x7fffe10179e4:	jne    0x7fffe1017877 ##          __ jcc(Assembler::notEqual, dispatch);</span><br><span class="line">                                            ###      // We have the address of an on stack replacement routine in rax.</span><br><span class="line">                                            ###      // In preparation of invoking it, first we must migrate the locals</span><br><span class="line">                                            ###      // and monitors from off the interpreter frame on the stack.</span><br><span class="line">                                            ###      // Ensure to save the osr nmethod over the migration call,</span><br><span class="line">                                            ###      // it will be preserved in rbx.</span><br><span class="line">   0x7fffe10179ea:	mov    %rax,%rbx        ###      __ mov(rbx, rax);</span><br><span class="line"></span><br><span class="line">   0x7fffe10179ed:	call   0x7fffe10179f7         ###  从 0x7fffe10179ed  0x7fffe1017b17 都是 call_VM(noreg, CAST_FROM_FN_PTR(address, SharedRuntime::OSR_migration_begin));</span><br><span class="line">   0x7fffe10179f2:	jmp    0x7fffe1017b18</span><br><span class="line">   0x7fffe10179f7:	lea    0x8(%rsp),%rax</span><br><span class="line">   0x7fffe10179fc:	mov    %r13,-0x40(%rbp)</span><br><span class="line">   0x7fffe1017a00:	cmpq   $0x0,-0x10(%rbp)</span><br><span class="line">   0x7fffe1017a08:	je     0x7fffe1017a22</span><br><span class="line">   0x7fffe1017a0e:	movabs $0x7ffff71becc8,%rdi</span><br><span class="line">   0x7fffe1017a18:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe1017a1c:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017a21:	hlt    </span><br><span class="line">   0x7fffe1017a22:	push   %r10</span><br><span class="line">   0x7fffe1017a24:	cmp    0x16aef4d5(%rip),%r12        # 0x7ffff7b06f00 &lt;_ZN14CompressedOops11_narrow_oopE&gt;</span><br><span class="line">   0x7fffe1017a2b:	je     0x7fffe1017a45</span><br><span class="line">   0x7fffe1017a31:	movabs $0x7ffff7311c28,%rdi</span><br><span class="line">   0x7fffe1017a3b:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe1017a3f:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017a44:	hlt    </span><br><span class="line">   0x7fffe1017a45:	pop    %r10</span><br><span class="line">   0x7fffe1017a47:	mov    %r15,%rdi</span><br><span class="line">   0x7fffe1017a4a:	vzeroupper </span><br><span class="line">   0x7fffe1017a4d:	mov    %rbp,0x2d0(%r15)</span><br><span class="line">   0x7fffe1017a54:	mov    %rax,0x2c0(%r15)</span><br><span class="line">   0x7fffe1017a5b:	test   $0xf,%esp</span><br><span class="line">   0x7fffe1017a61:	je     0x7fffe1017a79</span><br><span class="line">   0x7fffe1017a67:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe1017a6b:	call   0x7ffff6bcdb22 &lt;_ZN13SharedRuntime19OSR_migration_beginEP10JavaThread&gt;</span><br><span class="line">   0x7fffe1017a70:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe1017a74:	jmp    0x7fffe1017a7e</span><br><span class="line">   0x7fffe1017a79:	call   0x7ffff6bcdb22 &lt;_ZN13SharedRuntime19OSR_migration_beginEP10JavaThread&gt;</span><br><span class="line">   0x7fffe1017a7e:	push   %rax</span><br><span class="line">   0x7fffe1017a7f:	push   %rdi</span><br><span class="line">   0x7fffe1017a80:	push   %rsi</span><br><span class="line">   0x7fffe1017a81:	push   %rdx</span><br><span class="line">   0x7fffe1017a82:	push   %rcx</span><br><span class="line">   0x7fffe1017a83:	push   %r8</span><br><span class="line">   0x7fffe1017a85:	push   %r9</span><br><span class="line">   0x7fffe1017a87:	push   %r10</span><br><span class="line">   0x7fffe1017a89:	push   %r11</span><br><span class="line">   0x7fffe1017a8b:	test   $0xf,%esp</span><br><span class="line">   0x7fffe1017a91:	je     0x7fffe1017aa9</span><br><span class="line">   0x7fffe1017a97:	sub    $0x8,%rsp</span><br><span class="line">   0x7fffe1017a9b:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe1017aa0:	add    $0x8,%rsp</span><br><span class="line">   0x7fffe1017aa4:	jmp    0x7fffe1017aae</span><br><span class="line">   0x7fffe1017aa9:	call   0x7ffff5d1c04e &lt;_ZN6Thread7currentEv&gt;</span><br><span class="line">   0x7fffe1017aae:	pop    %r11</span><br><span class="line">   0x7fffe1017ab0:	pop    %r10</span><br><span class="line">   0x7fffe1017ab2:	pop    %r9</span><br><span class="line">   0x7fffe1017ab4:	pop    %r8</span><br><span class="line">   0x7fffe1017ab6:	pop    %rcx</span><br><span class="line">   0x7fffe1017ab7:	pop    %rdx</span><br><span class="line">   0x7fffe1017ab8:	pop    %rsi</span><br><span class="line">   0x7fffe1017ab9:	pop    %rdi</span><br><span class="line">   0x7fffe1017aba:	cmp    %rax,%r15</span><br><span class="line">   0x7fffe1017abd:	je     0x7fffe1017ad7</span><br><span class="line">   0x7fffe1017ac3:	movabs $0x7ffff7311da0,%rdi</span><br><span class="line">   0x7fffe1017acd:	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">   0x7fffe1017ad1:	call   0x7ffff694f3c0 &lt;_ZN14MacroAssembler7debug64EPclPl&gt;</span><br><span class="line">   0x7fffe1017ad6:	hlt    </span><br><span class="line">   0x7fffe1017ad7:	pop    %rax</span><br><span class="line">   0x7fffe1017ad8:	movq   $0x0,0x2c0(%r15)</span><br><span class="line">   0x7fffe1017ae3:	movq   $0x0,0x2d0(%r15)</span><br><span class="line">   0x7fffe1017aee:	movq   $0x0,0x2c8(%r15)</span><br><span class="line">   0x7fffe1017af9:	vzeroupper </span><br><span class="line">   0x7fffe1017afc:	cmpq   $0x0,0x8(%r15)</span><br><span class="line">   0x7fffe1017b04:	je     0x7fffe1017b0f</span><br><span class="line">   0x7fffe1017b0a:	jmp    0x7fffe1000c20</span><br><span class="line">   0x7fffe1017b0f:	mov    -0x40(%rbp),%r13</span><br><span class="line">   0x7fffe1017b13:	mov    -0x38(%rbp),%r14</span><br><span class="line">   0x7fffe1017b17:	ret</span><br><span class="line">   0x7fffe1017b18:	mov    %rax,%rsi  ##       LP64_ONLY(__ mov(j_rarg0, rax));</span><br><span class="line">   0x7fffe1017b1b:	mov    -0x8(%rbp),%rdx  ##       __ movptr(sender_sp, Address(rbp, frame::interpreter_frame_sender_sp_offset * wordSize)); // get sender sp</span><br><span class="line">   0x7fffe1017b1f:	leave   ##       __ leave();                                // remove frame anchor</span><br><span class="line">   0x7fffe1017b20:	pop    %rcx  ##      __ pop(retaddr);                           // get return address</span><br><span class="line">   0x7fffe1017b21:	mov    %rdx,%rsp  ##       __ mov(rsp, sender_sp);                   // set sp to sender sp</span><br><span class="line">   0x7fffe1017b24:	and    $0xfffffffffffffff0,%rsp  ## // Ensure compiled code always sees stack at proper alignment   __ andptr(rsp, -(StackAlignmentInBytes));</span><br><span class="line">   0x7fffe1017b28:	push   %rcx   ##       // push the return address      __ push(retaddr);</span><br><span class="line">   0x7fffe1017b29:	jmp    *0xf8(%rbx)   ##         __ jmp(Address(rbx, nmethod::osr_entry_point_offset()));</span><br></pre></td></tr></table></figure>
+
+<h2 id="完整堆栈"><a href="#完整堆栈" class="headerlink" title="完整堆栈"></a>完整堆栈</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  TemplateTable::branch (is_jsr=false, is_wide=false)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/cpu/x86/templateTable_x86.cpp:2188</span><br><span class="line">#1  0x00007ffff6d74ce0 in TemplateTable::if_0cmp (cc=TemplateTable::equal)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/cpu/x86/templateTable_x86.cpp:2302</span><br><span class="line">#2  0x00007ffff6d66161 in Template::generate (</span><br><span class="line">    this=0x7ffff7bd8ce0 &lt;TemplateTable::_template_table+4896&gt;, </span><br><span class="line">    masm=0x7ffff0029588)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateTable.cpp:62</span><br><span class="line">#3  0x00007ffff6d59a3c in TemplateInterpreterGenerator::generate_and_dispatch (</span><br><span class="line">    this=0x7ffff59fea10, </span><br><span class="line">    t=0x7ffff7bd8ce0 &lt;TemplateTable::_template_table+4896&gt;, tos_out=vtos)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreterGenerator.cpp:380</span><br><span class="line">#4  0x00007ffff6d59572 in TemplateInterpreterGenerator::set_short_entry_points</span><br><span class="line">    (this=0x7ffff59fea10, </span><br><span class="line">    t=0x7ffff7bd8ce0 &lt;TemplateTable::_template_table+4896&gt;, </span><br><span class="line">    bep=@0x7ffff59fe398: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">    cep=@0x7ffff59fe3a0: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">    sep=@0x7ffff59fe3a8: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">    aep=@0x7ffff59fe3b0: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">    iep=@0x7ffff59fe3b8: 0x7fffe1017627 &quot;PSQRH\213M\330H\205\311\017\204g&quot;, </span><br><span class="line">    lep=@0x7ffff59fe3c0: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">    fep=@0x7ffff59fe3c8: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">    dep=@0x7ffff59fe3d0: 0x7fffe1008f14 &quot;H\277h\260N\367\377\177&quot;, </span><br><span class="line">    vep=@0x7ffff59fe3d8: 0x7fffe1017620 &quot;\213\004$H\203\304\bPSQRH\213M\330H\205\311\017\204g&quot;)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreterGenerator.cpp:344</span><br><span class="line">#5  0x00007ffff6d590ec in TemplateInterpreterGenerator::set_entry_points (</span><br><span class="line">    this=0x7ffff59fea10, code=Bytecodes::_ifeq)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreterGenerator.cpp:313</span><br><span class="line">#6  0x00007ffff6d58d4a in TemplateInterpreterGenerator::set_entry_points_for_all_bytes (this=0x7ffff59fea10)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreterGenerator.cpp:269</span><br><span class="line">#7  0x00007ffff6d5893a in TemplateInterpreterGenerator::generate_all (</span><br><span class="line">    this=0x7ffff59fea10)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreterGenerator.cpp:227</span><br><span class="line">#8  0x00007ffff6d57259 in TemplateInterpreterGenerator::TemplateInterpreterGenerator (this=0x7ffff59fea10, _code=0x7ffff00febe0)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreterGenerator.cpp:40</span><br><span class="line">#9  0x00007ffff6d55de4 in TemplateInterpreter::initialize_code ()</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/templateInterpreter.cpp:62</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">#10 0x00007ffff65cc48d in interpreter_init_code ()</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/interpreter/interpreter.cpp:137</span><br><span class="line">#11 0x00007ffff65a6d94 in init_globals ()</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/runtime/init.cpp:134</span><br><span class="line">#12 0x00007ffff6d8d1ca in Threads::create_vm (args=0x7ffff59fed50, </span><br><span class="line">    canTryAgain=0x7ffff59fec5b)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/runtime/thread.cpp:2843</span><br><span class="line">#13 0x00007ffff66b243b in JNI_CreateJavaVM_inner (vm=0x7ffff59feda8, </span><br><span class="line">    penv=0x7ffff59fedb0, args=0x7ffff59fed50)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/prims/jni.cpp:3613</span><br><span class="line">#14 0x00007ffff66b2787 in JNI_CreateJavaVM (vm=0x7ffff59feda8, </span><br><span class="line">    penv=0x7ffff59fedb0, args=0x7ffff59fed50)</span><br><span class="line">    at /home/dai/jdk/src/hotspot/share/prims/jni.cpp:3701</span><br><span class="line">#15 0x00007ffff7faca6a in InitializeJVM (pvm=0x7ffff59feda8, </span><br><span class="line">    penv=0x7ffff59fedb0, ifn=0x7ffff59fee00)</span><br><span class="line">    at /home/dai/jdk/src/java.base/share/native/libjli/java.c:1459</span><br><span class="line">#16 0x00007ffff7fa95ec in JavaMain (_args=0x7fffffffa9a0)</span><br><span class="line">    at /home/dai/jdk/src/java.base/share/native/libjli/java.c:411</span><br><span class="line">#17 0x00007ffff7fb05ec in ThreadJavaMain (args=0x7fffffffa9a0)</span><br><span class="line">    at /home/dai/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#18 0x00007ffff7c94b43 in start_thread (arg=&lt;optimized out&gt;)</span><br><span class="line">    at ./nptl/pthread_create.c:442</span><br><span class="line">#19 0x00007ffff7d26a00 in clone3 ()</span><br><span class="line">--Type &lt;RET&gt; for more, q to quit, c to continue without paging--</span><br><span class="line">    at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:81</span><br><span class="line">(gdb) info breakpoints </span><br><span class="line">Num     Type           Disp Enb Address            What</span><br><span class="line">1       breakpoint     keep y   0x00007ffff6d73852 in TemplateTable::branch(bool, bool) at /home/dai/jdk/src/hotspot/cpu/x86/templateTable_x86.cpp:2122</span><br><span class="line">	breakpoint already hit 1 time</span><br><span class="line">(gdb) p _masm-&gt;_code_section-&gt;_end</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/437592111">https://zhuanlan.zhihu.com/p/437592111</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/06/java-jdk-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E7%A9%BA%E6%8C%87%E9%92%88%E4%B8%8D%E9%80%80%E5%87%BA/" rel="prev" title="java jdk 为什么一个线程空指针不退出">
+      <i class="fa fa-chevron-left"></i> java jdk 为什么一个线程空指针不退出
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/10/elastic-search-%E7%BC%96%E8%AF%91%E5%92%8C%E8%B0%83%E8%AF%95/" rel="next" title="elastic search 编译和调试">
+      elastic search 编译和调试 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A"><span class="nav-number">2.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E5%A0%86%E6%A0%88"><span class="nav-number">3.</span> <span class="nav-text">完整堆栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

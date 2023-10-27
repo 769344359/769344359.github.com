@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="java的泛型java的泛型是什么?泛型是class&#x2F;interface&#x2F;method&#x2F;constructor的一个属性,简单来说是一个修饰符,所以当我们说java的泛型的时候,需要描述4个内容:class&#x2F;interface&#x2F;method&#x2F;constructor java 泛型术语表:    名称 翻译(我自己的翻译) 定义 来源 举例    parameteriz">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java generic">
+<meta property="og:url" content="https://shakudada.xyz/2023/07/30/java-generic/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="java的泛型java的泛型是什么?泛型是class&#x2F;interface&#x2F;method&#x2F;constructor的一个属性,简单来说是一个修饰符,所以当我们说java的泛型的时候,需要描述4个内容:class&#x2F;interface&#x2F;method&#x2F;constructor java 泛型术语表:    名称 翻译(我自己的翻译) 定义 来源 举例    parameteriz">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-30T05:56:58.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.890Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/07/30/java-generic/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java generic | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/07/30/java-generic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java generic
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-30 13:56:58" itemprop="dateCreated datePublished" datetime="2023-07-30T13:56:58+08:00">2023-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="java的泛型"><a href="#java的泛型" class="headerlink" title="java的泛型"></a>java的泛型</h2><p>java的泛型是什么?<br>泛型是class&#x2F;interface&#x2F;method&#x2F;constructor的一个属性,简单来说是一个修饰符,所以当我们说java的泛型的时候,需要描述4个内容:<code>class/interface/method/constructor</code></p>
+<h2 id="java-泛型"><a href="#java-泛型" class="headerlink" title="java 泛型"></a>java 泛型</h2><p>术语表:</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>翻译(我自己的翻译)</th>
+<th>定义</th>
+<th>来源</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>parameterized type</td>
+<td>参数化类型</td>
+<td>A parameterized type is a class or interface type of the form C&lt;T1,…,Tn&gt;, where C is the name of a generic class or interface, and &lt;T1,…,Tn&gt; is a list of type arguments that denote a particular parameterization of the generic class or interface.</td>
+<td><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.5">4.5</a></td>
+<td>List&lt;String&gt;</td>
+</tr>
+<tr>
+<td>TypeIdentifier</td>
+<td>类型标识符</td>
+<td>TypeIdentifier is used in the declaration of classes, interfaces,and type parameters (§8.1,§9.1, §4.4), and when referring to types (§6.5)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr>
+<td>type variable</td>
+<td>类型变量</td>
+<td>A type variable is an unqualified identifier used as a type in class, interface, method, and constructor bodies. A type variable is introduced by the declaration of a type parameter of a generic class, interface, method, or constructor (§8.1.2, §9.1.2, §8.4.4, §8.8.4)</td>
+<td>$4.4</td>
+<td>–</td>
+</tr>
+</tbody></table>
+<h3 id="类型参数和类型变量"><a href="#类型参数和类型变量" class="headerlink" title="类型参数和类型变量"></a>类型参数和类型变量</h3><p>两者的关系:<br>泛型参数由很多东西组成,其中泛型参数可以由泛型变量组成.</p>
+<h4 id="类型参数-type-parameter"><a href="#类型参数-type-parameter" class="headerlink" title="类型参数(type parameter)"></a>类型参数(type parameter)</h4><p>类型参数可以由类型变量构成</p>
+<h4 id="类变量-type-variable"><a href="#类变量-type-variable" class="headerlink" title="类变量(type variable)"></a>类变量(type variable)</h4><p>类型变量加上一些其他标识符(identifier)可以组成类型参数</p>
+<p><strong>什么是类型变量(type variable)</strong>:  </p>
+<blockquote>
+<p>A type variable is an unqualified identifier used as a type in class, interface, method,<br>and constructor bodies.</p>
+</blockquote>
+<p>类型变量是作用在类&#x2F;接口&#x2F;方法&#x2F;构造函数的标识符(identifier)</p>
+<p>所以得出结论:<br><code>类型变量是标识符</code></p>
+<h5 id="类型变量的作用"><a href="#类型变量的作用" class="headerlink" title="类型变量的作用"></a>类型变量的作用</h5><blockquote>
+<p>A type variable is introduced by the declaration of a type parameter of a generic<br>class, interface, method, or constructor</p>
+</blockquote>
+<h5 id="类型参数的作用域-type-parameter-scope"><a href="#类型参数的作用域-type-parameter-scope" class="headerlink" title="类型参数的作用域(type parameter scope)"></a>类型参数的作用域(type parameter scope)</h5><p>分为两部分:<br>作用在类&#x2F;接口是一类,另外一类是作用在构造函数&#x2F;方法的</p>
+<p>作用在类上的:</p>
+<blockquote>
+<p>The scope of a class’s type parameter (§8.1.2) is the type parameter section of<br>the class declaration, and the type parameter section of any superclass type or<br>superinterface type of the class declaration, and the class body. If the class is a<br>NAMES Scope of a Declaration 6.3<br>record class (§8.10), then the scope of the type parameter additionally includes the<br>header of the record declaration (§8.10.1).</p>
+</blockquote>
+<h3 id="泛型类、接口、方法、构造函数"><a href="#泛型类、接口、方法、构造函数" class="headerlink" title="泛型类、接口、方法、构造函数"></a>泛型类、接口、方法、构造函数</h3><p>关于泛型相关内容，分为四种：</p>
+<ul>
+<li>泛型类(generic class)</li>
+<li>泛型接口(generic interface)</li>
+<li>泛型方法(generic method)</li>
+<li>泛型构造函数(generic constructor)</li>
+</ul>
+<p>泛型类：</p>
+<blockquote>
+<p>A class is generic if the class declaration declares one or more type variables</p>
+</blockquote>
+<p>泛型构造函数：</p>
+<blockquote>
+<p>A constructor is generic if it declares one or more type variable</p>
+</blockquote>
+<p>泛型接口:</p>
+<blockquote>
+<p>An interface is generic if the interface declaration declares one or more type<br>variables</p>
+</blockquote>
+<p>泛型构造函数:</p>
+<blockquote>
+<p>A constructor is generic if it declares one or more type variables</p>
+</blockquote>
+<h3 id="类型实参-TypeArguments"><a href="#类型实参-TypeArguments" class="headerlink" title="类型实参 TypeArguments"></a>类型实参 TypeArguments</h3><h3 id="类型描述符-TypeIdentifier"><a href="#类型描述符-TypeIdentifier" class="headerlink" title="类型描述符  TypeIdentifier"></a>类型描述符  TypeIdentifier</h3><h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><p>泛型接口和泛型类是差不多,泛型构造函数和泛型方法是差不多.<br>所以我们只要区分泛型类和泛型方法的区别就行</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>java 的实现,我们可以直接看javac的源码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> *  &#123;@literal</span><br><span class="line"> *  TypeParametersOpt = [&quot;&lt;&quot; TypeParameter &#123;&quot;,&quot; TypeParameter&#125; &quot;&gt;&quot;]</span><br><span class="line"> *  &#125;</span><br><span class="line"> */</span><br><span class="line">protected List&lt;JCTypeParameter&gt; typeParametersOpt() &#123;</span><br><span class="line">    return typeParametersOpt(false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/**</span><br><span class="line"> *  &#123;@literal</span><br><span class="line"> *  TypeParameter = [Annotations] TypeVariable [TypeParameterBound]</span><br><span class="line"> *  TypeParameterBound = EXTENDS Type &#123;&quot;&amp;&quot; Type&#125;</span><br><span class="line"> *  TypeVariable = Ident</span><br><span class="line"> *  &#125;</span><br><span class="line"> */</span><br><span class="line">JCTypeParameter typeParameter() &#123;</span><br><span class="line">    int pos = token.pos;</span><br><span class="line">    List&lt;JCAnnotation&gt; annos = typeAnnotationsOpt();</span><br><span class="line">    Name name = typeName();</span><br><span class="line">    ListBuffer&lt;JCExpression&gt; bounds = new ListBuffer&lt;&gt;();</span><br><span class="line">    if (token.kind == EXTENDS) &#123;</span><br><span class="line">        nextToken();</span><br><span class="line">        bounds.append(parseType());</span><br><span class="line">        while (token.kind == AMP) &#123;</span><br><span class="line">            nextToken();</span><br><span class="line">            bounds.append(parseType());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return toP(F.at(pos).TypeParameter(name, bounds.toList(), annos));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Name typeName() &#123;</span><br><span class="line">    int pos = token.pos;</span><br><span class="line">    Name name = ident();</span><br><span class="line">    Source source = restrictedTypeNameStartingAtSource(name, pos, true);</span><br><span class="line">    if (source != null) &#123;</span><br><span class="line">        reportSyntaxError(pos, Errors.RestrictedTypeNotAllowed(name, source));</span><br><span class="line">    &#125;</span><br><span class="line">    return name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">protected Name ident(boolean allowClass) &#123;</span><br><span class="line">    if (token.kind == IDENTIFIER) &#123;</span><br><span class="line">        Name name = token.name();</span><br><span class="line">        nextToken();</span><br><span class="line">        return name;</span><br><span class="line">    &#125; else if (token.kind == ASSERT) &#123;</span><br><span class="line">        log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.AssertAsIdentifier);</span><br><span class="line">        nextToken();</span><br><span class="line">        return names.error;</span><br><span class="line">    &#125; else if (token.kind == ENUM) &#123;</span><br><span class="line">        log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.EnumAsIdentifier);</span><br><span class="line">        nextToken();</span><br><span class="line">        return names.error;</span><br><span class="line">    &#125; else if (token.kind == THIS) &#123;</span><br><span class="line">        if (allowThisIdent) &#123;</span><br><span class="line">            Name name = token.name();</span><br><span class="line">            nextToken();</span><br><span class="line">            return name;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.ThisAsIdentifier);</span><br><span class="line">            nextToken();</span><br><span class="line">            return names.error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else if (token.kind == UNDERSCORE) &#123;</span><br><span class="line">        if (Feature.UNDERSCORE_IDENTIFIER.allowedInSource(source)) &#123;</span><br><span class="line">            log.warning(token.pos, Warnings.UnderscoreAsIdentifier);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            log.error(DiagnosticFlag.SYNTAX, token.pos, Errors.UnderscoreAsIdentifier);</span><br><span class="line">        &#125;</span><br><span class="line">        Name name = token.name();</span><br><span class="line">        nextToken();</span><br><span class="line">        return name;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        accept(IDENTIFIER);</span><br><span class="line">        if (allowClass &amp;&amp; token.kind == CLASS) &#123;</span><br><span class="line">            nextToken();</span><br><span class="line">            return names._class;</span><br><span class="line">        &#125;</span><br><span class="line">        return names.error;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">main[1] stop in  com.sun.tools.javac.parser.Tokens$Token:315 </span><br><span class="line">Deferring breakpoint com.sun.tools.javac.parser.Tokens$Token:315.</span><br><span class="line">It will be set after the class is loaded.</span><br><span class="line">main[1] cont</span><br><span class="line">&gt; Set deferred breakpoint com.sun.tools.javac.parser.Tokens$Token:315</span><br><span class="line"></span><br><span class="line">Breakpoint hit: &quot;thread=main&quot;, com.sun.tools.javac.parser.Tokens$Token.&lt;init&gt;(), line=315 bci=14</span><br><span class="line">315                this.endPos = endPos;</span><br><span class="line"></span><br><span class="line">main[1] list </span><br><span class="line">311    </span><br><span class="line">312            Token(TokenKind kind, int pos, int endPos, List&lt;Comment&gt; comments) &#123;</span><br><span class="line">313                this.kind = kind;</span><br><span class="line">314                this.pos = pos;</span><br><span class="line">315 =&gt;             this.endPos = endPos;</span><br><span class="line">316                this.comments = comments;</span><br><span class="line">317                checkKind();</span><br><span class="line">318            &#125;</span><br><span class="line">319    </span><br><span class="line">320            Token[] split(Tokens tokens) &#123;</span><br><span class="line">main[1] where</span><br><span class="line">  [1] com.sun.tools.javac.parser.Tokens$Token.&lt;init&gt; (Tokens.java:315)</span><br><span class="line">  [2] com.sun.tools.javac.parser.Tokens.&lt;clinit&gt; (Tokens.java:457)</span><br><span class="line">  [3] com.sun.tools.javac.parser.ParserFactory.&lt;init&gt; (ParserFactory.java:79)</span><br><span class="line">  [4] com.sun.tools.javac.parser.ParserFactory.instance (ParserFactory.java:56)</span><br><span class="line">  [5] com.sun.tools.javac.main.JavaCompiler.&lt;init&gt; (JavaCompiler.java:386)</span><br><span class="line">  [6] com.sun.tools.javac.main.JavaCompiler.instance (JavaCompiler.java:115)</span><br><span class="line">  [7] com.sun.tools.javac.processing.JavacProcessingEnvironment.&lt;init&gt; (JavacProcessingEnvironment.java:215)</span><br><span class="line">  [8] com.sun.tools.javac.processing.JavacProcessingEnvironment.instance (JavacProcessingEnvironment.java:200)</span><br><span class="line">  [9] com.sun.tools.javac.api.BasicJavacTask.initPlugins (BasicJavacTask.java:217)</span><br><span class="line">  [10] com.sun.tools.javac.main.Main.compile (Main.java:292)</span><br><span class="line">  [11] com.sun.tools.javac.main.Main.compile (Main.java:176)</span><br><span class="line">  [12] com.sun.tools.javac.Main.compile (Main.java:64)</span><br><span class="line">  [13] com.sun.tools.javac.Main.main (Main.java:50)</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="如何调试"><a href="#如何调试" class="headerlink" title="如何调试"></a>如何调试</h3><p>窗口1: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">##  用javac 编译Hello.java</span><br><span class="line">./java  -agentlib:jdwp=transport=dt_socket,server=y,address=8000  --module jdk.compiler/com.sun.tools.javac.Main    com/Hello.java</span><br></pre></td></tr></table></figure>
+
+<p>窗口2:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">### jdb断点</span><br><span class="line">./jdb -attach 8000 -sourcepath   /var/jdk/src/jdk.compiler/share/classes</span><br><span class="line">### 在jdb中 断点main函数</span><br><span class="line">stop in com.sun.tools.javac.Main.main</span><br><span class="line">### 继续执行 命令是cont , 也可以是continue</span><br><span class="line">continue</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="泛型方法的代码"><a href="#泛型方法的代码" class="headerlink" title="泛型方法的代码"></a>泛型方法的代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class PARA&#123;</span><br><span class="line">    &lt;TT&gt; void test(TT para )&#123;</span><br><span class="line">        System.out.println(para);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>满足了这个parseRule</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ClassBodyDeclaration =</span><br><span class="line">    &quot;;&quot;</span><br><span class="line">  | [STATIC] Block</span><br><span class="line">  | ModifiersOpt</span><br><span class="line">    ( Type Ident</span><br><span class="line">      ( VariableDeclaratorsRest &quot;;&quot; | MethodDeclaratorRest )</span><br><span class="line">    | VOID Ident VoidMethodDeclaratorRest</span><br><span class="line">    | TypeParameters [Annotations]</span><br><span class="line">      ( Type Ident MethodDeclaratorRest</span><br><span class="line">      | VOID Ident VoidMethodDeclaratorRest</span><br><span class="line">      )</span><br><span class="line">    | Ident ConstructorDeclaratorRest</span><br><span class="line">    | TypeParameters Ident ConstructorDeclaratorRest</span><br><span class="line">    | ClassOrInterfaceOrEnumDeclaration</span><br><span class="line">    *      )</span><br></pre></td></tr></table></figure>
+
+<h3 id="堆栈"><a href="#堆栈" class="headerlink" title="堆栈"></a>堆栈</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint hit: &quot;thread=main&quot;, com.sun.tools.javac.parser.JavacParser.ident(), line=575 bci=0</span><br><span class="line">575            if (token.kind == IDENTIFIER) &#123;</span><br><span class="line"></span><br><span class="line">main[1] print token.name()</span><br><span class="line"> token.name() = &quot;TT&quot;</span><br><span class="line">main[1] where </span><br><span class="line">  [1] com.sun.tools.javac.parser.JavacParser.ident (JavacParser.java:575)</span><br><span class="line">  [2] com.sun.tools.javac.parser.JavacParser.ident (JavacParser.java:571)</span><br><span class="line">  [3] com.sun.tools.javac.parser.JavacParser.typeName (JavacParser.java:3,979)</span><br><span class="line">  [4] com.sun.tools.javac.parser.JavacParser.typeParameter (JavacParser.java:4,563)</span><br><span class="line">  [5] com.sun.tools.javac.parser.JavacParser.typeParametersOpt (JavacParser.java:4,541)</span><br><span class="line">  [6] com.sun.tools.javac.parser.JavacParser.classOrInterfaceOrRecordBodyDeclaration (JavacParser.java:4,277)</span><br><span class="line">  [7] com.sun.tools.javac.parser.JavacParser.classInterfaceOrRecordBody (JavacParser.java:4,214)</span><br><span class="line">  [8] com.sun.tools.javac.parser.JavacParser.classDeclaration (JavacParser.java:3,925)</span><br><span class="line">  [9] com.sun.tools.javac.parser.JavacParser.classOrRecordOrInterfaceOrEnumDeclaration (JavacParser.java:3,866)</span><br><span class="line">  [10] com.sun.tools.javac.parser.JavacParser.typeDeclaration (JavacParser.java:3,855)</span><br><span class="line">  [11] com.sun.tools.javac.parser.JavacParser.parseCompilationUnit (JavacParser.java:3,699)</span><br><span class="line">  [12] com.sun.tools.javac.main.JavaCompiler.parse (JavaCompiler.java:620)</span><br><span class="line">  [13] com.sun.tools.javac.main.JavaCompiler.parse (JavaCompiler.java:657)</span><br><span class="line">  [14] com.sun.tools.javac.main.JavaCompiler.parseFiles (JavaCompiler.java:1,006)</span><br><span class="line">  [15] com.sun.tools.javac.main.JavaCompiler.parseFiles (JavaCompiler.java:993)</span><br><span class="line">  [16] com.sun.tools.javac.main.JavaCompiler.compile (JavaCompiler.java:919)</span><br><span class="line">  [17] com.sun.tools.javac.main.Main.compile (Main.java:317)</span><br><span class="line">  [18] com.sun.tools.javac.main.Main.compile (Main.java:176)</span><br><span class="line">  [19] com.sun.tools.javac.Main.compile (Main.java:64)</span><br><span class="line">  [20] com.sun.tools.javac.Main.main (Main.java:50)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">main[1] print kind </span><br><span class="line"> kind  = &quot;token.identifier&quot;</span><br><span class="line">main[1] print pos </span><br><span class="line"> pos  = 13</span><br><span class="line">main[1] list </span><br><span class="line">311    </span><br><span class="line">312            Token(TokenKind kind, int pos, int endPos, List&lt;Comment&gt; comments) &#123;</span><br><span class="line">313                this.kind = kind;</span><br><span class="line">314                this.pos = pos;</span><br><span class="line">315 =&gt;             this.endPos = endPos;</span><br><span class="line">316                this.comments = comments;</span><br><span class="line">317                checkKind();</span><br><span class="line">318            &#125;</span><br><span class="line">319    </span><br><span class="line">320            Token[] split(Tokens tokens) &#123;</span><br><span class="line">main[1] where </span><br><span class="line">  [1] com.sun.tools.javac.parser.Tokens$Token.&lt;init&gt; (Tokens.java:315)</span><br><span class="line">  [2] com.sun.tools.javac.parser.Tokens$NamedToken.&lt;init&gt; (Tokens.java:399)</span><br><span class="line">  [3] com.sun.tools.javac.parser.JavaTokenizer.readToken (JavaTokenizer.java:1,046)</span><br><span class="line">  [4] com.sun.tools.javac.parser.Scanner.nextToken (Scanner.java:115)</span><br><span class="line">  [5] com.sun.tools.javac.parser.JavacParser.nextToken (JavacParser.java:275)</span><br><span class="line">  [6] com.sun.tools.javac.parser.JavacParser.typeParametersOpt (JavacParser.java:4,540)</span><br><span class="line">  [7] com.sun.tools.javac.parser.JavacParser.classOrInterfaceOrRecordBodyDeclaration (JavacParser.java:4,277)</span><br><span class="line">  [8] com.sun.tools.javac.parser.JavacParser.classInterfaceOrRecordBody (JavacParser.java:4,214)</span><br><span class="line">  [9] com.sun.tools.javac.parser.JavacParser.classDeclaration (JavacParser.java:3,925)</span><br><span class="line">  [10] com.sun.tools.javac.parser.JavacParser.classOrRecordOrInterfaceOrEnumDeclaration (JavacParser.java:3,866)</span><br><span class="line">  [11] com.sun.tools.javac.parser.JavacParser.typeDeclaration (JavacParser.java:3,855)</span><br><span class="line">  [12] com.sun.tools.javac.parser.JavacParser.parseCompilationUnit (JavacParser.java:3,699)</span><br><span class="line">  [13] com.sun.tools.javac.main.JavaCompiler.parse (JavaCompiler.java:620)</span><br><span class="line">  [14] com.sun.tools.javac.main.JavaCompiler.parse (JavaCompiler.java:657)</span><br><span class="line">  [15] com.sun.tools.javac.main.JavaCompiler.parseFiles (JavaCompiler.java:1,006)</span><br><span class="line">  [16] com.sun.tools.javac.main.JavaCompiler.parseFiles (JavaCompiler.java:993)</span><br><span class="line">  [17] com.sun.tools.javac.main.JavaCompiler.compile (JavaCompiler.java:919)</span><br><span class="line">  [18] com.sun.tools.javac.main.Main.compile (Main.java:317)</span><br><span class="line">  [19] com.sun.tools.javac.main.Main.compile (Main.java:176)</span><br><span class="line">  [20] com.sun.tools.javac.Main.compile (Main.java:64)</span><br><span class="line">  [21] com.sun.tools.javac.Main.main (Main.java:50)</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jls/se17/jls17.pdf#page=326&zoom=100,96,713">https://docs.oracle.com/javase/specs/jls/se17/jls17.pdf#page=326&amp;zoom=100,96,713</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/16/System-arraycopy-in-java/" rel="prev" title="System.arraycopy in java">
+      <i class="fa fa-chevron-left"></i> System.arraycopy in java
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/04/java-nio/" rel="next" title="java nio">
+      java nio <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E7%9A%84%E6%B3%9B%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">java的泛型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java-%E6%B3%9B%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">java 泛型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0%E5%92%8C%E7%B1%BB%E5%9E%8B%E5%8F%98%E9%87%8F"><span class="nav-number">2.1.</span> <span class="nav-text">类型参数和类型变量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0-type-parameter"><span class="nav-number">2.1.1.</span> <span class="nav-text">类型参数(type parameter)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B1%BB%E5%8F%98%E9%87%8F-type-variable"><span class="nav-number">2.1.2.</span> <span class="nav-text">类变量(type variable)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">类型变量的作用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%8F%82%E6%95%B0%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F-type-parameter-scope"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">类型参数的作用域(type parameter scope)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E7%B1%BB%E3%80%81%E6%8E%A5%E5%8F%A3%E3%80%81%E6%96%B9%E6%B3%95%E3%80%81%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">泛型类、接口、方法、构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%AE%9E%E5%8F%82-TypeArguments"><span class="nav-number">2.3.</span> <span class="nav-text">类型实参 TypeArguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6-TypeIdentifier"><span class="nav-number">2.4.</span> <span class="nav-text">类型描述符  TypeIdentifier</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%B0%83%E8%AF%95"><span class="nav-number">3.2.</span> <span class="nav-text">如何调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B%E6%96%B9%E6%B3%95%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="nav-number">3.3.</span> <span class="nav-text">泛型方法的代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E6%A0%88"><span class="nav-number">3.4.</span> <span class="nav-text">堆栈</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">4.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景想要熟悉clickhouse的内容。 实现123456789101112131415161718192021## &#x2F;ClickHouse&#x2F;src&#x2F;Functions&#x2F;isNaN.cpp## 添加一个structstruct testtrue&amp;#123;    static constexpr auto name &#x3D; &quot;testtrue&quot;;    ##函数名    templ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="clickhouse function">
+<meta property="og:url" content="https://shakudada.xyz/2022/06/01/clickhouse-function/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景想要熟悉clickhouse的内容。 实现123456789101112131415161718192021## &#x2F;ClickHouse&#x2F;src&#x2F;Functions&#x2F;isNaN.cpp## 添加一个structstruct testtrue&amp;#123;    static constexpr auto name &#x3D; &quot;testtrue&quot;;    ##函数名    templ">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-01T00:19:30.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.873Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="clickhouse">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2022/06/01/clickhouse-function/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>clickhouse function | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2022/06/01/clickhouse-function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          clickhouse function
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-06-01 08:19:30" itemprop="dateCreated datePublished" datetime="2022-06-01T08:19:30+08:00">2022-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>想要熟悉clickhouse的内容。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">## /ClickHouse/src/Functions/isNaN.cpp</span><br><span class="line">## 添加一个struct</span><br><span class="line">struct testtrue</span><br><span class="line">&#123;</span><br><span class="line">    static constexpr auto name = &quot;testtrue&quot;;    ##函数名</span><br><span class="line">    template &lt;typename T&gt;</span><br><span class="line">    static bool execute(const T t)     ### 执行回调</span><br><span class="line">    &#123;</span><br><span class="line">        /// Suppression for PVS-Studio.</span><br><span class="line">        return true || t;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">### 起别名</span><br><span class="line">using FunctionTestTure = FunctionNumericPredicate&lt;testtrue&gt;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void registerFunctionIsNaN(FunctionFactory &amp; factory)</span><br><span class="line">&#123;</span><br><span class="line">    factory.registerFunction&lt;FunctionIsNaN&gt;();</span><br><span class="line">    factory.registerFunction&lt;FunctionTestTure&gt;();  ### 回调注册这个函数</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重新编译并调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SELECT testtrue(2)</span><br><span class="line"></span><br><span class="line">Query id: 87e4625d-8b79-4c3a-8153-b333d6a0614f</span><br><span class="line"></span><br><span class="line">┌─testtrue(2)─┐</span><br><span class="line">│           1 │</span><br><span class="line">└─────────────┘</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="注册路径"><a href="#注册路径" class="headerlink" title="注册路径"></a>注册路径</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(lldb) bt</span><br><span class="line">* thread #1, name = &#x27;clickhouse-serv&#x27;, stop reason = breakpoint 1.1</span><br><span class="line">  * frame #0: 0x00000000148ee2ac clickhouse-server`DB::registerFunctionIsNaN(factory=0x000000002f984a50) at isNaN.cpp:43:5</span><br><span class="line">    frame #1: 0x0000000010339e2c clickhouse-server`DB::registerFunctionsMiscellaneous(factory=0x000000002f984a50) at registerFunctionsMiscellaneous.cpp:128:5</span><br><span class="line">    frame #2: 0x00000000103391a0 clickhouse-server`DB::registerFunctions() at registerFunctions.cpp:96:5</span><br><span class="line">    frame #3: 0x000000000d063d35 clickhouse-server`DB::Server::main(this=0x00007fffffffd9b8, (null)=size=0) at Server.cpp:623:5</span><br><span class="line">    frame #4: 0x00000000230abec5 clickhouse-server`Poco::Util::Application::run(this=0x00007fffffffd9b8) at Application.cpp:334:8</span><br><span class="line">    frame #5: 0x000000000d06250b clickhouse-server`DB::Server::run(this=0x00007fffffffd9b8) at Server.cpp:461:25</span><br><span class="line">    frame #6: 0x00000000230c6c70 clickhouse-server`Poco::Util::ServerApplication::run(this=0x00007fffffffd9b8, argc=1, argv=0x00007ffff70f7038) at ServerApplication.cpp:611:9</span><br><span class="line">    frame #7: 0x000000000d05f8e1 clickhouse-server`mainEntryClickHouseServer(argc=1, argv=0x00007ffff70f7038) at Server.cpp:187:20</span><br><span class="line">    frame #8: 0x000000000cf7fe63 clickhouse-server`main(argc_=1, argv_=0x00007fffffffdfb8) at main.cpp:409:12</span><br><span class="line">    frame #9: 0x00007ffff7d92d90 libc.so.6`__libc_start_call_main(main=(clickhouse-server`main at main.cpp:380), argc=1, argv=0x00007fffffffdfb8) at libc_start_call_main.h:58:16</span><br><span class="line">    frame #10: 0x00007ffff7d92e40 libc.so.6`__libc_start_main_impl(main=(clickhouse-server`main at main.cpp:380), argc=1, argv=0x00007fffffffdfb8, init=0x00007ffff7ffd040, fini=&lt;unavailable&gt;, rtld_fini=&lt;unavailable&gt;, stack_end=0x00007fffffffdfa8) at libc-start.c:392:3</span><br><span class="line">    frame #11: 0x000000000cf7fb55 clickhouse-server`_start + 37</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="函数调用路径"><a href="#函数调用路径" class="headerlink" title="函数调用路径"></a>函数调用路径</h2><p>lldb 调试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(lldb) b DB::(anonymous namespace)::testtrue::execute</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>调用堆栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">(lldb) bt</span><br><span class="line">* thread #3, name = &#x27;TCPHandler&#x27;, stop reason = breakpoint 3.1</span><br><span class="line">  * frame #0: 0x00000000148f3dca clickhouse-server`bool DB::(anonymous namespace)::testtrue::execute&lt;char8_t&gt;(t=0x02 u8&#x27;\U00000002&#x27;) at isNaN.cpp:28:9</span><br><span class="line">    frame #1: 0x00000000148f29dd clickhouse-server`COW&lt;DB::IColumn&gt;::immutable_ptr&lt;DB::IColumn&gt; DB::FunctionNumericPredicate&lt;DB::(anonymous namespace)::testtrue&gt;::execute&lt;char8_t&gt;(this=0x00007fff1e44db58, in_untyped=0x00007fff1e447820) const at FunctionNumericPredicate.h:89:31</span><br><span class="line">    frame #2: 0x00000000148f1e8a clickhouse-server`DB::FunctionNumericPredicate&lt;DB::(anonymous namespace)::testtrue&gt;::executeImpl(this=0x00007fff1e44db58, arguments=size=1, (null)=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, (null)=1) const at FunctionNumericPredicate.h:61:22</span><br><span class="line">    frame #3: 0x00000000103a611c clickhouse-server`DB::IFunction::executeImplDryRun(this=0x00007fff1e44db58, arguments=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1) const at IFunction.h:395:16</span><br><span class="line">    frame #4: 0x00000000103a484d clickhouse-server`DB::FunctionToExecutableFunctionAdaptor::executeDryRunImpl(this=0x00007fff1e44dba0, arguments=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1) const at IFunctionAdaptors.h:26:26</span><br><span class="line">    frame #5: 0x000000001a8fa3d9 clickhouse-server`DB::IExecutableFunction::executeWithoutLowCardinalityColumns(this=0x00007fff1e44dba0, args=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1, dry_run=true) const at IFunction.cpp:217:15</span><br><span class="line">    frame #6: 0x000000001a8fa00a clickhouse-server`DB::IExecutableFunction::defaultImplementationForConstantArguments(this=0x00007fff1e44dba0, args=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1, dry_run=true) const at IFunction.cpp:160:31</span><br><span class="line">    frame #7: 0x000000001a8fa2c4 clickhouse-server`DB::IExecutableFunction::executeWithoutLowCardinalityColumns(this=0x00007fff1e44dba0, args=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1, dry_run=true) const at IFunction.cpp:209:20</span><br><span class="line">    frame #8: 0x000000001a8faf55 clickhouse-server`DB::IExecutableFunction::executeWithoutSparseColumns(this=0x00007fff1e44dba0, arguments=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1, dry_run=true) const at IFunction.cpp:267:22</span><br><span class="line">    frame #9: 0x000000001a8fbe43 clickhouse-server`DB::IExecutableFunction::execute(this=0x00007fff1e44dba0, arguments=size=1, result_type=std::__1::shared_ptr&lt;const DB::IDataType&gt;::element_type @ 0x00007fff1e4899c8 strong=2 weak=2, input_rows_count=1, dry_run=true) const at IFunction.cpp:337:16</span><br><span class="line">    frame #10: 0x000000001b02a7b8 clickhouse-server`DB::ActionsDAG::addFunction(this=0x00007fff1e4ac248, function=std::__1::shared_ptr&lt;DB::IFunctionOverloadResolver&gt;::element_type @ 0x00007fff1e44dde0 strong=2 weak=1, children=size=0, result_name=&quot;testtrue(2)&quot;) at ActionsDAG.cpp:199:37</span><br><span class="line">    frame #11: 0x000000001cdad1a1 clickhouse-server`DB::ScopeStack::addFunction(this=0x00007fff2d1e96f0, function=std::__1::shared_ptr&lt;DB::IFunctionOverloadResolver&gt;::element_type @ 0x00007fff1e44dde0 strong=2 weak=1, argument_names=size=1, result_name=&quot;&quot;) at ActionsVisitor.cpp:598:51</span><br><span class="line">    frame #12: 0x000000001cdb7485 clickhouse-server`DB::ActionsMatcher::Data::addFunction(this=0x00007fff2d1e9698, function=std::__1::shared_ptr&lt;DB::IFunctionOverloadResolver&gt;::element_type @ 0x00007fff1e44dde0 strong=2 weak=1, argument_names=size=1, result_name=&lt;unavailable&gt;) at ActionsVisitor.h:140:27</span><br><span class="line">    frame #13: 0x000000001cdb0a2b clickhouse-server`DB::ActionsMatcher::visit(node=0x00007fff2a45c9b8, ast=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff2a45c9b8 strong=1 weak=2, data=0x00007fff2d1e9698) at ActionsVisitor.cpp:1093:14</span><br><span class="line">    frame #14: 0x000000001cdad64d clickhouse-server`DB::ActionsMatcher::visit(ast=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff2a45c9b8 strong=1 weak=2, data=0x00007fff2d1e9698) at ActionsVisitor.cpp:655:9</span><br><span class="line">    frame #15: 0x000000001cdb125c clickhouse-server`DB::ActionsMatcher::visit(expression_list=0x00007fff1e4895b8, (null)=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e4895b8 strong=2 weak=2, data=0x00007fff2d1e9698) at ActionsVisitor.cpp:763:17</span><br><span class="line">    frame #16: 0x000000001cdad6b9 clickhouse-server`DB::ActionsMatcher::visit(ast=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e4895b8 strong=2 weak=2, data=0x00007fff2d1e9698) at ActionsVisitor.cpp:659:9</span><br><span class="line">    frame #17: 0x000000001b1ebce5 clickhouse-server`DB::InDepthNodeVisitor&lt;DB::ActionsMatcher, true, false, std::__1::shared_ptr&lt;DB::IAST&gt; const&gt;::visit(this=0x00007fff2d1e9638, ast=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e4895b8 strong=2 weak=2) at InDepthNodeVisitor.h:34:13</span><br><span class="line">    frame #18: 0x000000001b1dc0ea clickhouse-server`DB::ExpressionAnalyzer::getRootActions(this=0x00007fff1e47f780, ast=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e4895b8 strong=2 weak=2, no_makeset_for_subqueries=false, actions=nullptr, only_consts=false) at ExpressionAnalyzer.cpp:587:48</span><br><span class="line">    frame #19: 0x000000001b1e2f9e clickhouse-server`DB::SelectQueryExpressionAnalyzer::appendSelect(this=0x00007fff1e47f780, chain=0x00007fff2d1ea5a0, only_types=false) at ExpressionAnalyzer.cpp:1383:5</span><br><span class="line">    frame #20: 0x000000001b1e6da8 clickhouse-server`DB::ExpressionAnalysisResult::ExpressionAnalysisResult(this=0x00007fff2d1eaa88, query_analyzer=0x00007fff1e47f780, metadata_snapshot=std::__1::shared_ptr&lt;const DB::StorageInMemoryMetadata&gt;::element_type @ 0x00007ffff705a800 strong=4 weak=1, first_stage_=true, second_stage_=true, only_types=false, filter_info_=nullptr, source_header=0x00007fff1e4c9550) at ExpressionAnalyzer.cpp:1830:24</span><br><span class="line">    frame #21: 0x000000001b57ab9d clickhouse-server`DB::InterpreterSelectQuery::getSampleBlockImpl(this=0x00007fff1e4c9000) at InterpreterSelectQuery.cpp:692:23</span><br><span class="line">    frame #22: 0x000000001b5747f9 clickhouse-server`DB::InterpreterSelectQuery::InterpreterSelectQuery(this=0x00007fff2d1ec148, try_move_to_prewhere=true)::$_1::operator()(bool) const at InterpreterSelectQuery.cpp:552:25</span><br><span class="line">    frame #23: 0x000000001b5709f6 clickhouse-server`DB::InterpreterSelectQuery::InterpreterSelectQuery(this=0x00007fff1e4c9000, query_ptr_=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48e198 strong=1 weak=2, context_=std::__1::shared_ptr&lt;const DB::Context&gt;::element_type @ 0x00007fff1e495000 strong=3 weak=2, input_pipe_= Has Value=false , storage_=nullptr, options_=0x00007fff1e461770, required_result_column_names=size=0, metadata_snapshot_=nullptr, subquery_for_sets_=size=0, prepared_sets_=size=0) at InterpreterSelectQuery.cpp:555:5</span><br><span class="line">    frame #24: 0x000000001b56edf3 clickhouse-server`DB::InterpreterSelectQuery::InterpreterSelectQuery(this=0x00007fff1e4c9000, query_ptr_=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48e198 strong=1 weak=2, context_=std::__1::shared_ptr&lt;const DB::Context&gt;::element_type @ 0x00007fff1e495000 strong=3 weak=2, options_=0x00007fff1e461770, required_result_column_names_=size=0) at InterpreterSelectQuery.cpp:165:7</span><br><span class="line">    frame #25: 0x000000001b5f4ce5 clickhouse-server`std::__1::__unique_if&lt;DB::InterpreterSelectQuery&gt;::__unique_single std::__1::make_unique&lt;DB::InterpreterSelectQuery, std::__1::shared_ptr&lt;DB::IAST&gt; const&amp;, std::__1::shared_ptr&lt;DB::Context&gt;&amp;, DB::SelectQueryOptions&amp;, std::__1::vector&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, std::__1::allocator&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;&gt;(__args=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48e198 strong=1 weak=2, __args=std::__1::shared_ptr&lt;DB::Context&gt;::element_type @ 0x00007fff1e495000 strong=3 weak=2, __args=0x00007fff1e461770, __args=size=0) at unique_ptr.h:725:32</span><br><span class="line">    frame #26: 0x000000001b5f2d09 clickhouse-server`DB::InterpreterSelectWithUnionQuery::buildCurrentChildInterpreter(this=0x00007fff1e461700, ast_ptr_=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48e198 strong=1 weak=2, current_required_result_column_names=size=0) at InterpreterSelectWithUnionQuery.cpp:223:16</span><br><span class="line">    frame #27: 0x000000001b5f23ed clickhouse-server`DB::InterpreterSelectWithUnionQuery::InterpreterSelectWithUnionQuery(this=0x00007fff1e461700, query_ptr_=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48f218 strong=2 weak=2, context_=std::__1::shared_ptr&lt;const DB::Context&gt;::element_type @ 0x00007fff1e492800 strong=5 weak=9, options_=0x00007fff2d1ef588, required_result_column_names=size=0) at InterpreterSelectWithUnionQuery.cpp:140:13</span><br><span class="line">    frame #28: 0x000000001b53b830 clickhouse-server`std::__1::__unique_if&lt;DB::InterpreterSelectWithUnionQuery&gt;::__unique_single std::__1::make_unique&lt;DB::InterpreterSelectWithUnionQuery, std::__1::shared_ptr&lt;DB::IAST&gt;&amp;, std::__1::shared_ptr&lt;DB::Context&gt;&amp;, DB::SelectQueryOptions const&amp;&gt;(__args=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48f218 strong=2 weak=2, __args=std::__1::shared_ptr&lt;DB::Context&gt;::element_type @ 0x00007fff1e492800 strong=5 weak=9, __args=0x00007fff2d1ef588) at unique_ptr.h:725:32</span><br><span class="line">    frame #29: 0x000000001b539e5d clickhouse-server`DB::InterpreterFactory::get(query=std::__1::shared_ptr&lt;DB::IAST&gt;::element_type @ 0x00007fff1e48f218 strong=2 weak=2, context=std::__1::shared_ptr&lt;DB::Context&gt;::element_type @ 0x00007fff1e492800 strong=5 weak=9, options=0x00007fff2d1ef588) at InterpreterFactory.cpp:122:16</span><br><span class="line">    frame #30: 0x000000001b961577 clickhouse-server`DB::executeQueryImpl(begin=&quot;select testtrue(2);&quot;, end=&quot;&quot;, context=std::__1::shared_ptr&lt;DB::Context&gt;::element_type @ 0x00007fff1e492800 strong=5 weak=9, internal=false, stage=Complete, istr=0x0000000000000000) at executeQuery.cpp:658:27</span><br><span class="line">    frame #31: 0x000000001b95ee64 clickhouse-server`DB::executeQuery(query=&quot;select testtrue(2);&quot;, context=std::__1::shared_ptr&lt;DB::Context&gt;::element_type @ 0x00007fff1e492800 strong=5 weak=9, internal=false, stage=Complete) at executeQuery.cpp:1067:30</span><br><span class="line">    frame #32: 0x000000001c590f25 clickhouse-server`DB::TCPHandler::runImpl(this=0x00007fff1e46e000) at TCPHandler.cpp:332:24</span><br><span class="line">    frame #33: 0x000000001c59f9e5 clickhouse-server`DB::TCPHandler::run(this=0x00007fff1e46e000) at TCPHandler.cpp:1781:9</span><br><span class="line">    frame #34: 0x0000000023091f79 clickhouse-server`Poco::Net::TCPServerConnection::start(this=0x00007fff1e46e000) at TCPServerConnection.cpp:43:3</span><br><span class="line">    frame #35: 0x0000000023092786 clickhouse-server`Poco::Net::TCPServerDispatcher::run(this=0x00007fff26648600) at TCPServerDispatcher.cpp:115:20</span><br><span class="line">    frame #36: 0x00000000232d2a94 clickhouse-server`Poco::PooledThread::run(this=0x00007ffff702df80) at ThreadPool.cpp:199:14</span><br><span class="line">    frame #37: 0x00000000232cf5ba clickhouse-server`Poco::(anonymous namespace)::RunnableHolder::run(this=0x00007ffff7001330) at Thread.cpp:55:11</span><br><span class="line">    frame #38: 0x00000000232ce39e clickhouse-server`Poco::ThreadImpl::runnableEntry(pThread=0x00007ffff702dfb8) at Thread_POSIX.cpp:345:27</span><br><span class="line">    frame #39: 0x00007ffff7dfdb43 libc.so.6`start_thread(arg=&lt;unavailable&gt;) at pthread_create.c:442:8</span><br><span class="line">    frame #40: 0x00007ffff7e8fa00 libc.so.6`__clone3 at clone3.S:81</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="function的实现"><a href="#function的实现" class="headerlink" title="function的实现"></a>function的实现</h2><p>所有函数都是继承<code>IFunction</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">## ClickHouse/src/Functions/IFunction.h</span><br><span class="line"></span><br><span class="line">class IFunction</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line"></span><br><span class="line">    virtual ~IFunction() = default;</span><br><span class="line"></span><br><span class="line">    virtual String getName() const = 0;</span><br><span class="line"></span><br><span class="line">    virtual ColumnPtr executeImpl(const ColumnsWithTypeAndName &amp; arguments, const DataTypePtr &amp; result_type, size_t input_rows_count) const = 0;</span><br><span class="line">    virtual ColumnPtr executeImplDryRun(const ColumnsWithTypeAndName &amp; arguments, const DataTypePtr &amp; result_type, size_t input_rows_count) const</span><br><span class="line">    &#123;</span><br><span class="line">        return executeImpl(arguments, result_type, input_rows_count);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">using FunctionPtr = std::shared_ptr&lt;IFunction&gt;;</span><br></pre></td></tr></table></figure>
+<p>核心是<code>virtual</code>方法<code>executeImpl</code></p>
+<p>看看实现的模板类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">## ClickHouse/src/Functions/FunctionNumericPredicate.h</span><br><span class="line">    ColumnPtr executeImpl(const ColumnsWithTypeAndName &amp; arguments, const DataTypePtr &amp;, size_t /*input_rows_count*/) const override</span><br><span class="line">    &#123;</span><br><span class="line">        const auto * in = arguments.front().column.get();</span><br><span class="line"></span><br><span class="line">        ColumnPtr res;</span><br><span class="line">        if (!((res = execute&lt;UInt8&gt;(in))</span><br><span class="line">            || (res = execute&lt;UInt16&gt;(in))</span><br><span class="line">            || (res = execute&lt;UInt32&gt;(in))</span><br><span class="line">            || (res = execute&lt;UInt64&gt;(in))</span><br><span class="line">            || (res = execute&lt;Int8&gt;(in))</span><br><span class="line">            || (res = execute&lt;Int16&gt;(in))</span><br><span class="line">            || (res = execute&lt;Int32&gt;(in))</span><br><span class="line">            || (res = execute&lt;Int64&gt;(in))</span><br><span class="line">            || (res = execute&lt;Float32&gt;(in))</span><br><span class="line">            || (res = execute&lt;Float64&gt;(in))))</span><br><span class="line">            throw Exception&#123;&quot;Illegal column &quot; + in-&gt;getName() + &quot; of first argument of function &quot; + getName(), ErrorCodes::ILLEGAL_COLUMN&#125;;</span><br><span class="line"></span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    template &lt;typename T&gt;</span><br><span class="line">    ColumnPtr execute(const IColumn * in_untyped) const</span><br><span class="line">    &#123;</span><br><span class="line">        if (const auto in = checkAndGetColumn&lt;ColumnVector&lt;T&gt;&gt;(in_untyped))</span><br><span class="line">        &#123;</span><br><span class="line">            const auto size = in-&gt;size();</span><br><span class="line"></span><br><span class="line">            auto out = ColumnUInt8::create(size);</span><br><span class="line"></span><br><span class="line">            const auto &amp; in_data = in-&gt;getData();</span><br><span class="line">            auto &amp; out_data = out-&gt;getData();</span><br><span class="line"></span><br><span class="line">            for (const auto i : collections::range(0, size))</span><br><span class="line">                out_data[i] = Impl::execute(in_data[i]);</span><br><span class="line"></span><br><span class="line">            return out;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return nullptr;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/clickhouse/" rel="tag"># clickhouse</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/22/clickhouse-%E8%AF%B7%E6%B1%82%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" rel="prev" title="clickhouse  请求的生命周期">
+      <i class="fa fa-chevron-left"></i> clickhouse  请求的生命周期
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/06/19/lucene-%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85/" rel="next" title="lucene 编译安装">
+      lucene 编译安装 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%86%8C%E8%B7%AF%E5%BE%84"><span class="nav-number">3.</span> <span class="nav-text">注册路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%B7%AF%E5%BE%84"><span class="nav-number">4.</span> <span class="nav-text">函数调用路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#function%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">function的实现</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

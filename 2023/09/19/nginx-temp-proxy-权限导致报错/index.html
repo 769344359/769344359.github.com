@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景线上有个服务,本来请求路径是PHP -&gt; NGINX -&gt; PHP需要做项目迁移,迁移到PHP-&gt; NGINX -&gt; JAVA, 也就是将请求的服务从php改成请求java 排查错误复现上线后php请求java的接口报错cURL error 18: transfer closed with outstanding read data remaining , 排查之后发现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx temp_proxy 权限导致报错">
+<meta property="og:url" content="https://shakudada.xyz/2023/09/19/nginx-temp-proxy-%E6%9D%83%E9%99%90%E5%AF%BC%E8%87%B4%E6%8A%A5%E9%94%99/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景线上有个服务,本来请求路径是PHP -&gt; NGINX -&gt; PHP需要做项目迁移,迁移到PHP-&gt; NGINX -&gt; JAVA, 也就是将请求的服务从php改成请求java 排查错误复现上线后php请求java的接口报错cURL error 18: transfer closed with outstanding read data remaining , 排查之后发现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn4.shakudada.xyz/2023/09/ea259a6563711b3c960ad7f467372b11.png">
+<meta property="og:image" content="https://cdn4.shakudada.xyz/2023/09/fc5b85d80aaabb87c1ba222e59c5cc28.png">
+<meta property="article:published_time" content="2023-09-19T10:47:04.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.920Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="curl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn4.shakudada.xyz/2023/09/ea259a6563711b3c960ad7f467372b11.png">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/09/19/nginx-temp-proxy-%E6%9D%83%E9%99%90%E5%AF%BC%E8%87%B4%E6%8A%A5%E9%94%99/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>nginx temp_proxy 权限导致报错 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/09/19/nginx-temp-proxy-%E6%9D%83%E9%99%90%E5%AF%BC%E8%87%B4%E6%8A%A5%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          nginx temp_proxy 权限导致报错
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-19 18:47:04" itemprop="dateCreated datePublished" datetime="2023-09-19T18:47:04+08:00">2023-09-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>线上有个服务,本来请求路径是<br><code>PHP -&gt; NGINX -&gt; PHP</code><br>需要做项目迁移,迁移到<br><code>PHP-&gt; NGINX -&gt; JAVA</code>, 也就是将请求的服务从php改成请求java</p>
+<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><h3 id="错误复现"><a href="#错误复现" class="headerlink" title="错误复现"></a>错误复现</h3><p>上线后php请求java的接口报错<code>cURL error 18: transfer closed with outstanding read data remaining</code> , 排查之后发现java有个socket rest</p>
+<h3 id="排查java-错误"><a href="#排查java-错误" class="headerlink" title="排查java 错误"></a>排查java 错误</h3><p>查看java日志,线上发现有rst错误,请求只有不够1秒,但是被rst掉了,所以排除了接口太慢导致超时的问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br></pre></td><td class="code"><pre><span class="line">org.apache.catalina.connector.ClientAbortException: java.io.IOException: Connection reset by peer</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.OutputBuffer.realWriteBytes(OutputBuffer.java:353)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.OutputBuffer.flushByteBuffer(OutputBuffer.java:783)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.OutputBuffer.append(OutputBuffer.java:688)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.OutputBuffer.writeBytes(OutputBuffer.java:388)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.OutputBuffer.write(OutputBuffer.java:366)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.CoyoteOutputStream.write(CoyoteOutputStream.java:96)</span><br><span class="line"></span><br><span class="line">        at org.springframework.util.StreamUtils$NonClosingOutputStream.write(StreamUtils.java:287)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.core.json.UTF8JsonGenerator._flushBuffer(UTF8JsonGenerator.java:2161)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.core.json.UTF8JsonGenerator._writeStringSegment2(UTF8JsonGenerator.java:1476)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.core.json.UTF8JsonGenerator._writeStringSegment(UTF8JsonGenerator.java:1423)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.core.json.UTF8JsonGenerator._writeStringSegments(UTF8JsonGenerator.java:1306)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.core.json.UTF8JsonGenerator.writeString(UTF8JsonGenerator.java:502)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.StringSerializer.serialize(StringSerializer.java:41)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:728)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:755)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.MapSerializer.serializeFields(MapSerializer.java:726)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.MapSerializer.serializeWithoutTypeInfo(MapSerializer.java:681)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.MapSerializer.serialize(MapSerializer.java:637)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.MapSerializer.serialize(MapSerializer.java:33)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:728)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:755)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.impl.IndexedListSerializer.serializeContents(IndexedListSerializer.java:119)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.impl.IndexedListSerializer.serialize(IndexedListSerializer.java:79)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.impl.IndexedListSerializer.serialize(IndexedListSerializer.java:18)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.BeanPropertyWriter.serializeAsField(BeanPropertyWriter.java:728)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.std.BeanSerializerBase.serializeFields(BeanSerializerBase.java:755)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider._serialize(DefaultSerializerProvider.java:480)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ser.DefaultSerializerProvider.serializeValue(DefaultSerializerProvider.java:319)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ObjectWriter$Prefetch.serialize(ObjectWriter.java:1516)</span><br><span class="line"></span><br><span class="line">        at com.fasterxml.jackson.databind.ObjectWriter.writeValue(ObjectWriter.java:1006)</span><br><span class="line"></span><br><span class="line">        at org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter.writeInternal(AbstractJackson2HttpMessageConverter.java:346)</span><br><span class="line"></span><br><span class="line">        at org.springframework.http.converter.AbstractGenericHttpMessageConverter.write(AbstractGenericHttpMessageConverter.java:104)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodProcessor.writeWithMessageConverters(AbstractMessageConverterMethodProcessor.java:277)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.handleReturnValue(RequestResponseBodyMethodProcessor.java:181)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite.handleReturnValue(HandlerMethodReturnValueHandlerComposite.java:82)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:123)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:878)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:792)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1040)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:943)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)</span><br><span class="line"></span><br><span class="line">        at javax.servlet.http.HttpServlet.service(HttpServlet.java:652)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)</span><br><span class="line"></span><br><span class="line">        at javax.servlet.http.HttpServlet.service(HttpServlet.java:733)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)</span><br><span class="line"></span><br><span class="line">        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:202)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:542)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:143)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:374)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1707)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)</span><br><span class="line"></span><br><span class="line">        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)</span><br><span class="line"></span><br><span class="line">        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)</span><br><span class="line"></span><br><span class="line">        at java.base/java.lang.Thread.run(Thread.java:834)</span><br><span class="line"></span><br><span class="line">Caused by: java.io.IOException: Connection reset by peer</span><br><span class="line"></span><br><span class="line">        at java.base/sun.nio.ch.FileDispatcherImpl.write0(Native Method)</span><br><span class="line"></span><br><span class="line">        at java.base/sun.nio.ch.SocketDispatcher.write(SocketDispatcher.java:47)</span><br><span class="line"></span><br><span class="line">        at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:113)</span><br><span class="line"></span><br><span class="line">        at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:79)</span><br><span class="line"></span><br><span class="line">        at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:50)</span><br><span class="line"></span><br><span class="line">        at java.base/sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:466)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.NioChannel.write(NioChannel.java:135)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.NioBlockingSelector.write(NioBlockingSelector.java:118)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.NioSelectorPool.write(NioSelectorPool.java:151)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.doWrite(NioEndpoint.java:1367)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.SocketWrapperBase.doWrite(SocketWrapperBase.java:766)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.SocketWrapperBase.writeBlocking(SocketWrapperBase.java:586)</span><br><span class="line"></span><br><span class="line">        at org.apache.tomcat.util.net.SocketWrapperBase.write(SocketWrapperBase.java:530)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.http11.Http11OutputBuffer$SocketOutputBuffer.doWrite(Http11OutputBuffer.java:546)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.http11.filters.IdentityOutputFilter.doWrite(IdentityOutputFilter.java:84)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.http11.Http11OutputBuffer.doWrite(Http11OutputBuffer.java:193)</span><br><span class="line"></span><br><span class="line">        at org.apache.coyote.Response.doWrite(Response.java:606)</span><br><span class="line"></span><br><span class="line">        at org.apache.catalina.connector.OutputBuffer.realWriteBytes(OutputBuffer.java:340)</span><br><span class="line"></span><br><span class="line">        ... 73 common frames omitted</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="排查nginx日志"><a href="#排查nginx日志" class="headerlink" title="排查nginx日志"></a>排查nginx日志</h3><p>proxy_temp  permission denied , 所以问题找到了,就是nginx权限有问题,没有权限创建proxy_temp 文件 </p>
+<p>原因: 每个请求都会分配一个页的缓冲区.如果超过一个页8kb&#x2F;16kb,就会将内容存到proxy_temp文件里面,因为没有权限创建这个文件,导致请求直接被断开</p>
+<p><img src="https://cdn4.shakudada.xyz/2023/09/ea259a6563711b3c960ad7f467372b11.png"></p>
+<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><p>当前方案:<br>修改到当前nginx的用户组可以创建<code>proxy_temp</code>文件</p>
+<p>可选方案:<br>如果不想写文件,嫌弃写文件有性能问题,可以调节</p>
+<ul>
+<li><code>proxy_max_temp_file_size</code></li>
+<li><code>proxy_buffer_size</code> </li>
+<li><code>proxy_buffers</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">When buffering is enabled, nginx receives a response from the proxied server as soon as possible, saving it into the buffers set by the proxy_buffer_size and proxy_buffers directives. If the whole response does not fit into memory, a part of it can be saved to a temporary file on the disk. Writing to temporary files is controlled by the proxy_max_temp_file_size and proxy_temp_file_write_size directives.</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上线后:<br><img src="https://cdn4.shakudada.xyz/2023/09/fc5b85d80aaabb87c1ba222e59c5cc28.png"></p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html#:~:text=When%20buffering%20is%20enabled%2C%20nginx,temporary%20file%20on%20the%20disk">http://nginx.org/en/docs/http/ngx_http_proxy_module.html#:~:text=When%20buffering%20is%20enabled%2C%20nginx,temporary%20file%20on%20the%20disk</a>.</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nginx/" rel="tag"># nginx</a>
+              <a href="/tags/curl/" rel="tag"># curl</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/10/elastic-search-%E7%BC%96%E8%AF%91%E5%92%8C%E8%B0%83%E8%AF%95/" rel="prev" title="elastic search 编译和调试">
+      <i class="fa fa-chevron-left"></i> elastic search 编译和调试
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/21/java-%E4%B8%9A%E5%8A%A1oom%E6%8E%92%E6%9F%A5/" rel="next" title="java 业务oom排查">
+      java 业务oom排查 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5"><span class="nav-number">2.</span> <span class="nav-text">排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%8D%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">错误复现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5java-%E9%94%99%E8%AF%AF"><span class="nav-number">2.2.</span> <span class="nav-text">排查java 错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5nginx%E6%97%A5%E5%BF%97"><span class="nav-number">2.3.</span> <span class="nav-text">排查nginx日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text">解决方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">3.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近找了个华为云的vps,想做个简单的网址，于是一番注册域名和http证书。 结过弄了很久发现居然访问不了。 其实原因是没有备案，我的证书配置是正常的。 排查过程通过curl 定位直接curl -v url可以看到详细的握手过程 1234567891011121314151617181920212223242526.&#x2F;curl https:&#x2F;&#x2F;gitlab.shakudada.xyz -v* ST">
+<meta property="og:type" content="article">
+<meta property="og:title" content="https_tls_ssl">
+<meta property="og:url" content="https://shakudada.xyz/2019/10/13/https-tls-ssl/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="最近找了个华为云的vps,想做个简单的网址，于是一番注册域名和http证书。 结过弄了很久发现居然访问不了。 其实原因是没有备案，我的证书配置是正常的。 排查过程通过curl 定位直接curl -v url可以看到详细的握手过程 1234567891011121314151617181920212223242526.&#x2F;curl https:&#x2F;&#x2F;gitlab.shakudada.xyz -v* ST">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-13T14:06:21.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.888Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="http">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2019/10/13/https-tls-ssl/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>https_tls_ssl | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2019/10/13/https-tls-ssl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          https_tls_ssl
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-13 22:06:21" itemprop="dateCreated datePublished" datetime="2019-10-13T22:06:21+08:00">2019-10-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近找了个华为云的vps,想做个简单的网址，于是一番注册域名和http证书。</p>
+<p>结过弄了很久发现居然访问不了。</p>
+<p>其实原因是没有备案，我的证书配置是正常的。</p>
+<h2 id="排查过程"><a href="#排查过程" class="headerlink" title="排查过程"></a>排查过程</h2><h3 id="通过curl-定位"><a href="#通过curl-定位" class="headerlink" title="通过curl 定位"></a>通过curl 定位</h3><p>直接<code>curl -v url</code>可以看到详细的握手过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">./curl https://gitlab.shakudada.xyz -v</span><br><span class="line">* STATE: INIT =&gt; CONNECT handle 0x1a23898; line 1491 (connection #-5000)</span><br><span class="line">* Added connection 0. The cache now contains 1 members</span><br><span class="line">* STATE: CONNECT =&gt; WAITRESOLVE handle 0x1a23898; line 1532 (connection #0)</span><br><span class="line">*   Trying 139.9.222.124:443...</span><br><span class="line">* TCP_NODELAY set</span><br><span class="line">* STATE: WAITRESOLVE =&gt; WAITCONNECT handle 0x1a23898; line 1611 (connection #0)</span><br><span class="line">* Connected to gitlab.shakudada.xyz (139.9.222.124) port 443 (#0)</span><br><span class="line">* STATE: WAITCONNECT =&gt; SENDPROTOCONNECT handle 0x1a23898; line 1667 (connection #0)</span><br><span class="line">* Marked for [keep alive]: HTTP default</span><br><span class="line">* ALPN, offering http/1.1</span><br><span class="line">* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH</span><br><span class="line">* successfully set certificate verify locations:</span><br><span class="line">*   CAfile: /etc/ssl/certs/ca-certificates.crt</span><br><span class="line">  CApath: none</span><br><span class="line">* TLSv1.2 (OUT), TLS header, Certificate Status (22):</span><br><span class="line">* TLSv1.2 (OUT), TLS handshake, Client hello (1):</span><br><span class="line">* STATE: SENDPROTOCONNECT =&gt; PROTOCONNECT handle 0x1a23898; line 1682 (connection #0)</span><br><span class="line">* error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol</span><br><span class="line">* Marked for [closure]: Failed HTTPS connection</span><br><span class="line">* multi_done</span><br><span class="line">* Closing connection 0</span><br><span class="line">* The cache now contains 0 members</span><br><span class="line">* Expire cleared (transfer 0x1a23898)</span><br><span class="line">curl: (35) error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol</span><br><span class="line">dinosaur@dinosaur-X550VXK:~/curl/mycurl/bin$</span><br></pre></td></tr></table></figure>
+
+<p>在<code>client hello</code> 后就失败了，所以直接tcpdump 看看包数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i wlp3s0  host 139.9.222.124 and  port 443 -A -X</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>其中<code>139.9.222.124</code>就是我那没有备案的ip</p>
+<p>以下是抓包，去掉了开始的tcp的三次握手</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">22:22:23.280367 IP 192.168.1.106.33170 &gt; 139.9.222.124.https: Flags [P.], seq 1:518, ack 1, win 229, options [nop,nop,TS val 434651673 ecr 3365805465], length 517</span><br><span class="line">	0x0000:  4500 0239 15ab 4000 4006 f77b c0a8 016a  E..9..@.@..&#123;...j</span><br><span class="line">	0x0010:  8b09 de7c 8192 01bb f6ab 981d 4d9a ceb8  ...|........M...</span><br><span class="line">	0x0020:  8018 00e5 22f2 0000 0101 080a 19e8 4219  ....&quot;.........B.</span><br><span class="line">	0x0030:  c89e 1d99 1603 0102 0001 0001 fc03 0304  ................</span><br><span class="line">	0x0040:  6e2a ea14 6844 e2e1 db8c 1ee3 3582 e33f  n*..hD......5..?</span><br><span class="line">	0x0050:  9128 2ad2 cd1c bac2 1e70 dd4f 6587 d700  .(*......p.Oe...</span><br><span class="line">	0x0060:  009e c030 c02c c028 c024 c014 c00a 00a5  ...0.,.(.$......</span><br><span class="line">	0x0070:  00a3 00a1 009f 006b 006a 0069 0068 0039  .......k.j.i.h.9</span><br><span class="line">	0x0080:  0038 0037 0036 0088 0087 0086 0085 c032  .8.7.6.........2</span><br><span class="line">	0x0090:  c02e c02a c026 c00f c005 009d 003d 0035  ...*.&amp;.......=.5</span><br><span class="line">	0x00a0:  0084 c02f c02b c027 c023 c013 c009 00a4  .../.+.&#x27;.#......</span><br><span class="line">	0x00b0:  00a2 00a0 009e 0067 0040 003f 003e 0033  .......g.@.?.&gt;.3</span><br><span class="line">	0x00c0:  0032 0031 0030 009a 0099 0098 0097 0045  .2.1.0.........E</span><br><span class="line">	0x00d0:  0044 0043 0042 c031 c02d c029 c025 c00e  .D.C.B.1.-.).%..</span><br><span class="line">	0x00e0:  c004 009c 003c 002f 0096 0041 c012 c008  .....&lt;./...A....</span><br><span class="line">	0x00f0:  0016 0013 0010 000d c00d c003 000a 00ff  ................</span><br><span class="line">	0x0100:  0100 0135 0000 0019 0017 0000 1467 6974  ...5.........git</span><br><span class="line">	0x0110:  6c61 622e 7368 616b 7564 6164 612e 7879  lab.shakudada.xy</span><br><span class="line">	0x0120:  7a00 0b00 0403 0001 0200 0a00 1c00 1a00  z...............</span><br><span class="line">	0x0130:  1700 1900 1c00 1b00 1800 1a00 1600 0e00  ................</span><br><span class="line">	0x0140:  0d00 0b00 0c00 0900 0a00 0d00 2000 1e06  ................</span><br><span class="line">	0x0150:  0106 0206 0305 0105 0205 0304 0104 0204  ................</span><br><span class="line">	0x0160:  0303 0103 0203 0302 0102 0202 0300 0f00  ................</span><br><span class="line">	0x0170:  0101 3374 0000 0010 000b 0009 0868 7474  ..3t.........htt</span><br><span class="line">	0x0180:  702f 312e 3100 1500 b000 0000 0000 0000  p/1.1...........</span><br><span class="line">	0x0190:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x01a0:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x01b0:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x01c0:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x01d0:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x01e0:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x01f0:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x0200:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x0210:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x0220:  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">	0x0230:  0000 0000 0000 0000 00                   .........</span><br><span class="line">22:22:23.292507 IP 139.9.222.124.https &gt; 192.168.1.106.33170: Flags [FP.], seq 1:650, ack 518, win 8192, length 649</span><br><span class="line">	0x0000:  4500 02b1 15ac 4000 f606 4102 8b09 de7c  E.....@...A....|</span><br><span class="line">	0x0010:  c0a8 016a 01bb 8192 4d9a ceb8 f6ab 9a22  ...j....M......&quot;</span><br><span class="line">	0x0020:  5019 2000 d25b 0000 4854 5450 2f31 2e31  P....[..HTTP/1.1</span><br><span class="line">	0x0030:  2034 3033 2046 6f72 6269 6464 656e 0a43  .403.Forbidden.C</span><br><span class="line">	0x0040:  6f6e 7465 6e74 2d54 7970 653a 2074 6578  ontent-Type:.tex</span><br><span class="line">	0x0050:  742f 6874 6d6c 3b20 6368 6172 7365 743d  t/html;.charset=</span><br><span class="line">	0x0060:  7574 662d 380a 5365 7276 6572 3a20 4144  utf-8.Server:.AD</span><br><span class="line">	0x0070:  4d2f 322e 312e 310a 436f 6e6e 6563 7469  M/2.1.1.Connecti</span><br><span class="line">	0x0080:  6f6e 3a20 636c 6f73 650a 436f 6e74 656e  on:.close.Conten</span><br><span class="line">	0x0090:  742d 4c65 6e67 7468 3a20 3533 300a 0a3c  t-Length:.530..&lt;</span><br><span class="line">	0x00a0:  6874 6d6c 3e0a 3c68 6561 643e 0a3c 6d65  html&gt;.&lt;head&gt;.&lt;me</span><br><span class="line">	0x00b0:  7461 2068 7474 702d 6571 7569 763d 2243  ta.http-equiv=&quot;C</span><br><span class="line">	0x00c0:  6f6e 7465 6e74 2d54 7970 6522 2063 6f6e  ontent-Type&quot;.con</span><br><span class="line">	0x00d0:  7465 6e74 3d22 7465 7874 6d6c 3b63 6861  tent=&quot;textml;cha</span><br><span class="line">	0x00e0:  7273 6574 3d47 4232 3331 3222 202f 3e0a  rset=GB2312&quot;./&gt;.</span><br><span class="line">	0x00f0:  2020 203c 7374 796c 653e 626f 6479 7b62  ...&lt;style&gt;body&#123;b</span><br><span class="line">	0x0100:  6163 6b67 726f 756e 642d 636f 6c6f 723a  ackground-color:</span><br><span class="line">	0x0110:  2346 4646 4646 467d 3c2f 7374 796c 653e  #FFFFFF&#125;&lt;/style&gt;</span><br><span class="line">	0x0120:  200a 3c74 6974 6c65 3ee9 9d9e e6b3 95e9  ..&lt;title&gt;.......</span><br><span class="line">	0x0130:  98bb e696 ad32 3334 3c2f 7469 746c 653e  .....234&lt;/title&gt;</span><br><span class="line">	0x0140:  0a20 203c 7363 7269 7074 206c 616e 6775  ...&lt;script.langu</span><br><span class="line">	0x0150:  6167 653d 226a 6176 6173 6372 6970 7422  age=&quot;javascript&quot;</span><br><span class="line">	0x0160:  2074 7970 653d 2274 6578 742f 6a61 7661  .type=&quot;text/java</span><br><span class="line">	0x0170:  7363 7269 7074 223e 0a20 2020 2020 2020  script&quot;&gt;........</span><br><span class="line">	0x0180:  2020 7769 6e64 6f77 2e6f 6e6c 6f61 6420  ..window.onload.</span><br><span class="line">	0x0190:  3d20 6675 6e63 7469 6f6e 2028 2920 7b20  =.function.().&#123;.</span><br><span class="line">	0x01a0:  0a20 2020 2020 2020 2020 2020 646f 6375  ............docu</span><br><span class="line">	0x01b0:  6d65 6e74 2e67 6574 456c 656d 656e 7442  ment.getElementB</span><br><span class="line">	0x01c0:  7949 6428 226d 6169 6e46 7261 6d65 2229  yId(&quot;mainFrame&quot;)</span><br><span class="line">	0x01d0:  2e73 7263 3d20 2268 7474 703a 2f2f 3131  .src=.&quot;http://11</span><br><span class="line">	0x01e0:  342e 3131 352e 3139 322e 3234 363a 3930  4.115.192.246:90</span><br><span class="line">	0x01f0:  3830 2f65 7272 6f72 2e68 746d 6c22 3b0a  80/error.html&quot;;.</span><br><span class="line">	0x0200:  2020 2020 2020 2020 2020 2020 7d0a 3c2f  ............&#125;.&lt;/</span><br><span class="line">	0x0210:  7363 7269 7074 3e20 2020 0a3c 2f68 6561  script&gt;....&lt;/hea</span><br><span class="line">	0x0220:  643e 0a20 203c 626f 6479 3e0a 2020 2020  d&gt;...&lt;body&gt;.....</span><br><span class="line">	0x0230:  3c69 6672 616d 6520 7374 796c 653d 2277  &lt;iframe.style=&quot;w</span><br><span class="line">	0x0240:  6964 7468 3a31 3030 253b 2068 6569 6768  idth:100%;.heigh</span><br><span class="line">	0x0250:  743a 3130 3025 3b22 2069 643d 226d 6169  t:100%;&quot;.id=&quot;mai</span><br><span class="line">	0x0260:  6e46 7261 6d65 2220 7372 633d 2222 2066  nFrame&quot;.src=&quot;&quot;.f</span><br><span class="line">	0x0270:  7261 6d65 626f 7264 6572 3d22 3022 2073  rameborder=&quot;0&quot;.s</span><br><span class="line">	0x0280:  6372 6f6c 6c69 6e67 3d22 6e6f 223e 3c2f  crolling=&quot;no&quot;&gt;&lt;/</span><br><span class="line">	0x0290:  6966 7261 6d65 3e0a 2020 2020 3c2f 626f  iframe&gt;.....&lt;/bo</span><br><span class="line">	0x02a0:  6479 3e0a 2020 2020 2020 3c2f 6874 6d6c  dy&gt;.......&lt;/html</span><br><span class="line">	0x02b0:  3e                                       &gt;</span><br><span class="line">22:22:23.292552 IP 192.168.1.106.33170 &gt; 139.9.222.124.https: Flags [.], ack 651, win 239, options [nop,nop,TS val 434651685 ecr 3365805465], length 0</span><br><span class="line">	0x0000:  4500 0034 15ac 4000 4006 f97f c0a8 016a  E..4..@.@......j</span><br><span class="line">	0x0010:  8b09 de7c 8192 01bb f6ab 9a22 4d9a d142  ...|.......&quot;M..B</span><br><span class="line">	0x0020:  8010 00ef d4f7 0000 0101 080a 19e8 4225  ..............B%</span><br><span class="line">	0x0030:  c89e 1d99                                ....</span><br><span class="line">22:22:23.292562 IP 139.9.222.124.https &gt; 192.168.1.106.33170: Flags [.], ack 518, win 235, options [nop,nop,TS val 3365805485 ecr 434651673], length 0</span><br><span class="line">	0x0000:  4500 0034 1ff1 4000 3106 fe3a 8b09 de7c  E..4..@.1..:...|</span><br><span class="line">	0x0010:  c0a8 016a 01bb 8192 4d9a ceb8 f6ab 9a22  ...j....M......&quot;</span><br><span class="line">	0x0020:  8010 00eb d77d 0000 0101 080a c89e 1dad  .....&#125;..........</span><br><span class="line">	0x0030:  19e8 4219  </span><br></pre></td></tr></table></figure>
+
+
+<p>4500 这两个字节开头明显就是ip报头，4代表ipv4,5则是ip报头的长度，也就是ip报头长度是5*4&#x3D;20；</p>
+<h4 id="ip报头"><a href="#ip报头" class="headerlink" title="ip报头"></a>ip报头</h4><p>也就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x0000:  4500 0239 15ab 4000 4006 f77b c0a8 016a  E..9..@.@..&#123;...j</span><br><span class="line">0x0010:  8b09 de7c </span><br></pre></td></tr></table></figure>
+<p>一直到de7c都是ip报头</p>
+<h4 id="tcp-报头"><a href="#tcp-报头" class="headerlink" title="tcp 报头"></a>tcp 报头</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x0000:  4500 0239 15ab 4000 4006 f77b c0a8 016a  E..9..@.@..&#123;...j</span><br><span class="line">0x0010:  8b09 de7c 8192 01bb &lt;- 01bb就是443也就是目的端口</span><br></pre></td></tr></table></figure>
+<p><code>1*16*16+11*16+16=443</code></p>
+<p>版本：IP协议的版本，目前的IP协议版本号为4，下一代IP协议版本号为6。</p>
+<p>首部长度：IP报头的长度。固定部分的长度（20字节）和可变部分的长度之和。共占4位。最大为1111，即10进制的15，代表IP报头的最大长度可以为15个32bits（4字节），也就是最长可为15*4&#x3D;60字节，除去固定部分的长度20字节，可变部分的长度最大为40字节。</p>
+<p>翻了一下<a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc8446">rfc8446</a>,TLSV12的<code>client hello</code>的版本<code>magic number</code>是<code>0x0303</code>,搜索了一下果然有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct &#123;</span><br><span class="line">         ProtocolVersion legacy_version = 0x0303;    /* TLS v1.2 */</span><br><span class="line">         Random random;</span><br><span class="line">         opaque legacy_session_id&lt;0..32&gt;;</span><br><span class="line">         CipherSuite cipher_suites&lt;2..2^16-2&gt;;</span><br><span class="line">         opaque legacy_compression_methods&lt;1..2^8-1&gt;;</span><br><span class="line">         Extension extensions&lt;8..2^16-1&gt;;</span><br><span class="line">     &#125; ClientHello;</span><br></pre></td></tr></table></figure>
+
+<p>但是返回的明文很明显不是一个错误的链接</p>
+<p>所以被sni阻断了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">In the OCSPStatusRequest, the &quot;ResponderIDs&quot; provides a list of OCSP</span><br><span class="line">   responders that the client trusts.  A zero-length &quot;responder_id_list&quot;</span><br><span class="line">   sequence has the special meaning that the responders are implicitly</span><br><span class="line">   known to the server - e.g., by prior arrangement.  &quot;Extensions&quot; is a</span><br><span class="line">   DER encoding of OCSP request extensions.</span><br><span class="line"></span><br><span class="line">   Both &quot;ResponderID&quot; and &quot;Extensions&quot; are DER-encoded ASN.1 types as</span><br><span class="line">   defined in [OCSP].  &quot;Extensions&quot; is imported from [PKIX].  A zero-</span><br><span class="line">   length &quot;request_extensions&quot; value means that there are no extensions</span><br><span class="line">   (as opposed to a zero-length ASN.1 SEQUENCE, which is not valid for</span><br><span class="line">   the &quot;Extensions&quot; type).</span><br><span class="line"></span><br><span class="line">   In the case of the &quot;id-pkix-ocsp-nonce&quot; OCSP extension, [OCSP] is</span><br><span class="line">   unclear about its encoding; for clarification, the nonce MUST be a</span><br><span class="line">   DER-encoded OCTET STRING, which is encapsulated as another OCTET</span><br><span class="line">   STRING (note that implementations based on an existing OCSP client</span><br><span class="line">   will need to be checked for conformance to this requirement).</span><br><span class="line"></span><br><span class="line">   Servers that receive a client hello containing the &quot;status_request&quot;</span><br><span class="line">   extension, MAY return a suitable certificate status response to the</span><br><span class="line">   client along with their certificate.  If OCSP is requested, they</span><br><span class="line">   SHOULD use the information contained in the extension when selecting</span><br><span class="line">   an OCSP responder, and SHOULD include request_extensions in the OCSP</span><br><span class="line">   request.</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/http/" rel="tag"># http</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/08/mysql-string-max-length/" rel="prev" title="mysql字符串最大长度">
+      <i class="fa fa-chevron-left"></i> mysql字符串最大长度
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/18/lex%E5%92%8Cyacc%E4%BE%8B%E5%AD%90/" rel="next" title="lex和yacc">
+      lex和yacc <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">排查过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87curl-%E5%AE%9A%E4%BD%8D"><span class="nav-number">1.1.</span> <span class="nav-text">通过curl 定位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ip%E6%8A%A5%E5%A4%B4"><span class="nav-number">1.1.1.</span> <span class="nav-text">ip报头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcp-%E6%8A%A5%E5%A4%B4"><span class="nav-number">1.1.2.</span> <span class="nav-text">tcp 报头</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

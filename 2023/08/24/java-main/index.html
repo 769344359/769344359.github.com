@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="main 函数介绍java的main函数在入口函数一般都是这个签名 123public static void main(String[] argv)&amp;#123;&amp;#125;  那么这个main函数是怎么加载的呢? 调用时机:jni_invoke_static 123456789101112131415161718192021222324(gdb) p method._value-&gt;prin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java main">
+<meta property="og:url" content="https://shakudada.xyz/2023/08/24/java-main/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="main 函数介绍java的main函数在入口函数一般都是这个签名 123public static void main(String[] argv)&amp;#123;&amp;#125;  那么这个main函数是怎么加载的呢? 调用时机:jni_invoke_static 123456789101112131415161718192021222324(gdb) p method._value-&gt;prin">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-24T05:39:10.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.892Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/08/24/java-main/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java main | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/08/24/java-main/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java main
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-24 13:39:10" itemprop="dateCreated datePublished" datetime="2023-08-24T13:39:10+08:00">2023-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="main-函数介绍"><a href="#main-函数介绍" class="headerlink" title="main 函数介绍"></a>main 函数介绍</h2><p>java的main函数在入口函数<br>一般都是这个签名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] argv)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么这个main函数是怎么加载的呢?</p>
+<h2 id="调用时机"><a href="#调用时机" class="headerlink" title="调用时机:"></a>调用时机:</h2><p><code>jni_invoke_static</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">(gdb) p method._value-&gt;print()</span><br><span class="line">&#123;method&#125;</span><br><span class="line"> - this oop:          0x00007fffb44112d8</span><br><span class="line"> - method holder:     &#x27;Hello&#x27;</span><br><span class="line"> - constants:         0x00007fffb4411030 constant pool [34] &#123;0x00007fffb4411030&#125; for &#x27;Hello&#x27; cache=0x00007fffb44113e0</span><br><span class="line"> - access:            0x9  public static </span><br><span class="line"> - name:              &#x27;main&#x27;</span><br><span class="line"> - signature:         &#x27;([Ljava/lang/String;)V&#x27;</span><br><span class="line"> - max stack:         3</span><br><span class="line"> - max locals:        1</span><br><span class="line"> - size of params:    1</span><br><span class="line"> - method size:       13</span><br><span class="line"> - vtable index:      -2</span><br><span class="line"> - i2i entry:         0x00007fffe100dc00    ///////////  entity_point</span><br><span class="line"> - adapters:          AHE@0x00007ffff01015d0: 0xb i2c: 0x00007fffe1114d60 c2i: 0x00007fffe1114e1a c2iUV: 0x00007fffe1114de4 c2iNCI: 0x00007fffe1114e57</span><br><span class="line"> - compiled entry     0x00007fffe1114e1a</span><br><span class="line"> - code size:         13</span><br><span class="line"> - code start:        0x00007fffb44112c0     // 这里是bytecode 的起点</span><br><span class="line"> - code end (excl):   0x00007fffb44112cd    // 这是bytecode的终点</span><br><span class="line"> - checked ex length: 0</span><br><span class="line"> - linenumber start:  0x00007fffb44112cd</span><br><span class="line"> - localvar length:   0</span><br><span class="line">$7 = void</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info registers </span><br><span class="line">rax            0x7ffff59fe940      140737314285888</span><br><span class="line">rbx            0x7fffe1000c9e      140736968264862</span><br><span class="line">rcx            0x7fffb44112d8      140736217551576</span><br><span class="line">rdx            0xa                 10</span><br><span class="line">rsi            0x7ffff59febf8      140737314286584</span><br><span class="line">rdi            0x7ffff59fe940      140737314285888</span><br><span class="line">rbp            0x7ffff59fe870      0x7ffff59fe870</span><br><span class="line">rsp            0x7ffff59fe810      0x7ffff59fe810</span><br><span class="line">r8             0x7fffe100dc00      140736968317952                    // 这里就是入口点</span><br><span class="line">r9             0x7ffff59feaf0      140737314286320</span><br><span class="line">r10            0x7ffff053ae20      140737225403936</span><br><span class="line">r11            0x7ffff0000090      140737219920016</span><br><span class="line">r12            0x1                 1</span><br><span class="line">r13            0x0                 0</span><br><span class="line">r14            0x7ffff7c94850      140737350551632</span><br><span class="line">r15            0x7fffffffa800      140737488332800</span><br><span class="line">rip            0x7fffe1000ca6      0x7fffe1000ca6</span><br><span class="line">eflags         0x202               [ IF ]</span><br><span class="line">cs             0x33                51</span><br><span class="line">ss             0x2b                43</span><br><span class="line">ds             0x0                 0</span><br><span class="line">es             0x0                 0</span><br><span class="line">fs             0x0                 0</span><br><span class="line">gs             0x0                 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$2 = void</span><br><span class="line">(gdb) where</span><br><span class="line">#0  JavaCalls::call_helper (result=0x7ffff7bfec10, method=..., args=0x7ffff7bfeb30, __the_thread__=0x7ffff00295a0) at /home/ubuntu/jdk/src/hotspot/share/runtime/javaCalls.cpp:333</span><br><span class="line">#1  0x00007ffff6799785 in jni_invoke_static (result=result@entry=0x7ffff7bfec10, method_id=method_id@entry=0x7ffff02c84d0, args=args@entry=0x7ffff7bfec80, __the_thread__=__the_thread__@entry=0x7ffff00295a0, env=0x7ffff00298d0, </span><br><span class="line">    call_type=JNI_STATIC, receiver=0x0) at /home/ubuntu/jdk/src/hotspot/share/prims/jni.cpp:889</span><br><span class="line">#2  0x00007ffff679cd19 in jni_CallStaticVoidMethod (env=0x7ffff00298d0, cls=&lt;optimized out&gt;, methodID=0x7ffff02c84d0) at /home/ubuntu/jdk/src/hotspot/share/prims/jni.cpp:1713</span><br><span class="line">#3  0x00007ffff7fadcb5 in JavaMain (_args=&lt;optimized out&gt;) at /home/ubuntu/jdk/src/java.base/share/native/libjli/java.c:547</span><br><span class="line">#4  0x00007ffff7fb0f4d in ThreadJavaMain (args=&lt;optimized out&gt;) at /home/ubuntu/jdk/src/java.base/unix/native/libjli/java_md.c:651</span><br><span class="line">#5  0x00007ffff7c94b43 in start_thread (arg=&lt;optimized out&gt;) at ./nptl/pthread_create.c:442</span><br><span class="line">#6  0x00007ffff7d26a00 in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:81</span><br><span class="line">(gdb</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="c-调用java-static-method方法"><a href="#c-调用java-static-method方法" class="headerlink" title="c++ 调用java static method方法"></a>c++ 调用java static method方法</h2><p>调用<code>generate_call_stub</code> ,这是入口点,这个会调用method的entry_point</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br></pre></td><td class="code"><pre><span class="line">address StubGenerator::generate_call_stub(address&amp; return_address) &#123;</span><br><span class="line"></span><br><span class="line">  assert((int)frame::entry_frame_after_call_words == -(int)rsp_after_call_off + 1 &amp;&amp;</span><br><span class="line">         (int)frame::entry_frame_call_wrapper_offset == (int)call_wrapper_off,</span><br><span class="line">         &quot;adjust this code&quot;);</span><br><span class="line">  StubCodeMark mark(this, &quot;StubRoutines&quot;, &quot;call_stub&quot;);</span><br><span class="line">  address start = __ pc();</span><br><span class="line"></span><br><span class="line">  // same as in generate_catch_exception()!</span><br><span class="line">  const Address rsp_after_call(rbp, rsp_after_call_off * wordSize);</span><br><span class="line"></span><br><span class="line">  const Address call_wrapper  (rbp, call_wrapper_off   * wordSize);</span><br><span class="line">  const Address result        (rbp, result_off         * wordSize);</span><br><span class="line">  const Address result_type   (rbp, result_type_off    * wordSize);</span><br><span class="line">  const Address method        (rbp, method_off         * wordSize);</span><br><span class="line">  const Address entry_point   (rbp, entry_point_off    * wordSize);</span><br><span class="line">  const Address parameters    (rbp, parameters_off     * wordSize);</span><br><span class="line">  const Address parameter_size(rbp, parameter_size_off * wordSize);</span><br><span class="line"></span><br><span class="line">  // same as in generate_catch_exception()!</span><br><span class="line">  const Address thread        (rbp, thread_off         * wordSize);</span><br><span class="line"></span><br><span class="line">  const Address r15_save(rbp, r15_off * wordSize);</span><br><span class="line">  const Address r14_save(rbp, r14_off * wordSize);</span><br><span class="line">  const Address r13_save(rbp, r13_off * wordSize);</span><br><span class="line">  const Address r12_save(rbp, r12_off * wordSize);</span><br><span class="line">  const Address rbx_save(rbp, rbx_off * wordSize);</span><br><span class="line"></span><br><span class="line">  // stub code</span><br><span class="line">  __ enter();</span><br><span class="line">  __ subptr(rsp, -rsp_after_call_off * wordSize);</span><br><span class="line"></span><br><span class="line">  // save register parameters</span><br><span class="line">#ifndef _WIN64</span><br><span class="line">  __ movptr(parameters,   c_rarg5); // parameters</span><br><span class="line">  __ movptr(entry_point,  c_rarg4); // entry_point</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  __ movptr(method,       c_rarg3); // method</span><br><span class="line">  __ movl(result_type,  c_rarg2);   // result type</span><br><span class="line">  __ movptr(result,       c_rarg1); // result</span><br><span class="line">  __ movptr(call_wrapper, c_rarg0); // call wrapper</span><br><span class="line"></span><br><span class="line">  // save regs belonging to calling function</span><br><span class="line">  __ movptr(rbx_save, rbx);</span><br><span class="line">  __ movptr(r12_save, r12);</span><br><span class="line">  __ movptr(r13_save, r13);</span><br><span class="line">  __ movptr(r14_save, r14);</span><br><span class="line">  __ movptr(r15_save, r15);</span><br><span class="line"></span><br><span class="line">#ifdef _WIN64</span><br><span class="line">  int last_reg = 15;</span><br><span class="line">  if (UseAVX &gt; 2) &#123;</span><br><span class="line">    last_reg = 31;</span><br><span class="line">  &#125;</span><br><span class="line">  if (VM_Version::supports_evex()) &#123;</span><br><span class="line">    for (int i = xmm_save_first; i &lt;= last_reg; i++) &#123;</span><br><span class="line">      __ vextractf32x4(xmm_save(i), as_XMMRegister(i), 0);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    for (int i = xmm_save_first; i &lt;= last_reg; i++) &#123;</span><br><span class="line">      __ movdqu(xmm_save(i), as_XMMRegister(i));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const Address rdi_save(rbp, rdi_off * wordSize);</span><br><span class="line">  const Address rsi_save(rbp, rsi_off * wordSize);</span><br><span class="line"></span><br><span class="line">  __ movptr(rsi_save, rsi);</span><br><span class="line">  __ movptr(rdi_save, rdi);</span><br><span class="line">#else</span><br><span class="line">  const Address mxcsr_save(rbp, mxcsr_off * wordSize);</span><br><span class="line">  &#123;</span><br><span class="line">    Label skip_ldmx;</span><br><span class="line">    __ stmxcsr(mxcsr_save);</span><br><span class="line">    __ movl(rax, mxcsr_save);</span><br><span class="line">    __ andl(rax, 0xFFC0); // Mask out any pending exceptions (only check control and mask bits)</span><br><span class="line">    ExternalAddress mxcsr_std(StubRoutines::x86::addr_mxcsr_std());</span><br><span class="line">    __ cmp32(rax, mxcsr_std, rscratch1);</span><br><span class="line">    __ jcc(Assembler::equal, skip_ldmx);</span><br><span class="line">    __ ldmxcsr(mxcsr_std, rscratch1);</span><br><span class="line">    __ bind(skip_ldmx);</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  // Load up thread register</span><br><span class="line">  __ movptr(r15_thread, thread);</span><br><span class="line">  __ reinit_heapbase();</span><br><span class="line"></span><br><span class="line">#ifdef ASSERT</span><br><span class="line">  // make sure we have no pending exceptions</span><br><span class="line">  &#123;</span><br><span class="line">    Label L;</span><br><span class="line">    __ cmpptr(Address(r15_thread, Thread::pending_exception_offset()), NULL_WORD);</span><br><span class="line">    __ jcc(Assembler::equal, L);</span><br><span class="line">    __ stop(&quot;StubRoutines::call_stub: entered with pending exception&quot;);</span><br><span class="line">    __ bind(L);</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  // pass parameters if any</span><br><span class="line">  BLOCK_COMMENT(&quot;pass parameters if any&quot;);</span><br><span class="line">  Label parameters_done;</span><br><span class="line">  __ movl(c_rarg3, parameter_size);</span><br><span class="line">  __ testl(c_rarg3, c_rarg3);</span><br><span class="line">  __ jcc(Assembler::zero, parameters_done);</span><br><span class="line"></span><br><span class="line">  Label loop;</span><br><span class="line">  __ movptr(c_rarg2, parameters);       // parameter pointer</span><br><span class="line">  __ movl(c_rarg1, c_rarg3);            // parameter counter is in c_rarg1</span><br><span class="line">  __ BIND(loop);</span><br><span class="line">  __ movptr(rax, Address(c_rarg2, 0));// get parameter</span><br><span class="line">  __ addptr(c_rarg2, wordSize);       // advance to next parameter</span><br><span class="line">  __ decrementl(c_rarg1);             // decrement counter</span><br><span class="line">  __ push(rax);                       // pass parameter</span><br><span class="line">  __ jcc(Assembler::notZero, loop);</span><br><span class="line"></span><br><span class="line">  // call Java function</span><br><span class="line">  __ BIND(parameters_done);</span><br><span class="line">  __ movptr(rbx, method);             // get Method*</span><br><span class="line">  __ movptr(c_rarg1, entry_point);    // get entry_point</span><br><span class="line">  __ mov(r13, rsp);                   // set sender sp</span><br><span class="line">  BLOCK_COMMENT(&quot;call Java function&quot;);</span><br><span class="line">  __ call(c_rarg1);</span><br><span class="line"></span><br><span class="line">  BLOCK_COMMENT(&quot;call_stub_return_address:&quot;);</span><br><span class="line">  return_address = __ pc();</span><br><span class="line"></span><br><span class="line">  // store result depending on type (everything that is not</span><br><span class="line">  // T_OBJECT, T_LONG, T_FLOAT or T_DOUBLE is treated as T_INT)</span><br><span class="line">  __ movptr(c_rarg0, result);</span><br><span class="line">  Label is_long, is_float, is_double, exit;</span><br><span class="line">  __ movl(c_rarg1, result_type);</span><br><span class="line">  __ cmpl(c_rarg1, T_OBJECT);</span><br><span class="line">  __ jcc(Assembler::equal, is_long);</span><br><span class="line">  __ cmpl(c_rarg1, T_LONG);</span><br><span class="line">  __ jcc(Assembler::equal, is_long);</span><br><span class="line">  __ cmpl(c_rarg1, T_FLOAT);</span><br><span class="line">  __ jcc(Assembler::equal, is_float);</span><br><span class="line">  __ cmpl(c_rarg1, T_DOUBLE);</span><br><span class="line">  __ jcc(Assembler::equal, is_double);</span><br><span class="line"></span><br><span class="line">  // handle T_INT case</span><br><span class="line">  __ movl(Address(c_rarg0, 0), rax);</span><br><span class="line"></span><br><span class="line">  __ BIND(exit);</span><br><span class="line"></span><br><span class="line">  // pop parameters</span><br><span class="line">  __ lea(rsp, rsp_after_call);</span><br><span class="line"></span><br><span class="line">#ifdef ASSERT</span><br><span class="line">  // verify that threads correspond</span><br><span class="line">  &#123;</span><br><span class="line">   Label L1, L2, L3;</span><br><span class="line">    __ cmpptr(r15_thread, thread);</span><br><span class="line">    __ jcc(Assembler::equal, L1);</span><br><span class="line">    __ stop(&quot;StubRoutines::call_stub: r15_thread is corrupted&quot;);</span><br><span class="line">    __ bind(L1);</span><br><span class="line">    __ get_thread(rbx);</span><br><span class="line">    __ cmpptr(r15_thread, thread);</span><br><span class="line">    __ jcc(Assembler::equal, L2);</span><br><span class="line">    __ stop(&quot;StubRoutines::call_stub: r15_thread is modified by call&quot;);</span><br><span class="line">    __ bind(L2);</span><br><span class="line">    __ cmpptr(r15_thread, rbx);</span><br><span class="line">    __ jcc(Assembler::equal, L3);</span><br><span class="line">    __ stop(&quot;StubRoutines::call_stub: threads must correspond&quot;);</span><br><span class="line">    __ bind(L3);</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  __ pop_cont_fastpath();</span><br><span class="line"></span><br><span class="line">  // restore regs belonging to calling function</span><br><span class="line">#ifdef _WIN64</span><br><span class="line">  // emit the restores for xmm regs</span><br><span class="line">  if (VM_Version::supports_evex()) &#123;</span><br><span class="line">    for (int i = xmm_save_first; i &lt;= last_reg; i++) &#123;</span><br><span class="line">      __ vinsertf32x4(as_XMMRegister(i), as_XMMRegister(i), xmm_save(i), 0);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    for (int i = xmm_save_first; i &lt;= last_reg; i++) &#123;</span><br><span class="line">      __ movdqu(as_XMMRegister(i), xmm_save(i));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line">  __ movptr(r15, r15_save);</span><br><span class="line">  __ movptr(r14, r14_save);</span><br><span class="line">  __ movptr(r13, r13_save);</span><br><span class="line">  __ movptr(r12, r12_save);</span><br><span class="line">  __ movptr(rbx, rbx_save);</span><br><span class="line"></span><br><span class="line">#ifdef _WIN64</span><br><span class="line">  __ movptr(rdi, rdi_save);</span><br><span class="line">  __ movptr(rsi, rsi_save);</span><br><span class="line">#else</span><br><span class="line">  __ ldmxcsr(mxcsr_save);</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  // restore rsp</span><br><span class="line">  __ addptr(rsp, -rsp_after_call_off * wordSize);</span><br><span class="line"></span><br><span class="line">  // return</span><br><span class="line">  __ vzeroupper();</span><br><span class="line">  __ pop(rbp);</span><br><span class="line">  __ ret(0);</span><br><span class="line"></span><br><span class="line">  // handle return types different from T_INT</span><br><span class="line">  __ BIND(is_long);</span><br><span class="line">  __ movq(Address(c_rarg0, 0), rax);</span><br><span class="line">  __ jmp(exit);</span><br><span class="line"></span><br><span class="line">  __ BIND(is_float);</span><br><span class="line">  __ movflt(Address(c_rarg0, 0), xmm0);</span><br><span class="line">  __ jmp(exit);</span><br><span class="line"></span><br><span class="line">  __ BIND(is_double);</span><br><span class="line">  __ movdbl(Address(c_rarg0, 0), xmm0);</span><br><span class="line">  __ jmp(exit);</span><br><span class="line"></span><br><span class="line">  return start;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="如何列出汇编代码"><a href="#如何列出汇编代码" class="headerlink" title="如何列出汇编代码"></a>如何列出汇编代码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 列出从0x7fffe1000ca6 开始的100 个汇编指令</span><br><span class="line">x/100i   0x7fffe1000ca6</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何用gdb断点地址"><a href="#如何用gdb断点地址" class="headerlink" title="如何用gdb断点地址"></a>如何用gdb断点地址</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b *0x7fffe1000ca6</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="方法入口点"><a href="#方法入口点" class="headerlink" title="方法入口点"></a>方法入口点</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JavaCalls::call_helper</span><br><span class="line">-----&gt;  address entry_point = method-&gt;from_interpreted_entry();</span><br><span class="line">---------&gt; Atomic::load_acquire(&amp;_from_interpreted_entry)</span><br></pre></td></tr></table></figure>
+
+<p>执行方法的时候会调用 <code>_from_interpreted_entry</code>生成对应的栈以及上下文，其中寄存器r13会指向下一个bytecode ,<br>然后通过r13读取下一个bytecode的例程，并执行对应例程</p>
+<p>那么<code>_from_interpreted_entry</code> 是从哪里可以设置的？<br>在<code>link_method</code>会设置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void Method::link_method(const methodHandle&amp; h_method, TRAPS) &#123;</span><br><span class="line">...</span><br><span class="line">  address entry = Interpreter::entry_for_method(h_method);</span><br><span class="line">  set_interpreter_entry(entry);</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的<code>Interpreter::entry_for_method(h_method)</code>是下面这个数组：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AbstractInterpreter::_entry_table  </span><br></pre></td></tr></table></figure>
+
+<p>那么<code>_entry_table</code>是在哪里设置呢？</p>
+<p>在下面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">void TemplateInterpreterGenerator::generate_all()&#123;</span><br><span class="line"></span><br><span class="line">  #define method_entry(kind)                                              \</span><br><span class="line">  &#123; CodeletMark cm(_masm, &quot;method entry point (kind = &quot; #kind &quot;)&quot;); \</span><br><span class="line">    Interpreter::_entry_table[Interpreter::kind] = generate_method_entry(Interpreter::kind); \</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // all non-native method kinds</span><br><span class="line">  method_entry(zerolocals)  // 就是这里会设置AbstractInterpreter::_entry_table[Interpreter::zerolocals]  = generate_method_entry(Interpreter::zerolocals)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里生成的例程就是包括方法帧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line">address TemplateInterpreterGenerator::generate_normal_entry(bool synchronized) &#123;</span><br><span class="line">  // determine code generation flags</span><br><span class="line">  bool inc_counter  = UseCompiler || CountCompiledCalls || LogTouchedMethods;</span><br><span class="line"></span><br><span class="line">  // ebx: Method*</span><br><span class="line">  // rbcp: sender sp</span><br><span class="line">  address entry_point = __ pc();</span><br><span class="line"></span><br><span class="line">  const Address constMethod(rbx, Method::const_offset());</span><br><span class="line">  const Address access_flags(rbx, Method::access_flags_offset());</span><br><span class="line">  const Address size_of_parameters(rdx,</span><br><span class="line">                                   ConstMethod::size_of_parameters_offset());</span><br><span class="line">  const Address size_of_locals(rdx, ConstMethod::size_of_locals_offset());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  // get parameter size (always needed)</span><br><span class="line">  __ movptr(rdx, constMethod);</span><br><span class="line">  __ load_unsigned_short(rcx, size_of_parameters);</span><br><span class="line"></span><br><span class="line">  // rbx: Method*</span><br><span class="line">  // rcx: size of parameters</span><br><span class="line">  // rbcp: sender_sp (could differ from sp+wordSize if we were called via c2i )</span><br><span class="line"></span><br><span class="line">  __ load_unsigned_short(rdx, size_of_locals); // get size of locals in words</span><br><span class="line">  __ subl(rdx, rcx); // rdx = no. of additional locals</span><br><span class="line"></span><br><span class="line">  // YYY</span><br><span class="line">//   __ incrementl(rdx);</span><br><span class="line">//   __ andl(rdx, -2);</span><br><span class="line"></span><br><span class="line">  // see if we&#x27;ve got enough room on the stack for locals plus overhead.</span><br><span class="line">  generate_stack_overflow_check();</span><br><span class="line"></span><br><span class="line">  // get return address</span><br><span class="line">  __ pop(rax);</span><br><span class="line"></span><br><span class="line">  // compute beginning of parameters</span><br><span class="line">  __ lea(rlocals, Address(rsp, rcx, Interpreter::stackElementScale(), -wordSize));</span><br><span class="line"></span><br><span class="line">  // rdx - # of additional locals</span><br><span class="line">  // allocate space for locals</span><br><span class="line">  // explicitly initialize locals</span><br><span class="line">  &#123;</span><br><span class="line">    Label exit, loop;</span><br><span class="line">    __ testl(rdx, rdx);</span><br><span class="line">    __ jcc(Assembler::lessEqual, exit); // do nothing if rdx &lt;= 0</span><br><span class="line">    __ bind(loop);</span><br><span class="line">    __ push((int) NULL_WORD); // initialize local variables</span><br><span class="line">    __ decrementl(rdx); // until everything initialized</span><br><span class="line">    __ jcc(Assembler::greater, loop);</span><br><span class="line">    __ bind(exit);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // initialize fixed part of activation frame</span><br><span class="line">  generate_fixed_frame(false);</span><br><span class="line"></span><br><span class="line">  // make sure method is not native &amp; not abstract</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">  __ movl(rax, access_flags);</span><br><span class="line">  &#123;</span><br><span class="line">    Label L;</span><br><span class="line">    __ testl(rax, JVM_ACC_NATIVE);</span><br><span class="line">    __ jcc(Assembler::zero, L);</span><br><span class="line">    __ stop(&quot;tried to execute native method as non-native&quot;);</span><br><span class="line">    __ bind(L);</span><br><span class="line">  &#125;</span><br><span class="line">  &#123;</span><br><span class="line">    Label L;</span><br><span class="line">    __ testl(rax, JVM_ACC_ABSTRACT);</span><br><span class="line">    __ jcc(Assembler::zero, L);</span><br><span class="line">    __ stop(&quot;tried to execute abstract method in interpreter&quot;);</span><br><span class="line">    __ bind(L);</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  // Since at this point in the method invocation the exception</span><br><span class="line">  // handler would try to exit the monitor of synchronized methods</span><br><span class="line">  // which hasn&#x27;t been entered yet, we set the thread local variable</span><br><span class="line">  // _do_not_unlock_if_synchronized to true. The remove_activation</span><br><span class="line">  // will check this flag.</span><br><span class="line"></span><br><span class="line">  const Register thread = NOT_LP64(rax) LP64_ONLY(r15_thread);</span><br><span class="line">  NOT_LP64(__ get_thread(thread));</span><br><span class="line">  const Address do_not_unlock_if_synchronized(thread,</span><br><span class="line">        in_bytes(JavaThread::do_not_unlock_if_synchronized_offset()));</span><br><span class="line">  __ movbool(do_not_unlock_if_synchronized, true);</span><br><span class="line"></span><br><span class="line">  __ profile_parameters_type(rax, rcx, rdx);</span><br><span class="line">  // increment invocation count &amp; check for overflow</span><br><span class="line">  Label invocation_counter_overflow;</span><br><span class="line">  if (inc_counter) &#123;</span><br><span class="line">    generate_counter_incr(&amp;invocation_counter_overflow);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Label continue_after_compile;</span><br><span class="line">  __ bind(continue_after_compile);</span><br><span class="line"></span><br><span class="line">  // check for synchronized interpreted methods</span><br><span class="line">  bang_stack_shadow_pages(false);</span><br><span class="line"></span><br><span class="line">  // reset the _do_not_unlock_if_synchronized flag</span><br><span class="line">  NOT_LP64(__ get_thread(thread));</span><br><span class="line">  __ movbool(do_not_unlock_if_synchronized, false);</span><br><span class="line"></span><br><span class="line">  // check for synchronized methods</span><br><span class="line">  // Must happen AFTER invocation_counter check and stack overflow check,</span><br><span class="line">  // so method is not locked if overflows.</span><br><span class="line">  if (synchronized) &#123;</span><br><span class="line">    // Allocate monitor and lock method</span><br><span class="line">    lock_method();</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // no synchronization necessary</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">    &#123;</span><br><span class="line">      Label L;</span><br><span class="line">      __ movl(rax, access_flags);</span><br><span class="line">      __ testl(rax, JVM_ACC_SYNCHRONIZED);</span><br><span class="line">      __ jcc(Assembler::zero, L);</span><br><span class="line">      __ stop(&quot;method needs synchronization&quot;);</span><br><span class="line">      __ bind(L);</span><br><span class="line">    &#125;</span><br><span class="line">#endif</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // start execution</span><br><span class="line">#ifdef ASSERT</span><br><span class="line">  &#123;</span><br><span class="line">    Label L;</span><br><span class="line">     const Address monitor_block_top (rbp,</span><br><span class="line">                 frame::interpreter_frame_monitor_block_top_offset * wordSize);</span><br><span class="line">    __ movptr(rax, monitor_block_top);</span><br><span class="line">    __ cmpptr(rax, rsp);</span><br><span class="line">    __ jcc(Assembler::equal, L);</span><br><span class="line">    __ stop(&quot;broken stack frame setup in interpreter&quot;);</span><br><span class="line">    __ bind(L);</span><br><span class="line">  &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">  // jvmti support</span><br><span class="line">  __ notify_method_entry();</span><br><span class="line"></span><br><span class="line">  __ dispatch_next(vtos);     ////////  生成方法帧和上下文执行 ， 执行下一个bytecode</span><br><span class="line"></span><br><span class="line">  // invocation counter overflow</span><br><span class="line">  if (inc_counter) &#123;</span><br><span class="line">    // Handle overflow of counter and compile method</span><br><span class="line">    __ bind(invocation_counter_overflow);</span><br><span class="line">    generate_counter_overflow(continue_after_compile);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return entry_point;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/7037413460543537188">https://juejin.cn/post/7037413460543537188</a></li>
+<li><a target="_blank" rel="noopener" href="https://wizardforcel.gitbooks.io/100-gdb-tips/content/examine-memory.html">https://wizardforcel.gitbooks.io/100-gdb-tips/content/examine-memory.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhimazhi/p/15352931.html">https://www.cnblogs.com/mazhimazhi/p/15352931.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mazhimazhi/p/15812077.html">https://www.cnblogs.com/mazhimazhi/p/15812077.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/16/WARNING-An-illegal-reflective-access-operation-has-occurred-groovy/" rel="prev" title="WARNING: An illegal reflective access operation has occurred groovy">
+      <i class="fa fa-chevron-left"></i> WARNING: An illegal reflective access operation has occurred groovy
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/25/Hydration-completed-but-contains-mismatches/" rel="next" title="Hydration completed but contains mismatches">
+      Hydration completed but contains mismatches <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#main-%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">main 函数介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%97%B6%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">调用时机:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c-%E8%B0%83%E7%94%A8java-static-method%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">c++ 调用java static method方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%97%E5%87%BA%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">如何列出汇编代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%A8gdb%E6%96%AD%E7%82%B9%E5%9C%B0%E5%9D%80"><span class="nav-number">5.</span> <span class="nav-text">如何用gdb断点地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%85%A5%E5%8F%A3%E7%82%B9"><span class="nav-number">6.</span> <span class="nav-text">方法入口点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">7.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

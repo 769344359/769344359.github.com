@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="php7 异常、错误以及相关坑php 的坑非常之多，有高低版本的，有历史包袱类的。也有与其他语言不一致导致的知识迁移导致的坑。 前置知识 throwable  PHP 7 changes how most errors are reported by PHP. Instead of reporting errors through the traditional error reporting m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php7 异常、错误以及相关坑">
+<meta property="og:url" content="https://shakudada.xyz/2019/10/19/php-try-catch/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="php7 异常、错误以及相关坑php 的坑非常之多，有高低版本的，有历史包袱类的。也有与其他语言不一致导致的知识迁移导致的坑。 前置知识 throwable  PHP 7 changes how most errors are reported by PHP. Instead of reporting errors through the traditional error reporting m">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-19T06:02:25.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.922Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="php">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2019/10/19/php-try-catch/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>php7 异常、错误以及相关坑 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2019/10/19/php-try-catch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          php7 异常、错误以及相关坑
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-10-19 14:02:25" itemprop="dateCreated datePublished" datetime="2019-10-19T14:02:25+08:00">2019-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="php7-异常、错误以及相关坑"><a href="#php7-异常、错误以及相关坑" class="headerlink" title="php7 异常、错误以及相关坑"></a>php7 异常、错误以及相关坑</h1><p>php 的坑非常之多，有高低版本的，有历史包袱类的。也有与其他语言不一致导致的知识迁移导致的坑。</p>
+<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><p> <a target="_blank" rel="noopener" href="https://www.php.net/manual/en/language.errors.php7.php">throwable</a></p>
+<blockquote>
+<p>PHP 7 changes how most errors are reported by PHP. Instead of reporting errors through the traditional error reporting mechanism used by PHP 5, most errors are now reported by throwing Error exceptions.</p>
+</blockquote>
+<blockquote>
+<p>(人肉机翻)php 7 改变了php大多数的errors的警告提示方式。和php 5 传统的error　reporting　机制不同，php 的大多数错误通过抛出错误异常来警告提示。</p>
+</blockquote>
+<h2 id="填坑开始"><a href="#填坑开始" class="headerlink" title="填坑开始"></a>填坑开始</h2><h3 id="例子１"><a href="#例子１" class="headerlink" title="例子１"></a>例子１</h3><ul>
+<li>php 版本７,除以０的错误会变成异常<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// test.php</span><br><span class="line">try &#123;</span><br><span class="line">   echo 1%0;</span><br><span class="line">&#125; catch (DivisionByZeroError $e) &#123;</span><br><span class="line">    echo &quot;bbb&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+然后执行<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">php test.php </span><br><span class="line">bbb</span><br></pre></td></tr></table></figure>
+输出<code>bbb</code> ,也就是被try catch 住了。</li>
+</ul>
+<p>那么我们先看php 是怎么catch 住这个错误的</p>
+<p>堆栈如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint 1, zend_throw_exception_ex (exception_ce=0x14cfe70, code=0, format=0x1087ea4 &quot;Modulo by zero&quot;) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_exceptions.c:913</span><br><span class="line">913	&#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  zend_throw_exception_ex (exception_ce=0x14cfe70, code=0, format=0x1087ea4 &quot;Modulo by zero&quot;) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_exceptions.c:913</span><br><span class="line">#1  0x00000000009b9feb in ZEND_MOD_SPEC_CONST_CONST_HANDLER () at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:4270</span><br><span class="line">#2  0x0000000000a381e4 in execute_ex (ex=0x7fffef61e030) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:59989</span><br><span class="line">#3  0x0000000000a3d0ab in zend_execute (op_array=0x7fffef684300, return_value=0x0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:63760</span><br><span class="line">#4  0x000000000094cd22 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend.c:1496</span><br><span class="line">#5  0x00000000008b0b4a in php_execute_script (primary_file=0x7fffffffca10) at /home/dinosaur/Downloads/php-7.2.2/main/main.c:2590</span><br><span class="line">#6  0x0000000000a3fd23 in do_cli (argc=2, argv=0x1441f40) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1011</span><br><span class="line">#7  0x0000000000a40ee0 in main (argc=2, argv=0x1441f40) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1404</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.kancloud.cn/nickbai/php7/363302">相关阅读</a></p>
+<h3 id="例子二"><a href="#例子二" class="headerlink" title="例子二"></a>例子二</h3><p>php 版本７</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">try &#123;</span><br><span class="line">   echo 1/0;      // 取余改成了除法</span><br><span class="line">&#125; catch (DivisionByZeroError $e) &#123;</span><br><span class="line">    echo &quot;bbb&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Warning: Division by zero in /home/dinosaur/test/test.php on line 3</span><br><span class="line">INF</span><br></pre></td></tr></table></figure>
+<p>发现了不一样了吗？</p>
+<p>①　抛了warning 没有被try catch 住</p>
+<p>②　php 脚本继续执行，(并输出INF)</p>
+<p>我们看看堆栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  zend_error (type=2, format=0x107dcfc &quot;Division by zero&quot;) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend.c:1105</span><br><span class="line">#1  0x000000000093fb5b in div_function (result=0x7fffef61e090, op1=0x7fffe70e61c0, op2=0x7fffe70e61d0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_operators.c:1173</span><br><span class="line">#2  0x00000000009a82a0 in fast_div_function (result=0x7fffef61e090, op1=0x7fffe70e61c0, op2=0x7fffe70e61d0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_operators.h:738</span><br><span class="line">#3  0x00000000009b9f22 in ZEND_DIV_SPEC_CONST_CONST_HANDLER () at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:4251</span><br><span class="line">#4  0x0000000000a381d4 in execute_ex (ex=0x7fffef61e030) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:59986</span><br><span class="line">#5  0x0000000000a3d0ab in zend_execute (op_array=0x7fffef684300, return_value=0x0) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend_vm_execute.h:63760</span><br><span class="line">#6  0x000000000094cd22 in zend_execute_scripts (type=8, retval=0x0, file_count=3) at /home/dinosaur/Downloads/php-7.2.2/Zend/zend.c:1496</span><br><span class="line">#7  0x00000000008b0b4a in php_execute_script (primary_file=0x7fffffffca10) at /home/dinosaur/Downloads/php-7.2.2/main/main.c:2590</span><br><span class="line">#8  0x0000000000a3fd23 in do_cli (argc=2, argv=0x1441f40) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1011</span><br><span class="line">#9  0x0000000000a40ee0 in main (argc=2, argv=0x1441f40) at /home/dinosaur/Downloads/php-7.2.2/sapi/cli/php_cli.c:1404</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>zend_error 翻到最底下就是<code>write</code> 系统调用了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (Z_LVAL_P(op2) == 0) &#123;</span><br><span class="line">	zend_error(E_WARNING, &quot;Division by zero&quot;);</span><br><span class="line">	ZVAL_DOUBLE(result, ((double) Z_LVAL_P(op1) / (double) Z_LVAL_P(op2)));</span><br><span class="line">	return SUCCESS;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>zend_error</code>后就<code>return</code> 了，所以后面的程序可以继续执行</p>
+<h3 id="对比总结"><a href="#对比总结" class="headerlink" title="对比总结"></a>对比总结</h3><p><code>1/0</code> 不会被抛出异常，会有warning　并继续执行　</p>
+<p>坑点在于：</p>
+<ul>
+<li>不是所有的error都能被catch</li>
+<li>没有被catch 住的话会继续执行</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/php/" rel="tag"># php</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/10/18/lex%E5%92%8Cyacc%E4%BE%8B%E5%AD%90/" rel="prev" title="lex和yacc">
+      <i class="fa fa-chevron-left"></i> lex和yacc
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/10/22/composer%E7%9A%84psr4/" rel="next" title="composer的psr4">
+      composer的psr4 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#php7-%E5%BC%82%E5%B8%B8%E3%80%81%E9%94%99%E8%AF%AF%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E5%9D%91"><span class="nav-number">1.</span> <span class="nav-text">php7 异常、错误以及相关坑</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">前置知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A1%AB%E5%9D%91%E5%BC%80%E5%A7%8B"><span class="nav-number">1.2.</span> <span class="nav-text">填坑开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%EF%BC%91"><span class="nav-number">1.2.1.</span> <span class="nav-text">例子１</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%E4%BA%8C"><span class="nav-number">1.2.2.</span> <span class="nav-text">例子二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.3.</span> <span class="nav-text">对比总结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

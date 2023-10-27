@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="mysql 报文:mysql报文分为两部分:header和payload header有四个字节,其中前三个字节是标识这个包的长度描述payload的长度,也就是payload最长的长度为2^24-1字节,最后一个字节则是类似于tcp的序列号,每次从0开始递增,描述的是第几个包 payloadpayload则是具体负载 mysql握手tcp三次握手之后,整个传输层的连接已经建立了,那么怎么登陆呢?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql binlog获取">
+<meta property="og:url" content="https://shakudada.xyz/2021/05/11/mysql-binlog%E8%8E%B7%E5%8F%96/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="mysql 报文:mysql报文分为两部分:header和payload header有四个字节,其中前三个字节是标识这个包的长度描述payload的长度,也就是payload最长的长度为2^24-1字节,最后一个字节则是类似于tcp的序列号,每次从0开始递增,描述的是第几个包 payloadpayload则是具体负载 mysql握手tcp三次握手之后,整个传输层的连接已经建立了,那么怎么登陆呢?">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-11T04:44:08.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.915Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2021/05/11/mysql-binlog%E8%8E%B7%E5%8F%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mysql binlog获取 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2021/05/11/mysql-binlog%E8%8E%B7%E5%8F%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql binlog获取
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-11 12:44:08" itemprop="dateCreated datePublished" datetime="2021-05-11T12:44:08+08:00">2021-05-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="mysql-报文"><a href="#mysql-报文" class="headerlink" title="mysql 报文:"></a>mysql 报文:</h2><p>mysql报文分为两部分:<code>header</code>和<code>payload</code></p>
+<h3 id="header"><a href="#header" class="headerlink" title="header"></a>header</h3><p>有四个字节,其中前三个字节是标识这个包的长度描述<code>payload</code>的长度,也就是<code>payload</code>最长的长度为2^24-1字节,最后一个字节则是类似于tcp的序列号,每次从0开始递增,描述的是第几个包</p>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload则是具体负载</p>
+<h2 id="mysql握手"><a href="#mysql握手" class="headerlink" title="mysql握手"></a>mysql握手</h2><p>tcp三次握手之后,整个传输层的连接已经建立了,那么怎么登陆呢?<br><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/internals/en/plain-handshake.html">握手文档</a><br><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/dev/mysql-server/8.0.16/page_protocol_connection_phase_authentication_methods_native_password_authentication.html">加密的方式</a><br>举个例子:加密套件是<code>mysql_native_password</code>,那么第一个包会是由 server发出,附带20字节的随机码, 然后在客户端的用户提交的密码做多次<code>sha1</code>哈希然后回传给mysql</p>
+<h2 id="binlog获取分为两步"><a href="#binlog获取分为两步" class="headerlink" title="binlog获取分为两步:"></a>binlog获取分为两步:</h2><p>1: COM_REGISTER_SLAVE 把slave注册到master里面<br>2: <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/internals/en/com-binlog-dump.html">COM_BINLOG_DUMP</a> 这个包主要是告诉master锁需要的binlog的名字和位点,然后就会返回一堆binlog事件给客户端 </p>
+<h2 id="mysql-发送binlog流程"><a href="#mysql-发送binlog流程" class="headerlink" title="mysql 发送binlog流程"></a>mysql 发送binlog流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">int Binlog_sender::get_binlog_end_pos(File_reader *reader, my_off_t *end_pos) &#123;</span><br><span class="line">  DBUG_TRACE;</span><br><span class="line">  my_off_t read_pos = reader-&gt;position();</span><br><span class="line"></span><br><span class="line">  do &#123;</span><br><span class="line">    /*</span><br><span class="line">      MYSQL_BIN_LOG::binlog_end_pos is atomic. We should only acquire the</span><br><span class="line">      LOCK_binlog_end_pos if we reached the end of the hot log and are going</span><br><span class="line">      to wait for updates on the binary log (Binlog_sender::wait_new_event()).</span><br><span class="line">    */</span><br><span class="line">    *end_pos = mysql_bin_log.get_binlog_end_pos();</span><br><span class="line"></span><br><span class="line">    /* If this is a cold binlog file, we are done getting the end pos */</span><br><span class="line">    if (unlikely(!mysql_bin_log.is_active(m_linfo.log_file_name))) &#123;</span><br><span class="line">      *end_pos = 0;</span><br><span class="line">      return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    DBUG_PRINT(&quot;info&quot;, (&quot;Reading file %s, seek pos %llu, end_pos is %llu&quot;,</span><br><span class="line">                        m_linfo.log_file_name, read_pos, *end_pos));</span><br><span class="line">    DBUG_PRINT(&quot;info&quot;, (&quot;Active file is %s&quot;, mysql_bin_log.get_log_fname()));</span><br><span class="line"></span><br><span class="line">    if (read_pos &lt; *end_pos) return 0;</span><br><span class="line"></span><br><span class="line">    /* Some data may be in net buffer, it should be flushed before waiting */</span><br><span class="line">    if (!m_wait_new_events || flush_net()) return 1;</span><br><span class="line"></span><br><span class="line">    if (unlikely(wait_new_events(read_pos))) return 1;</span><br><span class="line">  &#125; while (unlikely(!m_thd-&gt;killed));</span><br><span class="line"></span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/11/c%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90/" rel="prev" title="c字节对齐">
+      <i class="fa fa-chevron-left"></i> c字节对齐
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/21/vxlan/" rel="next" title="vxlan">
+      vxlan <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-%E6%8A%A5%E6%96%87"><span class="nav-number">1.</span> <span class="nav-text">mysql 报文:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#header"><span class="nav-number">1.1.</span> <span class="nav-text">header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#payload"><span class="nav-number">1.2.</span> <span class="nav-text">payload</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql%E6%8F%A1%E6%89%8B"><span class="nav-number">2.</span> <span class="nav-text">mysql握手</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#binlog%E8%8E%B7%E5%8F%96%E5%88%86%E4%B8%BA%E4%B8%A4%E6%AD%A5"><span class="nav-number">3.</span> <span class="nav-text">binlog获取分为两步:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-%E5%8F%91%E9%80%81binlog%E6%B5%81%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">mysql 发送binlog流程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

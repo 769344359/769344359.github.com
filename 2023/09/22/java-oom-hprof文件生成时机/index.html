@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景1 有次排查oom问题,发现没有对应的目录,oom后会不生成hprof的dump文件2 oom后被try catch 后依然可以生成dump的prof文件,所以不是在退出生成hprof文件的,而是在生成这个异常的时候生成dump的hprof文件的 代码java -Xms50m -Xmx50m   -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java oom hprof文件生成时机">
+<meta property="og:url" content="https://shakudada.xyz/2023/09/22/java-oom-hprof%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E6%97%B6%E6%9C%BA/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景1 有次排查oom问题,发现没有对应的目录,oom后会不生成hprof的dump文件2 oom后被try catch 后依然可以生成dump的prof文件,所以不是在退出生成hprof文件的,而是在生成这个异常的时候生成dump的hprof文件的 代码java -Xms50m -Xmx50m   -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn4.shakudada.xyz/2023/09/ab9a8c357b113031ef1496e0e63a4b0a.png">
+<meta property="article:published_time" content="2023-09-22T05:18:46.000Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.893Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn4.shakudada.xyz/2023/09/ab9a8c357b113031ef1496e0e63a4b0a.png">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/09/22/java-oom-hprof%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E6%97%B6%E6%9C%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java oom hprof文件生成时机 | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/09/22/java-oom-hprof%E6%96%87%E4%BB%B6%E7%94%9F%E6%88%90%E6%97%B6%E6%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java oom hprof文件生成时机
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-09-22 13:18:46" itemprop="dateCreated datePublished" datetime="2023-09-22T13:18:46+08:00">2023-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>1 有次排查oom问题,发现没有对应的目录,oom后会不生成hprof的dump文件<br>2 oom后被try catch 后依然可以生成dump的prof文件,所以不是在退出生成hprof文件的,而是在生成这个异常的时候生成dump的hprof文件的</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>java -Xms50m -Xmx50m   -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath&#x3D;&#x2F;home&#x2F;admin&#x2F;logs&#x2F;jvmlogs&#x2F;java.hprof   Main.java </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        List&lt;Object&gt; tem = new ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        boolean test = true;</span><br><span class="line">        try &#123;</span><br><span class="line">            while (test) &#123;</span><br><span class="line">                tem.add(new int[10000000]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;catch (Throwable table)&#123;</span><br><span class="line">            System.out.println(&quot;oom test&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(&quot;afasdfadsf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>堆栈</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Thread 2 &quot;java&quot; hit Breakpoint 1, HeapDumper::dump (this=this@entry=0x7ffff7bfe090, path=path@entry=0x7ffff0803c20 &quot;/home/ubuntu/fasdfd/fadf&quot;, out=0x7ffff0000b80, compression=0, overwrite=overwrite@entry=false, num_dump_threads=num_dump_threads@entry=1) at /home/ubuntu/jdk/src/hotspot/share/services/heapDumper.cpp:2383</span><br><span class="line">2383    int HeapDumper::dump(const char* path, outputStream* out, int compression, bool overwrite, uint num_dump_threads) &#123;</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  HeapDumper::dump (this=this@entry=0x7ffff7bfe090, path=path@entry=0x7ffff0803c20 &quot;/home/ubuntu/fasdfd/fadf&quot;, out=0x7ffff0000b80, compression=0, overwrite=overwrite@entry=false, num_dump_threads=num_dump_threads@entry=1)</span><br><span class="line">    at /home/ubuntu/jdk/src/hotspot/share/services/heapDumper.cpp:2383</span><br><span class="line">#1  0x00007ffff65473a8 in HeapDumper::dump_heap (oome=oome@entry=true) at /home/ubuntu/jdk/src/hotspot/share/services/heapDumper.cpp:2573</span><br><span class="line">#2  0x00007ffff654750e in HeapDumper::dump_heap_from_oome () at /home/ubuntu/jdk/src/hotspot/share/services/heapDumper.cpp:2487</span><br><span class="line">#3  0x00007ffff61e9c78 in report_java_out_of_memory (message=message@entry=0x7ffff75a0d5e &quot;Java heap space&quot;) at /home/ubuntu/jdk/src/hotspot/share/utilities/debug.cpp:356</span><br><span class="line">#4  0x00007ffff6c3760d in MemAllocator::Allocation::check_out_of_memory (this=this@entry=0x7ffff7bfe1b0) at /home/ubuntu/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:126</span><br><span class="line">#5  0x00007ffff6c3aac6 in MemAllocator::Allocation::~Allocation (this=0x7ffff7bfe1b0, __in_chrg=&lt;optimized out&gt;) at /home/ubuntu/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:83</span><br><span class="line">#6  MemAllocator::allocate (this=this@entry=0x7ffff7bfe280) at /home/ubuntu/jdk/src/hotspot/share/gc/shared/memAllocator.cpp:375</span><br><span class="line">#7  0x00007ffff72658e7 in CollectedHeap::array_allocate (__the_thread__=0x7ffff0029850, do_zero=true, length=10000000, size=&lt;optimized out&gt;, klass=0x100040d90, this=&lt;optimized out&gt;) at /home/ubuntu/jdk/src/hotspot/share/gc/shared/collectedHeap.inline.hpp:41</span><br><span class="line">#8  TypeArrayKlass::allocate_common (this=this@entry=0x100040d90, length=length@entry=10000000, do_zero=do_zero@entry=true, __the_thread__=__the_thread__@entry=0x7ffff0029850) at /home/ubuntu/jdk/src/hotspot/share/oops/typeArrayKlass.cpp:93</span><br><span class="line">#9  0x00007ffff6d861d9 in TypeArrayKlass::allocate (__the_thread__=0x7ffff0029850, length=10000000, this=&lt;optimized out&gt;) at /home/ubuntu/jdk/src/hotspot/share/oops/typeArrayKlass.hpp:68</span><br><span class="line">#10 oopFactory::new_typeArray (type=type@entry=T_INT, length=length@entry=10000000, __the_thread__=__the_thread__@entry=0x7ffff0029850) at /home/ubuntu/jdk/src/hotspot/share/memory/oopFactory.cpp:93</span><br><span class="line">#11 0x00007ffff662b51a in InterpreterRuntime::newarray (current=0x7ffff0029850, type=T_INT, size=10000000) at /home/ubuntu/jdk/src/hotspot/share/interpreter/interpreterRuntime.cpp:248</span><br><span class="line">#12 0x00007fffe856be1a in ?? ()</span><br><span class="line">#13 0x00007fffe856bd91 in ?? ()</span><br><span class="line">#14 0x00000000fcf98230 in ?? ()</span><br><span class="line">#15 0x00007ffff7bfe3e0 in ?? ()</span><br><span class="line">#16 0x00007fffc9014349 in ?? ()</span><br><span class="line">#17 0x00007ffff7bfe450 in ?? ()</span><br><span class="line">#18 0x00007fffc9014408 in ?? ()</span><br><span class="line">#19 0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+
+<p>核心函数是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void report_java_out_of_memory(const char* message) &#123;</span><br><span class="line">  static int out_of_memory_reported = 0;</span><br><span class="line"></span><br><span class="line">  if (Atomic::cmpxchg(&amp;out_of_memory_reported, 0, 1) == 0) &#123;</span><br><span class="line">    // create heap dump before OnOutOfMemoryError commands are executed</span><br><span class="line">    if (HeapDumpOnOutOfMemoryError) &#123;</span><br><span class="line">      tty-&gt;print_cr(&quot;java.lang.OutOfMemoryError: %s&quot;, message);</span><br><span class="line">      HeapDumper::dump_heap_from_oome();                         // 生成hprof 文件</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (OnOutOfMemoryError &amp;&amp; OnOutOfMemoryError[0]) &#123;</span><br><span class="line">      VMError::report_java_out_of_memory(message);       // 生成错误信息</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (CrashOnOutOfMemoryError) &#123;</span><br><span class="line">      tty-&gt;print_cr(&quot;Aborting due to java.lang.OutOfMemoryError: %s&quot;, message);</span><br><span class="line">      report_fatal(OOM_JAVA_HEAP_FATAL, __FILE__, __LINE__, &quot;OutOfMemory encountered: %s&quot;, message);     // catch 导致的</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (ExitOnOutOfMemoryError) &#123;</span><br><span class="line">      tty-&gt;print_cr(&quot;Terminating due to java.lang.OutOfMemoryError: %s&quot;, message);</span><br><span class="line">      os::_exit(3); // quick exit with no cleanup hooks run</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="如何打开dump文件的"><a href="#如何打开dump文件的" class="headerlink" title="如何打开dump文件的"></a>如何打开dump文件的</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">char const* FileWriter::open_writer() &#123;</span><br><span class="line">  assert(_fd &lt; 0, &quot;Must not already be open&quot;);</span><br><span class="line"></span><br><span class="line">  _fd = os::create_binary_file(_path, _overwrite);</span><br><span class="line"></span><br><span class="line">  if (_fd &lt; 0) &#123;</span><br><span class="line">    return os::strerror(errno);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return NULL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后调用的是linux 的库函数open64</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// jdk/src/hotspot/os/linux/os_linux.cpp</span><br><span class="line">// create binary file, rewriting existing file if required</span><br><span class="line">int os::create_binary_file(const char* path, bool rewrite_existing) &#123;</span><br><span class="line">  int oflags = O_WRONLY | O_CREAT;</span><br><span class="line">  oflags |= rewrite_existing ? O_TRUNC : O_EXCL;</span><br><span class="line">  return ::open64(path, oflags, S_IREAD | S_IWRITE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>dump的目录一定要存在,不存在也不会检查<br><img src="https://cdn4.shakudada.xyz/2023/09/ab9a8c357b113031ef1496e0e63a4b0a.png"></p>
+<h3 id="生成hprof文件和exception的时机"><a href="#生成hprof文件和exception的时机" class="headerlink" title="生成hprof文件和exception的时机"></a>生成hprof文件和exception的时机</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">bool MemAllocator::Allocation::check_out_of_memory() &#123;</span><br><span class="line">  JavaThread* THREAD = _thread; // For exception macros.</span><br><span class="line">  assert(!HAS_PENDING_EXCEPTION, &quot;Unexpected exception, will result in uninitialized storage&quot;);</span><br><span class="line"></span><br><span class="line">  if (obj() != NULL) &#123;</span><br><span class="line">    return false;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const char* message = _overhead_limit_exceeded ? &quot;GC overhead limit exceeded&quot; : &quot;Java heap space&quot;;</span><br><span class="line">  if (!_thread-&gt;in_retryable_allocation()) &#123;</span><br><span class="line">    // -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support</span><br><span class="line">    report_java_out_of_memory(message);       //////////////  生成hprof 文件 , 里面就是上面的一对内容</span><br><span class="line"></span><br><span class="line">    if (JvmtiExport::should_post_resource_exhausted()) &#123;</span><br><span class="line">      JvmtiExport::post_resource_exhausted(</span><br><span class="line">        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,</span><br><span class="line">        message);</span><br><span class="line">    &#125;</span><br><span class="line">    oop exception = _overhead_limit_exceeded ?</span><br><span class="line">        Universe::out_of_memory_error_gc_overhead_limit() :      // gc 超过limit 导致的oom的异常</span><br><span class="line">        Universe::out_of_memory_error_java_heap();            // 我们平常说的堆内存不足导致oom</span><br><span class="line">    THROW_OOP_(exception, true);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    THROW_OOP_(Universe::out_of_memory_error_retry(), true);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以是先生成dump文件,再抛异常</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/goldenfish1919/article/details/95162330">https://blog.csdn.net/goldenfish1919/article/details/95162330</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/21/java-%E4%B8%9A%E5%8A%A1oom%E6%8E%92%E6%9F%A5/" rel="prev" title="java 业务oom排查">
+      <i class="fa fa-chevron-left"></i> java 业务oom排查
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/16/clickhouse-cloud-dbeaver%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A/" rel="next" title="clickhouse cloud dbeaver连接不上">
+      clickhouse cloud dbeaver连接不上 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">1.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%89%93%E5%BC%80dump%E6%96%87%E4%BB%B6%E7%9A%84"><span class="nav-number">1.2.</span> <span class="nav-text">如何打开dump文件的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90hprof%E6%96%87%E4%BB%B6%E5%92%8Cexception%E7%9A%84%E6%97%B6%E6%9C%BA"><span class="nav-number">1.3.</span> <span class="nav-text">生成hprof文件和exception的时机</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">相关阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

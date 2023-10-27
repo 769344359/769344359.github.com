@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"shakudada.xyz","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"79C1GXGOC6","apiKey":"225fa4bf2bc37c3e46a671682674fe37","indexName":"my-hexo-blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="背景java的线程间通信,偶尔会用到wait和notify 实现注册: 1234567891011121314&#x2F;&#x2F; Register native methods of Objectvoid java_lang_Object::register_natives(TRAPS) &amp;#123;  InstanceKlass* obj &#x3D; vmClasses::Object_klass();  Metho">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java-wait-notify">
+<meta property="og:url" content="https://shakudada.xyz/2023/10/25/java-wait-notify/index.html">
+<meta property="og:site_name" content="dinosaur">
+<meta property="og:description" content="背景java的线程间通信,偶尔会用到wait和notify 实现注册: 1234567891011121314&#x2F;&#x2F; Register native methods of Objectvoid java_lang_Object::register_natives(TRAPS) &amp;#123;  InstanceKlass* obj &#x3D; vmClasses::Object_klass();  Metho">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-25T03:42:47.897Z">
+<meta property="article:modified_time" content="2023-10-25T03:42:47.897Z">
+<meta property="article:author" content="dinosaur">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://shakudada.xyz/2023/10/25/java-wait-notify/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java-wait-notify | dinosaur</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">dinosaur</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container"></div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="algolia-results">
+  <div id="algolia-stats"></div>
+  <div id="algolia-hits"></div>
+  <div id="algolia-pagination" class="algolia-pagination"></div>
+</div>
+
+      
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/10/25/java-wait-notify/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java-wait-notify
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-10-25 11:42:47" itemprop="dateCreated datePublished" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>java的线程间通信,偶尔会用到wait和notify</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>注册:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// Register native methods of Object</span><br><span class="line">void java_lang_Object::register_natives(TRAPS) &#123;</span><br><span class="line">  InstanceKlass* obj = vmClasses::Object_klass();</span><br><span class="line">  Method::register_native(obj, vmSymbols::hashCode_name(),</span><br><span class="line">                          vmSymbols::void_int_signature(), (address) &amp;JVM_IHashCode, CHECK);</span><br><span class="line">  Method::register_native(obj, vmSymbols::wait_name(),</span><br><span class="line">                          vmSymbols::long_void_signature(), (address) &amp;JVM_MonitorWait, CHECK);</span><br><span class="line">  Method::register_native(obj, vmSymbols::notify_name(),</span><br><span class="line">                          vmSymbols::void_method_signature(), (address) &amp;JVM_MonitorNotify, CHECK);</span><br><span class="line">  Method::register_native(obj, vmSymbols::notifyAll_name(),</span><br><span class="line">                          vmSymbols::void_method_signature(), (address) &amp;JVM_MonitorNotifyAll, CHECK);</span><br><span class="line">  Method::register_native(obj, vmSymbols::clone_name(),</span><br><span class="line">                          vmSymbols::void_object_signature(), (address) &amp;JVM_Clone, THREAD);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br></pre></td><td class="code"><pre><span class="line">// -----------------------------------------------------------------------------</span><br><span class="line">// Wait/Notify/NotifyAll</span><br><span class="line">//</span><br><span class="line">// Note: a subset of changes to ObjectMonitor::wait()</span><br><span class="line">// will need to be replicated in complete_exit</span><br><span class="line">void ObjectMonitor::wait(jlong millis, bool interruptible, TRAPS) &#123;</span><br><span class="line">  JavaThread* current = THREAD;</span><br><span class="line"></span><br><span class="line">  assert(InitDone, &quot;Unexpectedly not initialized&quot;);</span><br><span class="line"></span><br><span class="line">  CHECK_OWNER();  // Throws IMSE if not owner.</span><br><span class="line"></span><br><span class="line">  EventJavaMonitorWait event;</span><br><span class="line"></span><br><span class="line">  // check for a pending interrupt</span><br><span class="line">  if (interruptible &amp;&amp; current-&gt;is_interrupted(true) &amp;&amp; !HAS_PENDING_EXCEPTION) &#123;</span><br><span class="line">    // post monitor waited event.  Note that this is past-tense, we are done waiting.</span><br><span class="line">    if (JvmtiExport::should_post_monitor_waited()) &#123;</span><br><span class="line">      // Note: &#x27;false&#x27; parameter is passed here because the</span><br><span class="line">      // wait was not timed out due to thread interrupt.</span><br><span class="line">      JvmtiExport::post_monitor_waited(current, this, false);</span><br><span class="line"></span><br><span class="line">      // In this short circuit of the monitor wait protocol, the</span><br><span class="line">      // current thread never drops ownership of the monitor and</span><br><span class="line">      // never gets added to the wait queue so the current thread</span><br><span class="line">      // cannot be made the successor. This means that the</span><br><span class="line">      // JVMTI_EVENT_MONITOR_WAITED event handler cannot accidentally</span><br><span class="line">      // consume an unpark() meant for the ParkEvent associated with</span><br><span class="line">      // this ObjectMonitor.</span><br><span class="line">    &#125;</span><br><span class="line">    if (event.should_commit()) &#123;</span><br><span class="line">      post_monitor_wait_event(&amp;event, this, 0, millis, false);</span><br><span class="line">    &#125;</span><br><span class="line">    THROW(vmSymbols::java_lang_InterruptedException());</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  assert(current-&gt;_Stalled == 0, &quot;invariant&quot;);</span><br><span class="line">  current-&gt;_Stalled = intptr_t(this);</span><br><span class="line">  current-&gt;set_current_waiting_monitor(this);</span><br><span class="line"></span><br><span class="line">  // create a node to be put into the queue</span><br><span class="line">  // Critically, after we reset() the event but prior to park(), we must check</span><br><span class="line">  // for a pending interrupt.</span><br><span class="line">  ObjectWaiter node(current);</span><br><span class="line">  node.TState = ObjectWaiter::TS_WAIT;</span><br><span class="line">  current-&gt;_ParkEvent-&gt;reset();</span><br><span class="line">  OrderAccess::fence();          // ST into Event; membar ; LD interrupted-flag</span><br><span class="line"></span><br><span class="line">  // Enter the waiting queue, which is a circular doubly linked list in this case</span><br><span class="line">  // but it could be a priority queue or any data structure.</span><br><span class="line">  // _WaitSetLock protects the wait queue.  Normally the wait queue is accessed only</span><br><span class="line">  // by the the owner of the monitor *except* in the case where park()</span><br><span class="line">  // returns because of a timeout of interrupt.  Contention is exceptionally rare</span><br><span class="line">  // so we use a simple spin-lock instead of a heavier-weight blocking lock.</span><br><span class="line"></span><br><span class="line">  Thread::SpinAcquire(&amp;_WaitSetLock, &quot;WaitSet - add&quot;);</span><br><span class="line">  AddWaiter(&amp;node);</span><br><span class="line">  Thread::SpinRelease(&amp;_WaitSetLock);</span><br><span class="line"></span><br><span class="line">  _Responsible = NULL;</span><br><span class="line"></span><br><span class="line">  intx save = _recursions;     // record the old recursion count</span><br><span class="line">  _waiters++;                  // increment the number of waiters</span><br><span class="line">  _recursions = 0;             // set the recursion level to be 1</span><br><span class="line">  exit(current);               // exit the monitor</span><br><span class="line">  guarantee(owner_raw() != current, &quot;invariant&quot;);</span><br><span class="line"></span><br><span class="line">  // The thread is on the WaitSet list - now park() it.</span><br><span class="line">  // On MP systems it&#x27;s conceivable that a brief spin before we park</span><br><span class="line">  // could be profitable.</span><br><span class="line">  //</span><br><span class="line">  // TODO-FIXME: change the following logic to a loop of the form</span><br><span class="line">  //   while (!timeout &amp;&amp; !interrupted &amp;&amp; _notified == 0) park()</span><br><span class="line"></span><br><span class="line">  int ret = OS_OK;</span><br><span class="line">  int WasNotified = 0;</span><br><span class="line"></span><br><span class="line">  // Need to check interrupt state whilst still _thread_in_vm</span><br><span class="line">  bool interrupted = interruptible &amp;&amp; current-&gt;is_interrupted(false);</span><br><span class="line"></span><br><span class="line">  &#123; // State transition wrappers</span><br><span class="line">    OSThread* osthread = current-&gt;osthread();</span><br><span class="line">    OSThreadWaitState osts(osthread, true);</span><br><span class="line"></span><br><span class="line">    assert(current-&gt;thread_state() == _thread_in_vm, &quot;invariant&quot;);</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">      ClearSuccOnSuspend csos(this);</span><br><span class="line">      ThreadBlockInVMPreprocess&lt;ClearSuccOnSuspend&gt; tbivs(current, csos, true /* allow_suspend */);</span><br><span class="line">      if (interrupted || HAS_PENDING_EXCEPTION) &#123;</span><br><span class="line">        // Intentionally empty</span><br><span class="line">      &#125; else if (node._notified == 0) &#123;</span><br><span class="line">        if (millis &lt;= 0) &#123;</span><br><span class="line">          current-&gt;_ParkEvent-&gt;park();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">          ret = current-&gt;_ParkEvent-&gt;park(millis);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Node may be on the WaitSet, the EntryList (or cxq), or in transition</span><br><span class="line">    // from the WaitSet to the EntryList.</span><br><span class="line">    // See if we need to remove Node from the WaitSet.</span><br><span class="line">    // We use double-checked locking to avoid grabbing _WaitSetLock</span><br><span class="line">    // if the thread is not on the wait queue.</span><br><span class="line">    //</span><br><span class="line">    // Note that we don&#x27;t need a fence before the fetch of TState.</span><br><span class="line">    // In the worst case we&#x27;ll fetch a old-stale value of TS_WAIT previously</span><br><span class="line">    // written by the is thread. (perhaps the fetch might even be satisfied</span><br><span class="line">    // by a look-aside into the processor&#x27;s own store buffer, although given</span><br><span class="line">    // the length of the code path between the prior ST and this load that&#x27;s</span><br><span class="line">    // highly unlikely).  If the following LD fetches a stale TS_WAIT value</span><br><span class="line">    // then we&#x27;ll acquire the lock and then re-fetch a fresh TState value.</span><br><span class="line">    // That is, we fail toward safety.</span><br><span class="line"></span><br><span class="line">    if (node.TState == ObjectWaiter::TS_WAIT) &#123;</span><br><span class="line">      Thread::SpinAcquire(&amp;_WaitSetLock, &quot;WaitSet - unlink&quot;);</span><br><span class="line">      if (node.TState == ObjectWaiter::TS_WAIT) &#123;</span><br><span class="line">        DequeueSpecificWaiter(&amp;node);       // unlink from WaitSet</span><br><span class="line">        assert(node._notified == 0, &quot;invariant&quot;);</span><br><span class="line">        node.TState = ObjectWaiter::TS_RUN;</span><br><span class="line">      &#125;</span><br><span class="line">      Thread::SpinRelease(&amp;_WaitSetLock);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // The thread is now either on off-list (TS_RUN),</span><br><span class="line">    // on the EntryList (TS_ENTER), or on the cxq (TS_CXQ).</span><br><span class="line">    // The Node&#x27;s TState variable is stable from the perspective of this thread.</span><br><span class="line">    // No other threads will asynchronously modify TState.</span><br><span class="line">    guarantee(node.TState != ObjectWaiter::TS_WAIT, &quot;invariant&quot;);</span><br><span class="line">    OrderAccess::loadload();</span><br><span class="line">    if (_succ == current) _succ = NULL;</span><br><span class="line">    WasNotified = node._notified;</span><br><span class="line"></span><br><span class="line">    // Reentry phase -- reacquire the monitor.</span><br><span class="line">    // re-enter contended monitor after object.wait().</span><br><span class="line">    // retain OBJECT_WAIT state until re-enter successfully completes</span><br><span class="line">    // Thread state is thread_in_vm and oop access is again safe,</span><br><span class="line">    // although the raw address of the object may have changed.</span><br><span class="line">    // (Don&#x27;t cache naked oops over safepoints, of course).</span><br><span class="line"></span><br><span class="line">    // post monitor waited event. Note that this is past-tense, we are done waiting.</span><br><span class="line">    if (JvmtiExport::should_post_monitor_waited()) &#123;</span><br><span class="line">      JvmtiExport::post_monitor_waited(current, this, ret == OS_TIMEOUT);</span><br><span class="line"></span><br><span class="line">      if (node._notified != 0 &amp;&amp; _succ == current) &#123;</span><br><span class="line">        // In this part of the monitor wait-notify-reenter protocol it</span><br><span class="line">        // is possible (and normal) for another thread to do a fastpath</span><br><span class="line">        // monitor enter-exit while this thread is still trying to get</span><br><span class="line">        // to the reenter portion of the protocol.</span><br><span class="line">        //</span><br><span class="line">        // The ObjectMonitor was notified and the current thread is</span><br><span class="line">        // the successor which also means that an unpark() has already</span><br><span class="line">        // been done. The JVMTI_EVENT_MONITOR_WAITED event handler can</span><br><span class="line">        // consume the unpark() that was done when the successor was</span><br><span class="line">        // set because the same ParkEvent is shared between Java</span><br><span class="line">        // monitors and JVM/TI RawMonitors (for now).</span><br><span class="line">        //</span><br><span class="line">        // We redo the unpark() to ensure forward progress, i.e., we</span><br><span class="line">        // don&#x27;t want all pending threads hanging (parked) with none</span><br><span class="line">        // entering the unlocked monitor.</span><br><span class="line">        node._event-&gt;unpark();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (event.should_commit()) &#123;</span><br><span class="line">      post_monitor_wait_event(&amp;event, this, node._notifier_tid, millis, ret == OS_TIMEOUT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    OrderAccess::fence();</span><br><span class="line"></span><br><span class="line">    assert(current-&gt;_Stalled != 0, &quot;invariant&quot;);</span><br><span class="line">    current-&gt;_Stalled = 0;</span><br><span class="line"></span><br><span class="line">    assert(owner_raw() != current, &quot;invariant&quot;);</span><br><span class="line">    ObjectWaiter::TStates v = node.TState;</span><br><span class="line">    if (v == ObjectWaiter::TS_RUN) &#123;</span><br><span class="line">      enter(current);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      guarantee(v == ObjectWaiter::TS_ENTER || v == ObjectWaiter::TS_CXQ, &quot;invariant&quot;);</span><br><span class="line">      ReenterI(current, &amp;node);</span><br><span class="line">      node.wait_reenter_end(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // current has reacquired the lock.</span><br><span class="line">    // Lifecycle - the node representing current must not appear on any queues.</span><br><span class="line">    // Node is about to go out-of-scope, but even if it were immortal we wouldn&#x27;t</span><br><span class="line">    // want residual elements associated with this thread left on any lists.</span><br><span class="line">    guarantee(node.TState == ObjectWaiter::TS_RUN, &quot;invariant&quot;);</span><br><span class="line">    assert(owner_raw() == current, &quot;invariant&quot;);</span><br><span class="line">    assert(_succ != current, &quot;invariant&quot;);</span><br><span class="line">  &#125; // OSThreadWaitState()</span><br><span class="line"></span><br><span class="line">  current-&gt;set_current_waiting_monitor(NULL);</span><br><span class="line"></span><br><span class="line">  guarantee(_recursions == 0, &quot;invariant&quot;);</span><br><span class="line">  _recursions = save      // restore the old recursion count</span><br><span class="line">                + JvmtiDeferredUpdates::get_and_reset_relock_count_after_wait(current); //  increased by the deferred relock count</span><br><span class="line">  _waiters--;             // decrement the number of waiters</span><br><span class="line"></span><br><span class="line">  // Verify a few postconditions</span><br><span class="line">  assert(owner_raw() == current, &quot;invariant&quot;);</span><br><span class="line">  assert(_succ != current, &quot;invariant&quot;);</span><br><span class="line">  assert(object()-&gt;mark() == markWord::encode(this), &quot;invariant&quot;);</span><br><span class="line"></span><br><span class="line">  // check if the notification happened</span><br><span class="line">  if (!WasNotified) &#123;</span><br><span class="line">    // no, it could be timeout or Thread.interrupt() or both</span><br><span class="line">    // check for interrupt event, otherwise it is timeout</span><br><span class="line">    if (interruptible &amp;&amp; current-&gt;is_interrupted(true) &amp;&amp; !HAS_PENDING_EXCEPTION) &#123;</span><br><span class="line">      THROW(vmSymbols::java_lang_InterruptedException());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // NOTE: Spurious wake up will be consider as timeout.</span><br><span class="line">  // Monitor notify has precedence over thread interrupt.</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>wait: </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Thread 20 &quot;Thread-0&quot; hit Breakpoint 2, __pthread_cond_wait (cond=0x7ffff0510058, mutex=0x7ffff0510030) at forward.c:121</span><br><span class="line">121     forward.c: No such file or directory.</span><br><span class="line">(gdb) bt</span><br><span class="line">#0  __pthread_cond_wait (cond=0x7ffff0510058, mutex=0x7ffff0510030) at forward.c:121</span><br><span class="line">#1  0x00007ffff6c21713 in os::PlatformEvent::park (this=0x7ffff0510000) at /home/ubuntu/daixiao/jdk/src/hotspot/os/posix/os_posix.cpp:1484</span><br><span class="line">#2  0x00007ffff6bd003c in ObjectMonitor::wait (this=0x7fffac0013b0, millis=0, interruptible=true, __the_thread__=0x7ffff050f5b0) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/objectMonitor.cpp:1544</span><br><span class="line">#3  0x00007ffff6e90188 in ObjectSynchronizer::wait (obj=..., millis=0, __the_thread__=0x7ffff050f5b0) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/synchronizer.cpp:654</span><br><span class="line">#4  0x00007ffff68298ae in JVM_MonitorWait (env=0x7ffff050f8a8, handle=0x7fffd0df77c0, ms=0) at /home/ubuntu/daixiao/jdk/src/hotspot/share/prims/jvm.cpp:617</span><br><span class="line">#5  0x00007fffe100f68b in ?? ()</span><br><span class="line">#6  0x00000008f7c32db8 in ?? ()</span><br><span class="line">#7  0x00007ffff050f5b0 in ?? ()</span><br><span class="line">#8  0x00007fffd0df7760 in ?? ()</span><br><span class="line">#9  0x00007fffd0df7748 in ?? ()</span><br><span class="line">#10 0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+
+<p>notify:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  __pthread_cond_signal (cond=0x7ffff04f0958) at forward.c:110</span><br><span class="line">#1  0x00007ffff6c21c13 in os::PlatformEvent::unpark (this=0x7ffff04f0900) at /home/ubuntu/daixiao/jdk/src/hotspot/os/posix/os_posix.cpp:1590</span><br><span class="line">#2  0x00007ffff6bcf654 in ObjectMonitor::ExitEpilog (this=0x7fffac0010b0, current=0x7ffff04ef410, Wakee=0x0) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/objectMonitor.cpp:1350</span><br><span class="line">#3  0x00007ffff6bcf57b in ObjectMonitor::exit (this=0x7fffac0010b0, current=0x7ffff04ef410, not_suspended=true) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/objectMonitor.cpp:1321</span><br><span class="line">#4  0x00007ffff6bcfe8e in ObjectMonitor::wait (this=0x7fffac0010b0, millis=0, interruptible=true, __the_thread__=0x7ffff04ef410) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/objectMonitor.cpp:1515</span><br><span class="line">#5  0x00007ffff6e90188 in ObjectSynchronizer::wait (obj=..., millis=0, __the_thread__=0x7ffff04ef410) at /home/ubuntu/daixiao/jdk/src/hotspot/share/runtime/synchronizer.cpp:654</span><br><span class="line">#6  0x00007ffff68298ae in JVM_MonitorWait (env=0x7ffff04ef708, handle=0x7fffd0df77c0, ms=0) at /home/ubuntu/daixiao/jdk/src/hotspot/share/prims/jvm.cpp:617</span><br><span class="line">#7  0x00007fffe100f68b in ?? ()</span><br><span class="line">#8  0x00000008f7c32db8 in ?? ()</span><br><span class="line">#9  0x00007ffff04ef410 in ?? ()</span><br><span class="line">#10 0x00007fffd0df7760 in ?? ()</span><br><span class="line">#11 0x00007fffd0df7748 in ?? ()</span><br><span class="line">#12 0x0000000000000000 in ?? ()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">void PlatformEvent::park() &#123;       // AKA &quot;down()&quot;</span><br><span class="line">  // Transitions for _event:</span><br><span class="line">  //   -1 =&gt; -1 : illegal</span><br><span class="line">  //    1 =&gt;  0 : pass - return immediately</span><br><span class="line">  //    0 =&gt; -1 : block; then set _event to 0 before returning</span><br><span class="line"></span><br><span class="line">  // Invariant: Only the thread associated with the PlatformEvent</span><br><span class="line">  // may call park().</span><br><span class="line">  assert(_nParked == 0, &quot;invariant&quot;);</span><br><span class="line"></span><br><span class="line">  int v;</span><br><span class="line"></span><br><span class="line">  // atomically decrement _event</span><br><span class="line">  for (;;) &#123;</span><br><span class="line">    v = _event;</span><br><span class="line">    if (Atomic::cmpxchg(&amp;_event, v, v - 1) == v) break;</span><br><span class="line">  &#125;</span><br><span class="line">  guarantee(v &gt;= 0, &quot;invariant&quot;);</span><br><span class="line"></span><br><span class="line">  if (v == 0) &#123; // Do this the hard way by blocking ...</span><br><span class="line">    int status = pthread_mutex_lock(_mutex);</span><br><span class="line">    assert_status(status == 0, status, &quot;mutex_lock&quot;);</span><br><span class="line">    guarantee(_nParked == 0, &quot;invariant&quot;);</span><br><span class="line">    ++_nParked;</span><br><span class="line">    while (_event &lt; 0) &#123;</span><br><span class="line">      // OS-level &quot;spurious wakeups&quot; are ignored</span><br><span class="line">      status = pthread_cond_wait(_cond, _mutex);</span><br><span class="line">      assert_status(status == 0 MACOS_ONLY(|| status == ETIMEDOUT),</span><br><span class="line">                    status, &quot;cond_wait&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    --_nParked;</span><br><span class="line"></span><br><span class="line">    _event = 0;</span><br><span class="line">    status = pthread_mutex_unlock(_mutex);</span><br><span class="line">    assert_status(status == 0, status, &quot;mutex_unlock&quot;);</span><br><span class="line">    // Paranoia to ensure our locked and lock-free paths interact</span><br><span class="line">    // correctly with each other.</span><br><span class="line">    OrderAccess::fence();</span><br><span class="line">  &#125;</span><br><span class="line">  guarantee(_event &gt;= 0, &quot;invariant&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;pthread.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;</span><br><span class="line">pthread_cond_t cond = PTHREAD_COND_INITIALIZER;</span><br><span class="line">int condition = 0;</span><br><span class="line">int count = 0;</span><br><span class="line">pthread_t thread_id;</span><br><span class="line">int consume( void )</span><br><span class="line">&#123;</span><br><span class="line">   while( 1 )</span><br><span class="line">   &#123;</span><br><span class="line">      pthread_mutex_lock( &amp;mutex );</span><br><span class="line">      while( condition == 0 )</span><br><span class="line">         pthread_cond_wait( &amp;cond, &amp;mutex );</span><br><span class="line">      printf( &quot;Consumed %d\n&quot;, count );</span><br><span class="line">      condition = 0;</span><br><span class="line">      pthread_cond_signal( &amp;cond );      </span><br><span class="line">      pthread_mutex_unlock( &amp;mutex );</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   return( 0 );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void*  produce( void * arg )</span><br><span class="line">&#123;</span><br><span class="line">   while( 1 )</span><br><span class="line">   &#123;</span><br><span class="line">      pthread_mutex_lock( &amp;mutex );</span><br><span class="line">      while( condition == 1 )</span><br><span class="line">         pthread_cond_wait( &amp;cond, &amp;mutex );</span><br><span class="line">      printf( &quot;Produced %d\n&quot;, count++ );</span><br><span class="line">      condition = 1;</span><br><span class="line">      pthread_cond_signal( &amp;cond );      </span><br><span class="line">      pthread_mutex_unlock( &amp;mutex );</span><br><span class="line">   &#125;</span><br><span class="line">   return( 0 );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main( void )</span><br><span class="line">&#123;</span><br><span class="line">   pthread_create( thread_id, NULL, &amp;produce, NULL );</span><br><span class="line">   return consume();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/54265523/how-is-java-wait-waiting-implemented">https://stackoverflow.com/questions/54265523/how-is-java-wait-waiting-implemented</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/b_x_p/article/details/103980515">https://blog.csdn.net/b_x_p/article/details/103980515</a></li>
+<li><a target="_blank" rel="noopener" href="https://cxyzjd.com/article/qq_26222859/53930941">https://cxyzjd.com/article/qq_26222859/53930941</a></li>
+<li><a target="_blank" rel="noopener" href="https://lotabout.me/books/Java-Concurrency/Thread-Pool/Shutdown.html">https://lotabout.me/books/Java-Concurrency/Thread-Pool/Shutdown.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://heapdump.cn/article/4013354">线程退出</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1811372#:~:text=Safepoint%20%E5%8F%AF%E4%BB%A5%E7%90%86%E8%A7%A3%E6%88%90%E6%98%AF,%E7%9A%84%E5%86%85%E9%83%A8%E6%8C%87%E9%92%88%E7%AD%89%E7%AD%89%E3%80%82">safepoint </a></li>
+<li><a target="_blank" rel="noopener" href="http://www.qnx.com/developers/docs/qnxcar2/index.jsp?topic=/com.qnx.doc.neutrino.lib_ref/topic/p/pthread_cond_wait.html">条件变量</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.javazhiyin.com/78759.html">lock</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/25/fst/" rel="prev" title="fst">
+      <i class="fa fa-chevron-left"></i> fst
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/27/clickhouse-%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE/" rel="next" title="clickhouse 物化视图">
+      clickhouse 物化视图 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#demo"><span class="nav-number">2.1.</span> <span class="nav-text">demo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E9%98%85%E8%AF%BB"><span class="nav-number">2.2.</span> <span class="nav-text">相关阅读</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">dinosaur</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/769344359" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;769344359" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/thedinosaurmail@gmail.com" title="E-Mail → thedinosaurmail@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dinosaur</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="//cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js"></script>
+<script src="//cdn.jsdelivr.net/npm/instantsearch.js@4/dist/instantsearch.production.min.js"></script>
+<script src="/js/algolia-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
