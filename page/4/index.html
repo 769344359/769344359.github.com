@@ -180,6 +180,105 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/07/04/lucene-%E5%88%86%E8%AF%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/04/lucene-%E5%88%86%E8%AF%8D/" class="post-title-link" itemprop="url">lucene 分词</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-07-04 21:54:33" itemprop="dateCreated datePublished" datetime="2023-07-04T21:54:33+08:00">2023-07-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>了解分词过程</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>lucene的查询过程:</p>
+<blockquote>
+<p> (String  query , String field ) -&gt; Query </p>
+</blockquote>
+<p>整个过程是将字符串<code>&quot;how old&quot;</code> 切割成一个个<code>Term Query</code></p>
+<p>最后会构造成一棵语法树:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">should:[how,old]</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn4.shakudada.xyz/2023/07/3f82dd065ddc3f5085d02223e7d6a805.png" alt="图片"></p>
+<h2 id="背景-1"><a href="#背景-1" class="headerlink" title="背景"></a>背景</h2><p>lucene 的分词是一个基本的话题,主要是利用:<code>incrementToken</code> 这个抽象方法以及继承<code>AttributeSource</code> 这个类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public abstract class TokenStream extends AttributeSource implements Closeable &#123;</span><br><span class="line">  public abstract boolean incrementToken() throws IOException;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="lucene-boolean-clause"><a href="#lucene-boolean-clause" class="headerlink" title="lucene boolean clause"></a>lucene boolean clause</h2><p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/8.8/query-dsl-bool-query.html">相关阅读</a></p>
+<p>lucene 的bolean 子句有四种:</p>
+<ul>
+<li>MUST</li>
+<li>FILTER</li>
+<li>SHOULD</li>
+<li>MUST_NOT<br><img src="https://cdn4.shakudada.xyz/2023/07/4ec8b62649ef8ace1e50480b162b9f2e.png" alt="子句"></li>
+</ul>
+<h2 id="堆栈"><a href="#堆栈" class="headerlink" title="堆栈"></a>堆栈</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;init&gt;:202, TermQuery (org.apache.lucene.search)</span><br><span class="line">newTermQuery:640, QueryBuilder (org.apache.lucene.util)</span><br><span class="line">add:408, QueryBuilder (org.apache.lucene.util)</span><br><span class="line">analyzeMultiBoolean:427, QueryBuilder (org.apache.lucene.util)</span><br><span class="line">createFieldQuery:364, QueryBuilder (org.apache.lucene.util)</span><br><span class="line">createFieldQuery:257, QueryBuilder (org.apache.lucene.util)</span><br><span class="line">newFieldQuery:468, QueryParserBase (org.apache.lucene.queryparser.classic)</span><br><span class="line">getFieldQuery:457, QueryParserBase (org.apache.lucene.queryparser.classic)</span><br><span class="line">MultiTerm:680, QueryParser (org.apache.lucene.queryparser.classic)</span><br><span class="line">Query:233, QueryParser (org.apache.lucene.queryparser.classic)</span><br><span class="line">TopLevelQuery:223, QueryParser (org.apache.lucene.queryparser.classic)</span><br><span class="line">parse:136, QueryParserBase (org.apache.lucene.queryparser.classic)</span><br><span class="line">testParse:20, ParseTest (com.dinosaur.lucene.demo)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="排序算分"><a href="#排序算分" class="headerlink" title="排序算分"></a>排序算分</h2><p><code>BlockMaxMaxscoreScorer</code> 的<code>matches</code>会将所有的分词算出来，然后计算分数总和</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">score:250, BM25Similarity$BM25Scorer (org.apache.lucene.search.similarities)</span><br><span class="line">score:60, LeafSimScorer (org.apache.lucene.search)</span><br><span class="line">score:75, TermScorer (org.apache.lucene.search)</span><br><span class="line">matches:240, BlockMaxMaxscoreScorer$2 (org.apache.lucene.search)</span><br><span class="line">doNext:85, TwoPhaseIterator$TwoPhaseIteratorAsDocIdSetIterator (org.apache.lucene.search)</span><br><span class="line">advance:78, TwoPhaseIterator$TwoPhaseIteratorAsDocIdSetIterator (org.apache.lucene.search)</span><br><span class="line">score:232, BooleanWeight$2 (org.apache.lucene.search)</span><br><span class="line">score:38, BulkScorer (org.apache.lucene.search)</span><br><span class="line">search:776, IndexSearcher (org.apache.lucene.search)</span><br><span class="line">search:694, IndexSearcher (org.apache.lucene.search)</span><br><span class="line">search:688, IndexSearcher (org.apache.lucene.search)</span><br><span class="line">searchAfter:523, IndexSearcher (org.apache.lucene.search)</span><br><span class="line">search:538, IndexSearcher (org.apache.lucene.search)</span><br><span class="line">doPagingSearch:161, SearchFiles (com.dinosaur.lucene.skiptest)</span><br><span class="line">testSearch:131, SearchFiles (com.dinosaur.lucene.skiptest)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.amazingkoala.com.cn/Lucene/Search/2018/1211/25.html">query</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/17cc1ec6d829">https://www.jianshu.com/p/17cc1ec6d829</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.amazingkoala.com.cn/Lucene/Search/2020/0916/167.html">https://www.amazingkoala.com.cn/Lucene/Search/2020/0916/167.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/cn/blog/faster-retrieval-of-top-hits-in-elasticsearch-with-block-max-wand">https://www.elastic.co/cn/blog/faster-retrieval-of-top-hits-in-elasticsearch-with-block-max-wand</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/07/04/Numeric-overflow-in-expression-idea-java/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -856,80 +955,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/06/07/Invalid-JSON-text-in-argument-2-in-mysql8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/07/Invalid-JSON-text-in-argument-2-in-mysql8/" class="post-title-link" itemprop="url">Invalid JSON text in argument 2 in  mysql8</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-07 14:17:35" itemprop="dateCreated datePublished" datetime="2023-06-07T14:17:35+08:00">2023-06-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>有个<code>update_rules</code>字段是json类型</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;type&quot;: &quot;once&quot;, &quot;values&quot;: []&#125;</span><br></pre></td></tr></table></figure>
-<p>想用JSON_CONTAINS提取中间的once内容,发现下面这个sql一直报错:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT  *  FROM  `usergroup`  WHERE JSON_CONTAINS(update_rules , &#x27;once&#x27; , &#x27;$.type&#x27; )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>报错一直是<code>Invalid JSON text in argument 2</code> , 看了很久也没有看出第二个参数哪里错了</p>
-<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-contains">mysql官网例子</a> , 我看官网也是这样</p>
-<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>搜索了一下<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/33513625/invalid-json-text-in-argument-2-json-contains-in-mysql-5-7-8">stackoverflow</a>,原来字符串还要在里面加双引号</p>
-<p>也就是<code>&#39;once&#39;</code> 改成<code>&#39;&quot;once&quot;&#39;</code></p>
-<p>完整的sql变成如下:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT  *  FROM  `usergroup`  WHERE JSON_CONTAINS(update_rules , &#x27;&quot;daily&quot;&#x27; , &#x27;$.type&#x27; )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -999,7 +1024,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

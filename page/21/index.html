@@ -180,6 +180,72 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2020/06/01/%E4%BE%9D%E8%B5%96%E5%92%8C%E5%86%B2%E7%AA%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/06/01/%E4%BE%9D%E8%B5%96%E5%92%8C%E5%86%B2%E7%AA%81/" class="post-title-link" itemprop="url">依赖和冲突</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-01 14:21:45" itemprop="dateCreated datePublished" datetime="2020-06-01T14:21:45+08:00">2020-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="纸带"><a href="#纸带" class="headerlink" title="纸带"></a>纸带</h2><h2 id="state-状态"><a href="#state-状态" class="headerlink" title="state(状态)"></a>state(状态)</h2><p>我看到有关状态的书籍是在可计算理论相关的书籍,或者类型系统相关的书籍.</p>
+<h2 id="展开"><a href="#展开" class="headerlink" title="展开"></a>展开</h2><p>f(f(A,B),f(D,E))<br>f(A,B,D,E);<br>循环依赖<br>f(f) </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2020/06/01/functor-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -834,81 +900,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2020/04/10/golang-stack/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/10/golang-stack/" class="post-title-link" itemprop="url">golang  compile</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-10 07:43:52" itemprop="dateCreated datePublished" datetime="2020-04-10T07:43:52+08:00">2020-04-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>golang 的 lex和parse 在<code>src\cmd\compile\internal\gc\main.go</code>开始</p>
-<p>核心步骤</p>
-<ul>
-<li>parseFiles     lex and parse</li>
-<li>typecheck      语法树的遍历做类型检查</li>
-<li>ssa</li>
-</ul>
-<p>之后会经过link 连接和加载器ld</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">func Main(archInit func(*Arch)) &#123;</span><br><span class="line">    	lines := parseFiles(flag.Args())  // lex and parse</span><br><span class="line">        ...</span><br><span class="line">        	typecheckok = true</span><br><span class="line"></span><br><span class="line">	// Process top-level declarations in phases.</span><br><span class="line"></span><br><span class="line">	// Phase 1: const, type, and names and types of funcs.</span><br><span class="line">	//   This will gather all the information about types</span><br><span class="line">	//   and methods but doesn&#x27;t depend on any of it.</span><br><span class="line">	//</span><br><span class="line">	//   We also defer type alias declarations until phase 2</span><br><span class="line">	//   to avoid cycles like #18640.</span><br><span class="line">	//   TODO(gri) Remove this again once we have a fix for #25838.</span><br><span class="line"></span><br><span class="line">	// Don&#x27;t use range--typecheck can add closures to xtop.</span><br><span class="line">	timings.Start(&quot;fe&quot;, &quot;typecheck&quot;, &quot;top1&quot;)</span><br><span class="line">	for i := 0; i &lt; len(xtop); i++ &#123;</span><br><span class="line">		n := xtop[i]</span><br><span class="line">		if op := n.Op; op != ODCL &amp;&amp; op != OAS &amp;&amp; op != OAS2 &amp;&amp; (op != ODCLTYPE || !n.Left.Name.Param.Alias) &#123;</span><br><span class="line">			xtop[i] = typecheck(n, ctxStmt)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// Phase 2: Variable assignments.</span><br><span class="line">	//   To check interface assignments, depends on phase 1.</span><br><span class="line"></span><br><span class="line">	// Don&#x27;t use range--typecheck can add closures to xtop.</span><br><span class="line">	timings.Start(&quot;fe&quot;, &quot;typecheck&quot;, &quot;top2&quot;)</span><br><span class="line">	for i := 0; i &lt; len(xtop); i++ &#123;</span><br><span class="line">		n := xtop[i]</span><br><span class="line">		if op := n.Op; op == ODCL || op == OAS || op == OAS2 || op == ODCLTYPE &amp;&amp; n.Left.Name.Param.Alias &#123;</span><br><span class="line">			xtop[i] = typecheck(n, ctxStmt)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// Phase 3: Type check function bodies.</span><br><span class="line">	// Don&#x27;t use range--typecheck can add closures to xtop.</span><br><span class="line">	timings.Start(&quot;fe&quot;, &quot;typecheck&quot;, &quot;func&quot;)</span><br><span class="line">	var fcount int64</span><br><span class="line">	for i := 0; i &lt; len(xtop); i++ &#123;</span><br><span class="line">		n := xtop[i]</span><br><span class="line">		if op := n.Op; op == ODCLFUNC || op == OCLOSURE &#123;</span><br><span class="line">			Curfn = n</span><br><span class="line">			decldepth = 1</span><br><span class="line">			saveerrors()</span><br><span class="line">			typecheckslice(Curfn.Nbody.Slice(), ctxStmt)</span><br><span class="line">			checkreturn(Curfn)</span><br><span class="line">			if nerrors != 0 &#123;</span><br><span class="line">				Curfn.Nbody.Set(nil) // type errors; do not compile</span><br><span class="line">			&#125;</span><br><span class="line">			// Now that we&#x27;ve checked whether n terminates,</span><br><span class="line">			// we can eliminate some obviously dead code.</span><br><span class="line">			deadcode(Curfn)</span><br><span class="line">			fcount++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	// With all types checked, it&#x27;s now safe to verify map keys. One single</span><br><span class="line">	// check past phase 9 isn&#x27;t sufficient, as we may exit with other errors</span><br><span class="line">	// before then, thus skipping map key errors.</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  cmd/go/internal/load.LoadImport (path=..., srcDir=..., parent=0xc000147200, stk=0xc0001db698, importPos=..., mode=1, ~r6=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:530</span><br><span class="line">#1  0x000000000079fa1b in cmd/go/internal/load.(*Package).load (p=0xc000147200, stk=0xc0001db698, bp=0xc0001b8a80, err=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:1707</span><br><span class="line">#2  0x0000000000799827 in cmd/go/internal/load.loadImport (pre=0x0, path=..., srcDir=..., parent=0xc000146d80, stk=0xc0001db698, importPos=..., mode=1, ~r7=&lt;optimized out&gt;)</span><br><span class="line">    at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:578</span><br><span class="line">#3  0x000000000079890a in cmd/go/internal/load.LoadImport (path=..., srcDir=..., parent=0xc000146d80, stk=0xc0001db698, importPos=..., mode=1, ~r6=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:531</span><br><span class="line">#4  0x000000000079fa1b in cmd/go/internal/load.(*Package).load (p=0xc000146d80, stk=0xc0001db698, bp=0xc0001b8700, err=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:1707</span><br><span class="line">#5  0x0000000000799827 in cmd/go/internal/load.loadImport (pre=0x0, path=..., srcDir=..., parent=0xc000146900, stk=0xc0001db698, importPos=..., mode=1, ~r7=&lt;optimized out&gt;)</span><br><span class="line">    at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:578</span><br><span class="line">#6  0x000000000079890a in cmd/go/internal/load.LoadImport (path=..., srcDir=..., parent=0xc000146900, stk=0xc0001cf698, importPos=..., mode=1, ~r6=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:531</span><br><span class="line">#7  0x000000000079fa1b in cmd/go/internal/load.(*Package).load (p=0xc000146900, stk=0xc0001db698, bp=0xc0001b8380, err=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:1707</span><br><span class="line">#8  0x00000000007a4c66 in cmd/go/internal/load.GoFilesPackage (gofiles=..., ~r1=&lt;optimized out&gt;) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:2230</span><br><span class="line">#9  0x00000000007a3c54 in cmd/go/internal/load.PackagesAndErrors (patterns=..., ~r1=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:2056</span><br><span class="line">#10 0x00000000007a417d in cmd/go/internal/load.PackagesForBuild (args=..., ~r1=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/load/pkg.go:2123</span><br><span class="line">#11 0x0000000000842528 in cmd/go/internal/work.runBuild (cmd=&lt;optimized out&gt;, args=...) at /home/dinosaur/newgo/go/src/cmd/go/internal/work/build.go:348</span><br><span class="line">#12 0x0000000000932219 in main.main () at /home/dinosaur/newgo/go/src/cmd/go/main.go:189</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -978,7 +969,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

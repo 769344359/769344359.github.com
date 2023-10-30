@@ -180,6 +180,76 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2019/12/12/java-Class-forName/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/12/12/java-Class-forName/" class="post-title-link" itemprop="url">java Class_forName</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-12 17:32:03" itemprop="dateCreated datePublished" datetime="2019-12-12T17:32:03+08:00">2019-12-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在看到jdbc使用的例子里面,看到了Class.forName(“xxx”)的相关调用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(&quot;com.mysql.jdbc.Driver&quot;)</span><br></pre></td></tr></table></figure>
+<p>这有什么用的?<br>其实可以约等于PHP的<code>class_exist</code>,或者说是golang的空引入<br><code>import _ &quot;github.com/go-sql-driver/mysql</code><br>就是为了调用一下static 块的代码,初始化一下</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xingzc/p/5760166.html">https://www.cnblogs.com/xingzc/p/5760166.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2019/12/12/mysql%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -883,74 +953,6 @@ EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = &
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2019/11/30/%E6%AD%A3%E5%88%99%E6%A8%A1%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/30/%E6%AD%A3%E5%88%99%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">正则模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-30 23:34:50" itemprop="dateCreated datePublished" datetime="2019-11-30T23:34:50+08:00">2019-11-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近在看一个php-cs-fix的时候，发现除了贪婪模式和非贪婪模式还有其他模式<br><a target="_blank" rel="noopener" href="https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659">https://github.com/FriendsOfPHP/PHP-CS-Fixer/pull/4659</a></p>
-<ul>
-<li>相关阅读<br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000010544411">https://segmentfault.com/a/1190000010544411</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1020,7 +1022,7 @@ EXPLAIN  SELECT * FROM  `base_underlying_information` WHERE  underlying_code = &
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

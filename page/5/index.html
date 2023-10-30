@@ -180,6 +180,80 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/06/07/Invalid-JSON-text-in-argument-2-in-mysql8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/07/Invalid-JSON-text-in-argument-2-in-mysql8/" class="post-title-link" itemprop="url">Invalid JSON text in argument 2 in  mysql8</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-07 14:17:35" itemprop="dateCreated datePublished" datetime="2023-06-07T14:17:35+08:00">2023-06-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>有个<code>update_rules</code>字段是json类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;type&quot;: &quot;once&quot;, &quot;values&quot;: []&#125;</span><br></pre></td></tr></table></figure>
+<p>想用JSON_CONTAINS提取中间的once内容,发现下面这个sql一直报错:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT  *  FROM  `usergroup`  WHERE JSON_CONTAINS(update_rules , &#x27;once&#x27; , &#x27;$.type&#x27; )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>报错一直是<code>Invalid JSON text in argument 2</code> , 看了很久也没有看出第二个参数哪里错了</p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-contains">mysql官网例子</a> , 我看官网也是这样</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>搜索了一下<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/33513625/invalid-json-text-in-argument-2-json-contains-in-mysql-5-7-8">stackoverflow</a>,原来字符串还要在里面加双引号</p>
+<p>也就是<code>&#39;once&#39;</code> 改成<code>&#39;&quot;once&quot;&#39;</code></p>
+<p>完整的sql变成如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT  *  FROM  `usergroup`  WHERE JSON_CONTAINS(update_rules , &#x27;&quot;daily&quot;&#x27; , &#x27;$.type&#x27; )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/06/06/Payload-value-must-not-be-empty/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -961,92 +1035,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/04/18/java-integer-divison/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/18/java-integer-divison/" class="post-title-link" itemprop="url">java integer divison</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-18 09:59:05" itemprop="dateCreated datePublished" datetime="2023-04-18T09:59:05+08:00">2023-04-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>了解java整除除法的规则</p>
-<h2 id="jls-描述"><a href="#jls-描述" class="headerlink" title="jls 描述"></a>jls 描述</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Integer division rounds toward 0. That is, the quotient produced for operands n</span><br><span class="line">and d that are integers after binary numeric promotion (§5.6) is an integer value q</span><br><span class="line">whose magnitude is as large as possible while satisfying |d ⋅ q| ≤ |n|. Moreover, q</span><br><span class="line">is positive when |n| ≥ |d| and n and d have the same sign, but q is negative when</span><br><span class="line">|n| ≥ |d| and n and d have opposite signs.</span><br></pre></td></tr></table></figure>
-
-<p>也就是 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int res = 3 / 5 = 0 ;</span><br></pre></td></tr></table></figure>
-
-<p>最后使用的bytecode 是<code>idiv</code></p>
-<p>我们看看<code>idiv</code> 这个bytecode 是怎么实现的吧:</p>
-<h3 id="jvm-实现"><a href="#jvm-实现" class="headerlink" title="jvm 实现"></a>jvm 实现</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void Assembler::idivl(Register src) &#123;</span><br><span class="line">  int encode = prefix_and_encode(src-&gt;encoding());</span><br><span class="line">  emit_int16((unsigned char)0xF7, (0xF8 | encode));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Assembler::divl(Register src) &#123; // Unsigned</span><br><span class="line">  int encode = prefix_and_encode(src-&gt;encoding());</span><br><span class="line">  emit_int16((unsigned char)0xF7, (0xF0 | encode));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>查看intel的文档:<br><img src="https://cdn4.shakudada.xyz/intel_mode.png" alt="intel"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">2.1.5 Addressing-Mode Encoding of ModR/M and SIB Bytes</span><br><span class="line">The values and corresponding addressing forms of the ModR/M and SIB bytes are shown in Table 2-1 through Table</span><br><span class="line">2-3: 16-bit addressing forms specified by the ModR/M byte are in Table 2-1 and 32-bit addressing forms are in</span><br><span class="line">Table 2-2. Table 2-3 shows 32-bit addressing forms specified by the SIB byte. In cases where the reg/opcode field</span><br><span class="line">in the ModR/M byte represents an extended opcode, valid encodings are shown in Appendix B.</span><br><span class="line">In Table 2-1 and Table 2-2, the Effective Address column lists 32 effective addresses that can be assigned to the</span><br><span class="line">first operand of an instruction by using the Mod and R/M fields of the ModR/M byte. The first 24 options provide</span><br><span class="line">ways of specifying a memory location; the last eight (Mod = 11B) provide ways of specifying general-purpose, MMX</span><br><span class="line">technology and XMM registers.</span><br><span class="line">The Mod and R/M columns in Table 2-1 and Table 2-2 give the binary encodings of the Mod and R/M fields required</span><br><span class="line">to obtain the effective address listed in the first column. For example: see the row indicated by Mod = 11B, R/M =</span><br><span class="line">000B. The row identifies the general-purpose registers EAX, AX or AL; MMX technology register MM0; or XMM</span><br><span class="line">register XMM0. The register used is determined by the opcode byte and the operand-size attribute.</span><br><span class="line">Now look at the seventh row in either table (labeled “REG =”). This row specifies the use of the 3-bit Reg/Opcode</span><br><span class="line">field when the field is used to give the location of a second operand. The second operand must be a generalpurpose, MMX technology, or XMM register. Rows one through five list the registers that may correspond to the</span><br><span class="line">value in the table. Again, the register used is determined by the opcode byte along with the operand-size attribute.</span><br><span class="line">If the instruction does not require a second operand, then the Reg/Opcode field may be used as an opcode extension. This use is represented by the sixth row in the tables (labeled “/digit (Opcode)”). Note that values in row six</span><br><span class="line">are represented in decimal form.</span><br><span class="line">The body of Table 2-1 and Table 2-2 (under the label “Value of ModR/M Byte (in Hexadecimal)”) contains a 32 by</span><br><span class="line">8 array that presents all of 256 values of the ModR/M byte (in hexadecimal). Bits 3, 4 and 5 are specified by the</span><br><span class="line">column of the table in which a byte resides. The row specifies bits 0, 1 and 2; and bits 6 and 7. The figure below</span><br><span class="line">demonstrates interpretation of one table value.</span><br></pre></td></tr></table></figure>
-<p><img src="https://cdn4.shakudada.xyz/register2.png" alt="register"><br>寄存器会从0编码到16,编码顺序如上述所示</p>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;                        </span><br><span class="line">     <span class="type">int</span> num0 = <span class="number">5</span>;</span><br><span class="line">     <span class="type">int</span> num1 = <span class="number">2</span>;</span><br><span class="line">     <span class="type">int</span> num = num0 / num1 ;</span><br><span class="line">     <span class="keyword">return</span> num;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">## 编译</span><br><span class="line">gcc -O0  test.c  -o  test</span><br><span class="line"></span><br><span class="line">## 用objdump 列出汇编内容</span><br><span class="line">objdump -d  test  | grep -A20   &#x27;&lt;main&gt;:&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>结果为</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0000000000001129 &lt;main&gt;:</span><br><span class="line">    1129:       f3 0f 1e fa             endbr64 </span><br><span class="line">    112d:       55                      push   %rbp</span><br><span class="line">    112e:       48 89 e5                mov    %rsp,%rbp</span><br><span class="line">    1131:       c7 45 f4 05 00 00 00    movl   $0x5,-0xc(%rbp)</span><br><span class="line">    1138:       c7 45 f8 02 00 00 00    movl   $0x2,-0x8(%rbp)</span><br><span class="line">    113f:       8b 45 f4                mov    -0xc(%rbp),%eax</span><br><span class="line">    1142:       99                      cltd   </span><br><span class="line">    1143:       f7 7d f8                idivl  -0x8(%rbp)</span><br><span class="line">    1146:       89 45 fc                mov    %eax,-0x4(%rbp)</span><br><span class="line">    1149:       8b 45 fc                mov    -0x4(%rbp),%eax</span><br><span class="line">    114c:       5d                      pop    %rbp</span><br><span class="line">    114d:       c3                      retq   </span><br><span class="line">    114e:       66 90                   xchg   %ax,%ax</span><br></pre></td></tr></table></figure>
-
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://community.intel.com/legacyfs/online/drupal_files/managed/a4/60/325383-sdm-vol-2abcd.pdf">intel 文档</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1116,7 +1104,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

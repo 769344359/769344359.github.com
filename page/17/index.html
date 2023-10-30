@@ -180,6 +180,73 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2021/03/27/docker%E6%8C%81%E4%B9%85%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/27/docker%E6%8C%81%E4%B9%85%E5%8C%96/" class="post-title-link" itemprop="url">docker持久化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-27 14:54:03" itemprop="dateCreated datePublished" datetime="2021-03-27T14:54:03+08:00">2021-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39805802/article/details/110496244">https://blog.csdn.net/weixin_39805802/article/details/110496244</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2021/03/27/mysql-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -802,93 +869,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2021/02/18/mvcc-translate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/18/mvcc-translate/" class="post-title-link" itemprop="url">mvcc translate</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-18 14:52:07" itemprop="dateCreated datePublished" datetime="2021-02-18T14:52:07+08:00">2021-02-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>5.1 INTRODUCTION<br>对于多版本并发控制算法来说,对于每个数据实例<code>x</code>的<code>写操作</code>都会生成一个<code>X</code>的新的副本(或者叫做版本).<br>数据管理器因此会保存一个包含数据管理器赋值过给X的所有<code>版本</code>的列表.<br>对于每个读操作<code>Read(x)</code>,调度器不仅把读操作发送给数据管理器,还会告诉数据管理器他想要读x的哪一个版本.<br>In a multiversion concurrency control algorithm, each Write on a data item x<br>produces a new copy (or version) of X. The DM that manages x therefore<br>keeps a list of versions of X, which is the history of values that the DM has<br>assigned to X. For each Read(x), the scheduler not only decides when to send<br>the Read to the DM, but it also tells the DM which one of the versions of x to<br>read.<br>多版本并发控制的优点在于帮助调度器避免拒绝太晚的操作(也就是说晚一点的操作不会被拒绝).举个例子,(单版本的情况下)调度器会拒绝读他本该读但是被覆盖的数据.<br>在多版本的情况下,旧的值不会被覆盖,因此可以延迟去读.调度器可以通过读旧版本的值来避免(单版本下)对于读操作的拒绝.<br>保持多版本并对于并发控制并不会花费太多成本,因为对于故障恢复算法来说也是需要版本的信息.<br>The benefit of multiple versions for concurrency control is to help the<br>scheduler avoid rejecting operations that arrive too late. For example, the<br>scheduler normally rejects a Read because the value it was supposed to read<br>has already been overwritten. With multiversions, such old values are never<br>overwritten and are therefore always available to tardy Reads. The scheduler<br>can avoid rejecting the Read simply by having the Read read an old version.’<br>Maintaining multiple versions may not add much to the cost of concurrency<br>control, because the versions may be needed anyway by the recovery<br>algorithm.<br>As we’ll see in the next chapter, many recovery algorithms have to<br>maintain some before image information, at least of those data items that have<br>been updated by active transactions; the recovery algorithm needs those before<br>images in case any of the active transactions abort. The before images of a data<br>item are exactly its list of old versions. It is a small step for the DM to make<br>those versions explicitly available to the scheduler.<br>一个很明显的花费是保存多个版本需要很多存储空间,为了控制这些存储的现在,版本内容必须要定期周期性地清理或者归档.<br>因为某些特定的版本还会被活跃的事务(也就是没有提交或者没有回滚回滚的事务),清理版本信息需要同时兼顾活跃的事务.<br>清理动作也是mvcc的另外一个花费.<br>An obvious cost of maintaining multiple versions is storage space. To<br>control this storage requirement, versions must periodically be purged or archived. Since certain versions may be needed by active transactions, purging<br>versions must be synchronized with respect to active transactions. This purging<br>activity is another cost of multiversion concurrency control.</p>
-<p>我们假设当事务被抛弃,那些那么这个事务创建的版本也会被销毁.在我们后续的讨论中,词<code>版本</code>描述的是<code>已提交</code>事务或者<code>活跃</code>事务的数据对应的值.因此,当调度器决定分配<code>x</code>的特定版本给操作<code>Read(x)</code>,返回的值不会包含<code>被抛弃</code>的事务.<br>如果版本读产生于活跃的事务,可恢复性(也就是回滚)要求读操作对应的事务的提交必须晚于被读的活跃事务的提交.</p>
-<p>We assume that if a transaction is aborted, any versions it created are<br>destroyed. In our subsequent discussion, the term “version” will refer to the<br>value of a data item produced by a transaction that’s either active or committed.<br>Thus, when the scheduler decides to assign a particular version of x to<br>Read(x), the value returned is not one produced by an aborted transaction. If<br>the version read is one produced by an active transaction, recoverability<br>requires that the reader’s commitment be delayed until the transaction that<br>produced the version has committed.<br>如果被读的事务最后被抛弃了(这个事务对应的版本也无效了),该活跃的事务也需要因此而被抛弃.<br> If that transaction actually aborts<br>(thereby invalidating its version), the reader must also be aborted.<br>当前存在的多版本内容仅仅对调度器和数据管理器可见,对于用户使用事务是不可见的.<br>The existence of multiple versions is only visible to the scheduler and DM,<br>not to user transactions.<br>事务只会持有该数据比如x和y.除了数据库处理系统,用户本身看上去只有一个版本,即,在用户的角度看是最后一个会写入<br>Transactions still reference data items, such as x and<br>y. Users therefore expect the DBS to behave as if there were only one version of<br>each data item, namely, the last one that was written from that user’s perspective.<br>调度器会通过使用多版本来减少拒绝的操作,从而提升性能.<br>The scheduler may use multiple versions to improve performance by<br>rejecting operations less frequently.<br>不过最后的结果会和单版本的结果看上去一样.<br> But it must not change the system’s<br>functionality over a single version view of the database.<br>There are many applications of databases in which users do want to<br>explicitly access each of the multiple versions of a data item. For example, a<br>user may wish to maintain several versions of a design database: the last design<br>released for manufacturing, the last design checked for correctness, and the<br>most recent working design. The user may update each version of the design<br>independently. Since the existence of these multiple versions is not transparent<br>to the user, such applications are not appropriate for the multiversion concurrency<br>control algorithms described in this chapter.</p>
-<p>Analyzing Correctness<br>分析mvcc的正确性<br>为了分析mvcc算法的正确性,我们需要扩展可序列化理论.我们需要扩展两类历史:运行在多版本数据库的多版本历史,在用户看来是单版本的单版本历史.用户会把序列化但版本历史(因为我们把事务看成只有一个版本的,我们所有的目标就是多版本执行的内容和但版本看到的一样,相类似的例子就是编译器经过ssr优化后很多顺序都变了但是看上去都一样)<br>To analyze the correctness of multiversion concurrency control algorithms, we<br>need to extend serializability theory. This extension requires two types of<br>histories: multiversion (MV) histories that represent the DM’s execution of<br>operations on a multiversion database, and single version (IV) histories that<br>represent the interpretation of MV histories in the users’ single version view of<br>the database. Serial 1V histories are the histories that the user regards as<br>correct.<br>不过实际上系统是多版本的(只是看上去和单版本的一样).所以为了证明这个并发控制算法是正确的,我们必须证明多版本的历史的约束和单版本的是等价的.那么<code>多版本历史</code>和<code>单版本历史</code>等价是什么意思?(也就是多版本历史和单版本历史等价的动作语义是什么)<br>But the system actually produces MV histories. So, to prove that a<br>concurrency control aIgorithm is correct, we must prove that each of the MV<br>histories that it can produce is equivalent to a serial 1V history,<br>What does it mean for an MV history to be equivalent to a 1V history?<br>我们通过拓展单版本历史之间的等价来描述<code>多版本历史</code>和<code>单版本历史</code>等价.为了做这个扩展,我们需要引入一些符号.<br>Let’s try to answer this by extending the definition of equivalence of 1V histories<br>that we used in Chapters 2-4. To attempt this extension, we need a little<br>notation.<br>对于每个数据实例x,我们用xi,xj…来表示x的版本,下标是写这个版本的事务的编号(也就是xi就是表示事务i写了一个版本x),<br>因此对于多版本历史,永远都是这个下标Wi[Xi],版本的下标和和事务的下标一样.多版本历史的读操作则没有那么特殊,举个例子ri[xj].<br>For each data item X, we denote the versions of x by xi, xj, . . . , where<br>the subscript is the index of the transaction that wrote the version. Thus, each<br>Write in an MV history is always of the form Wi[Xi], where the version<br>subscript equals the transaction subscript. Reads are denoted in the usual way,<br>such as ri[xj].<br>假如我们说<code>多版本历史</code>和<code>单版本历史</code>的<code>等价</code>的(equivalence)的定义是:如果多版本的每个操作的重复和单版本的冲突都一样.<br>考虑多版本历史</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H1 = w0[x0]c0w1[x1]c1r2[x0]w2[y2]c2</span><br></pre></td></tr></table></figure>
-<p>在<code>H1</code>这个历史里面,只有<code>w0[x0]</code>和<code>r2[x0]</code>是冲突的,写操作<code>w1[x1]</code>与<code>w0[x0]</code>以及<code>r2[x0]</code>不冲突,因为他们操作的是不同版本的数据,即x1.现在我们来考虑单版本历史:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">H2 = w0[x]c0w1[x]c1r2[x]w2[y]c2 </span><br></pre></td></tr></table></figure>
-<p>我们通过去掉操作的版本的下标(也就是去掉版本号)来构造历史H2,比如<code>x1</code>映射成<code>x</code>,<code>x0</code>也映射成<code>x</code>,<code>y2</code>映射成<code>y</code>.这种情况下(H2的单版本历史),<code>w0[x]</code>和<code>r2[x0]</code>是冲突的.按照定义(如果他们冲突一样)则他们等价,但是这其实是不合理的(虽然他们都冲突).在历史<code>H2</code>,<code>T2</code>读<code>T1</code>的<code>x</code>.但是在历史<code>H2</code>,<code>T1</code>读的是<code>T0</code>(也就是说冲突是一样但是读的数据来源是不一样的).因为这两个历史(H1和H2)读的来源不一致,所以他们最后写的操作也不一致<br>Suppose we adopt a definition of equivalence that says an MV history<br>HM” is equivalent to a 1V history HIV if every pair of conflicting operations in<br>Hbp, is in the same order in HIV. Consider the MV history<br>H, &#x3D; wobol co WEA cl rz[xol w,[yzl cz.<br>The only two operations in H, that conflict are w,[x,] and r,[x,]. The operation<br>w,[x,] does not conflict with either w,[x,] or r,[x,], because it operates on a<br>different<br>We constructed H, by mapping each operation on versions x0, x,, and yz in H,<br>into the same operation on the corresponding data items x and y. Notice that<br>the two operations in H, that conflict, w,[x,] and r,[x,], are in the same order<br>in H, as in H,. So, according to the definition of equivalence just given, H, is<br>equivalent to H,. But this is not reasonable. In H,, T, reads x from T,, whereas<br>in H,, T, reads x from T,,.’ Since T2 reads a different value of x in H, and H,, it<br>may write a different value in y.<br>我们的对于(单版本和多版本之间)的冲突之所以有一点问题,是因为<code>多版本历史</code>和<code>单版本历史</code>操作的是不同的对象:<br>一个是对版本的操作,一个是对数据的操作(可以类比一个是”打11岁的你”和”打你”是不同语义的).他们的操作是有不同的冲突属性.<br>举个例子,多版本情况下<code>w1[x1]</code>与<code>r2[x0]</code>不冲突,(相对应的版本历史.怎么对应?当然是把下标去掉)单版本情况下<code>w1[x]</code>和<code>r2[x]</code>是冲突的.<br>因此,如果仅仅通过冲突来定义他们是等价的,这是不精确的.<br>This definition of equivalence based on conflicts runs into trouble because<br>MVand 1V histories have slightly different operations - version operations<br>versus data item operations. These operations have different conflict properties.<br>For example, w,[x,] does not conflict with yz[xo], but their corresponding<br>1V operations w,[x] and TJX] do conflict. Therefore, a definition of equivalence<br>based on conflicts is inappropriate.<br>因此,为了解决这个问题(读的来源不一样的问题),我们需要回到2.6节的视图等价.<br>回想一下,如果两个历史的读的源都一样而且最后写也一样则他们视图等价.<br>比较历史<code>H1</code>和<code>H2</code>.在<code>H1</code>(多版本历史)中,T2从T1读x,但是对于<code>H2</code>(单版本历史),T2从T0读x,因此H1和H2视图不等价<br>To solve this problem, we need to return to first principles by adopting the<br>more fundamental definition of view equivalence developed in Section 2.6.<br>Recall that two histories are view equivalent if they have the same reads-from<br>relationships and the same final writes. Comparing histories H, and H,, we see<br>that T, reads x from T, in H,, but T, reads x from T, in H,. Thus, H, is not<br>view equivalent to H2.<br>然后我们获得满足条件等价(单版本和多版本之间的等价,定义是视图等价,那么两者是等价的)的定义.<br>我们需要通过一个对单版本历史与多版本历史之间等价的方式.<br>其中一个方式是SG(H)是无环的,所以历史H是等价于序列化多版本历史,但是仅仅是这样是没有太大帮助.因为(无环)序列化历史不是等价于序列化单版本历史.<br>举个例子:<br>H3 &#x3D; w0[x0]w0[y0]c0R&#x2F;&#x2F; todo<br>如果我们把版本的内容作为单独的数据实例,就会构造一下的序列化图,虽然这个序列化图是无环的,H3还是和单版本的不等价,因为他们映射的读来源不一样</p>
-<p>Now that we have a satisfactory definition of equivalence, we need a way<br>of showing that every MV history H produced by a given multiversion concurrency<br>control algorithm is equivalent to a serial 1V history. One way would be<br>to show that SG( H) is acyclic, so H is equivalent to a serial MV history, Unfortunately,<br>this doesn’t help much, because not every serial MV history is equivalent<br>to a serial 1V history. For example, consider the serial MV history<br>仅仅是多版本历史的子集,也就是<code>l-serial MV histories</code>才会等价于序列化单版本历史,如果所有的<code>read-from</code>关系,要么读自己的事务,要么读最新的事务,这样就说<code>l-serial MV histories</code>,<br>这样的<code>serial MV histories</code>是可以于单版本的历史等价<br>Only a subset of serial MV histories, called l-serial MV histories, are<br>equivalent to serial 1V histories. Intuitively, a serial MV history is I-serial if<br>for each reads-from relationship, say T, reads x from T,, T, is the last trdnsaction<br>preceding T, that writes any version of x. Notice that Ii, is not l-serial<br>because TL reads x from T,), not T,, which is the last transaction preceding T2<br>that writes x.</p>
-<p>mv2pl &gt; 1sr &gt;  5.3 Let H be an MV history over ?: C(H) is equivalent to a<br>serial, 1V history over T iff H is 1SR.</p>
-<blockquote>
-</blockquote>
-<h2 id="我整理的mvcc原理"><a href="#我整理的mvcc原理" class="headerlink" title="我整理的mvcc原理"></a>我整理的mvcc原理</h2><h2 id="1SR-定义"><a href="#1SR-定义" class="headerlink" title="1SR 定义"></a>1SR 定义</h2><p>An MV history is one-copy serializable (or 1SR) if its committed projection is equivalent to a l-serial MV history.</p>
-<h2 id="1-series-MV-history"><a href="#1-series-MV-history" class="headerlink" title="1-series MV history:"></a>1-series MV history:</h2><p>每个事务读先于他的事务里面写版本最大的<br>1 多版本事务Hi 和事务Hj,如果Hi从事务Hj读x,那么满足约束: Hj的x的版本是<strong>先于</strong>Hi的所有事务里面写x的版本最新的一个</p>
-<ul>
-<li>一个小问题:一个事务先于另外一个事务,这是个偏序关系,这里有个疑问,怎么定义这个<strong>先于</strong></li>
-</ul>
-<h2 id="MV-History-Equivalence"><a href="#MV-History-Equivalence" class="headerlink" title="MV History Equivalence:"></a>MV History Equivalence:</h2><p>两个历史的事务中,读的来源都一样则两个多版本事务视图等价</p>
-<p>mv2pl imply mvsg<br>mvsg imply 1sr<br>1sr imply 1-serial</p>
-<h3 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h3><ul>
-<li><a target="_blank" rel="noopener" href="http://www.vldb.org/conf/1992/P497.PDF">http://www.vldb.org/conf/1992/P497.PDF</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.csd.uoc.gr/~hy460/pdf/000.pdf">https://www.csd.uoc.gr/~hy460/pdf/000.pdf</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -958,7 +938,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

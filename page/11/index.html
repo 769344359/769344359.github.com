@@ -180,6 +180,100 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2022/11/29/javac/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/29/javac/" class="post-title-link" itemprop="url">javac</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-29 13:06:46" itemprop="dateCreated datePublished" datetime="2022-11-29T13:06:46+08:00">2022-11-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
+<li>了解java 编译过程</li>
+<li>使用java的module调用javac</li>
+</ul>
+<h2 id="java的编译命令"><a href="#java的编译命令" class="headerlink" title="java的编译命令"></a>java的编译命令</h2><p>在java jdk9 开始，拥有了<code>module</code> 系统 ，jdk里面内部的库也拆分成为不同的<code>module</code> </p>
+<p>java的编译前端命令是<code>javac</code> ,实际上调用的是<code>jdk.compiler</code> 这个module下面的类<code>com.sun.tools.javac.Main</code></p>
+<p>也就是说<code>javac</code> 这个命令和 <code>java  --module   jdk.compiler/com.sun.tools.javac.Main</code>  这个命令是一致的</p>
+<h2 id="java前端"><a href="#java前端" class="headerlink" title="java前端"></a>java前端</h2><p>列出所有的module</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> $  java --list-modules</span><br><span class="line">...</span><br><span class="line">jdk.attach@17.0.5</span><br><span class="line">jdk.charsets@17.0.5</span><br><span class="line">jdk.compiler@17.0.5</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我的jdk现在是jdk17 ， 可以看到其中有一个<code>jdk.compiler</code> 的module ， 这个就是java编译器前端</p>
+<h3 id="使用module-方式调用"><a href="#使用module-方式调用" class="headerlink" title="使用module 方式调用"></a>使用module 方式调用</h3><p>先创建一个<code>hello world</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim com/Hello.java</span><br></pre></td></tr></table></figure>
+<p>内容如下： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package com;</span><br><span class="line">public  class Hello&#123;</span><br><span class="line">        public static void main(String [] argc)&#123;</span><br><span class="line"></span><br><span class="line">                System.out.print(argc.length);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后使用以下命令编译： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java  --module   jdk.compiler/com.sun.tools.javac.Main  com/Hello.java</span><br></pre></td></tr></table></figure>
+
+<p>获取class 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$tree com</span><br><span class="line">com</span><br><span class="line">├── Hello.class</span><br><span class="line">└── Hello.java</span><br></pre></td></tr></table></figure>
+
+
+<p>执行这个<code>hello world</code> 的demo:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ java com.Hello</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<p>正常执行</p>
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.herongyang.com/Java-Tools/java-Option-list-modules-in-JDK.html">https://www.herongyang.com/Java-Tools/java-Option-list-modules-in-JDK.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2022/11/21/xid-equal-to-close-xid/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -887,74 +981,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2022/08/26/3-Method-Reference-Expressions/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/26/3-Method-Reference-Expressions/" class="post-title-link" itemprop="url">Method Reference Expressions</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-26 12:49:51" itemprop="dateCreated datePublished" datetime="2022-08-26T12:49:51+08:00">2022-08-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>了解java 的method reference  </p>
-<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jls/se18/jls18.pdf">java method reference</a><br>在上述文档的:<code>15.13 Method Reference Expressions</code> 这一个小节有介绍</p>
-<p>java method reference 是java的一个表达式, 表达式经过求值,会得到一个对象.<br>那么method reference结果是一个<code>functional interface type</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Evaluation of a method reference expression produces an instance of a functional</span><br><span class="line">interface type</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1024,7 +1050,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

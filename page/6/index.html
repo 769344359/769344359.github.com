@@ -180,6 +180,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/04/18/java-integer-divison/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="dinosaur">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dinosaur">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/18/java-integer-divison/" class="post-title-link" itemprop="url">java integer divison</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-18 09:59:05" itemprop="dateCreated datePublished" datetime="2023-04-18T09:59:05+08:00">2023-04-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>了解java整除除法的规则</p>
+<h2 id="jls-描述"><a href="#jls-描述" class="headerlink" title="jls 描述"></a>jls 描述</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Integer division rounds toward 0. That is, the quotient produced for operands n</span><br><span class="line">and d that are integers after binary numeric promotion (§5.6) is an integer value q</span><br><span class="line">whose magnitude is as large as possible while satisfying |d ⋅ q| ≤ |n|. Moreover, q</span><br><span class="line">is positive when |n| ≥ |d| and n and d have the same sign, but q is negative when</span><br><span class="line">|n| ≥ |d| and n and d have opposite signs.</span><br></pre></td></tr></table></figure>
+
+<p>也就是 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int res = 3 / 5 = 0 ;</span><br></pre></td></tr></table></figure>
+
+<p>最后使用的bytecode 是<code>idiv</code></p>
+<p>我们看看<code>idiv</code> 这个bytecode 是怎么实现的吧:</p>
+<h3 id="jvm-实现"><a href="#jvm-实现" class="headerlink" title="jvm 实现"></a>jvm 实现</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void Assembler::idivl(Register src) &#123;</span><br><span class="line">  int encode = prefix_and_encode(src-&gt;encoding());</span><br><span class="line">  emit_int16((unsigned char)0xF7, (0xF8 | encode));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Assembler::divl(Register src) &#123; // Unsigned</span><br><span class="line">  int encode = prefix_and_encode(src-&gt;encoding());</span><br><span class="line">  emit_int16((unsigned char)0xF7, (0xF0 | encode));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看intel的文档:<br><img src="https://cdn4.shakudada.xyz/intel_mode.png" alt="intel"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">2.1.5 Addressing-Mode Encoding of ModR/M and SIB Bytes</span><br><span class="line">The values and corresponding addressing forms of the ModR/M and SIB bytes are shown in Table 2-1 through Table</span><br><span class="line">2-3: 16-bit addressing forms specified by the ModR/M byte are in Table 2-1 and 32-bit addressing forms are in</span><br><span class="line">Table 2-2. Table 2-3 shows 32-bit addressing forms specified by the SIB byte. In cases where the reg/opcode field</span><br><span class="line">in the ModR/M byte represents an extended opcode, valid encodings are shown in Appendix B.</span><br><span class="line">In Table 2-1 and Table 2-2, the Effective Address column lists 32 effective addresses that can be assigned to the</span><br><span class="line">first operand of an instruction by using the Mod and R/M fields of the ModR/M byte. The first 24 options provide</span><br><span class="line">ways of specifying a memory location; the last eight (Mod = 11B) provide ways of specifying general-purpose, MMX</span><br><span class="line">technology and XMM registers.</span><br><span class="line">The Mod and R/M columns in Table 2-1 and Table 2-2 give the binary encodings of the Mod and R/M fields required</span><br><span class="line">to obtain the effective address listed in the first column. For example: see the row indicated by Mod = 11B, R/M =</span><br><span class="line">000B. The row identifies the general-purpose registers EAX, AX or AL; MMX technology register MM0; or XMM</span><br><span class="line">register XMM0. The register used is determined by the opcode byte and the operand-size attribute.</span><br><span class="line">Now look at the seventh row in either table (labeled “REG =”). This row specifies the use of the 3-bit Reg/Opcode</span><br><span class="line">field when the field is used to give the location of a second operand. The second operand must be a generalpurpose, MMX technology, or XMM register. Rows one through five list the registers that may correspond to the</span><br><span class="line">value in the table. Again, the register used is determined by the opcode byte along with the operand-size attribute.</span><br><span class="line">If the instruction does not require a second operand, then the Reg/Opcode field may be used as an opcode extension. This use is represented by the sixth row in the tables (labeled “/digit (Opcode)”). Note that values in row six</span><br><span class="line">are represented in decimal form.</span><br><span class="line">The body of Table 2-1 and Table 2-2 (under the label “Value of ModR/M Byte (in Hexadecimal)”) contains a 32 by</span><br><span class="line">8 array that presents all of 256 values of the ModR/M byte (in hexadecimal). Bits 3, 4 and 5 are specified by the</span><br><span class="line">column of the table in which a byte resides. The row specifies bits 0, 1 and 2; and bits 6 and 7. The figure below</span><br><span class="line">demonstrates interpretation of one table value.</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn4.shakudada.xyz/register2.png" alt="register"><br>寄存器会从0编码到16,编码顺序如上述所示</p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;                        </span><br><span class="line">     <span class="type">int</span> num0 = <span class="number">5</span>;</span><br><span class="line">     <span class="type">int</span> num1 = <span class="number">2</span>;</span><br><span class="line">     <span class="type">int</span> num = num0 / num1 ;</span><br><span class="line">     <span class="keyword">return</span> num;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">## 编译</span><br><span class="line">gcc -O0  test.c  -o  test</span><br><span class="line"></span><br><span class="line">## 用objdump 列出汇编内容</span><br><span class="line">objdump -d  test  | grep -A20   &#x27;&lt;main&gt;:&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>结果为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0000000000001129 &lt;main&gt;:</span><br><span class="line">    1129:       f3 0f 1e fa             endbr64 </span><br><span class="line">    112d:       55                      push   %rbp</span><br><span class="line">    112e:       48 89 e5                mov    %rsp,%rbp</span><br><span class="line">    1131:       c7 45 f4 05 00 00 00    movl   $0x5,-0xc(%rbp)</span><br><span class="line">    1138:       c7 45 f8 02 00 00 00    movl   $0x2,-0x8(%rbp)</span><br><span class="line">    113f:       8b 45 f4                mov    -0xc(%rbp),%eax</span><br><span class="line">    1142:       99                      cltd   </span><br><span class="line">    1143:       f7 7d f8                idivl  -0x8(%rbp)</span><br><span class="line">    1146:       89 45 fc                mov    %eax,-0x4(%rbp)</span><br><span class="line">    1149:       8b 45 fc                mov    -0x4(%rbp),%eax</span><br><span class="line">    114c:       5d                      pop    %rbp</span><br><span class="line">    114d:       c3                      retq   </span><br><span class="line">    114e:       66 90                   xchg   %ax,%ax</span><br></pre></td></tr></table></figure>
+
+<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://community.intel.com/legacyfs/online/drupal_files/managed/a4/60/325383-sdm-vol-2abcd.pdf">intel 文档</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/04/14/java-rabbitmq-%E5%88%9D%E5%A7%8B%E5%8C%96/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1111,97 +1197,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shakudada.xyz/2023/02/21/clickhouse-mybatis-batch-insert-cpu-raise-up/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="dinosaur">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dinosaur">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/02/21/clickhouse-mybatis-batch-insert-cpu-raise-up/" class="post-title-link" itemprop="url">clickhouse mybatis batch insert cpu raise up</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-02-21 13:55:21" itemprop="dateCreated datePublished" datetime="2023-02-21T13:55:21+08:00">2023-02-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-25 11:42:47" itemprop="dateModified" datetime="2023-10-25T11:42:47+08:00">2023-10-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p><img src="https://cdn4.shakudada.xyz/top.png" alt="背景"></p>
-<p>使用jdbc clickhouse,批量写入,发现cpu升高非常多,升到了90%多</p>
-<h2 id="排查及原因"><a href="#排查及原因" class="headerlink" title="排查及原因"></a>排查及原因</h2><h3 id="相关环境"><a href="#相关环境" class="headerlink" title="相关环境"></a>相关环境</h3><p>jdk: jdk11<br>clickhouse 使用的sql驱动: </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;groupId&gt;com.clickhouse&lt;/groupId&gt;</span><br><span class="line"> &lt;artifactId&gt;clickhouse-jdbc&lt;/artifactId&gt;</span><br><span class="line"> &lt;version&gt;0.3.2-patch11&lt;/version&gt;</span><br></pre></td></tr></table></figure>
-
-
-<p>原因:<br>使用mybatis plus 拼写sql,批量写入2000条<br>sql 用mybatis 的xml 拼写 类似:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into table values (row1_field1 , row1_field2 ),(row1_field1 , row1_field2) .... 这里是用mybatis 的xml foreache 2000 次</span><br></pre></td></tr></table></figure>
-
-<p>线上warning日志:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Please consider to use one and only one values expression, for example: use &#x27;values(?)&#x27; instead of &#x27;values(?),(?)&#x27;.</span><br></pre></td></tr></table></figure>
-
-<p>由于jdbc 的parser 比较慢,需要将perpare语句改成以下形式:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into table values ( ?, ? )  ## 只有一次 </span><br></pre></td></tr></table></figure>
-
-<p>采用的是</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// Note: &quot;insert into table values(?,?)&quot; is treated as &quot;insert into mytable&quot;</span><br><span class="line">try (PreparedStatement ps = conn.prepareStatement(&quot;insert into table values(?,?)&quot;)) &#123;</span><br><span class="line">    ps.setString(1, &quot;test&quot;); // id</span><br><span class="line">    ps.setObject(2, LocalDateTime.now()); // timestamp</span><br><span class="line">    ps.addBatch(); // append parameters to the query</span><br><span class="line">    ...</span><br><span class="line">    ps.executeBatch(); // issue the composed query: insert into mytable values(...)(...)...(...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h2><p>cpu 从80%降低到30%以内<br>优化前:</p>
-<p><img src="https://cdn4.shakudada.xyz/before.png" alt="优化前"></p>
-<p>优化后:<br><img src="https://cdn4.shakudada.xyz/after.png" alt="优化后"></p>
-<h2 id="相关阅读"><a href="#相关阅读" class="headerlink" title="相关阅读"></a>相关阅读</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://clickhouse.com/docs/en/integrations/language-clients/java/jdbc/#insert-1">https://clickhouse.com/docs/en/integrations/language-clients/java/jdbc/#insert-1</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/ClickHouse/clickhouse-java/issues/928">https://github.com/ClickHouse/clickhouse-java/issues/928</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/a783295110/article/details/123011034?spm=1001.2101.3001.6650.16&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-16-123011034-blog-120047936.pc_relevant_3mothn_strategy_recovery&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~Rate-16-123011034-blog-120047936.pc_relevant_3mothn_strategy_recovery&utm_relevant_index=24">https://blog.csdn.net/a783295110/article/details/123011034?spm=1001.2101.3001.6650.16&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-16-123011034-blog-120047936.pc_relevant_3mothn_strategy_recovery&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-16-123011034-blog-120047936.pc_relevant_3mothn_strategy_recovery&amp;utm_relevant_index=24</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1271,7 +1266,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">255</span>
+          <span class="site-state-item-count">256</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
